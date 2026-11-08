@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-11-08T06:06:35.862Z",
+  "days": [
+    {
+      "date": "2026-11-08",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-08_0800.json",
+          "theme": "職場晨間專案應變 ＆ 2026日本經濟「人」的結構改革",
+          "level": "N1~N2",
+          "title": "2026年の日本経済を左右するキーワード「人」と構造変化",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-08_1700.json",
+          "theme": "朋友深海展話題閒聊 ＆ 深海熱水噴出孔的「電氣合成」微生物",
+          "level": "N2",
+          "title": "太陽光の代わりに「電気」で生きる——深海微生物の電気合成",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-08_2200.json",
+          "theme": "家庭睡前閱讀時光 ＆ 夏目漱石《草枕》談人際與心靈餘裕",
+          "level": "N1~N2",
+          "title": "「とかくに人の世は住みにくい」——夏目漱石『草枕』にみる心の余白",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-07_0800.json",
+          "theme": "通勤電車延誤應變 ＆ 混合辦公（Hybrid Work）的深層課題",
+          "level": "N2",
+          "title": "出社か在宅かを超えて——「ハイブリッドワーク」が直面する真の課題",
+          "hasQuiz": false,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-07_1700.json",
+          "theme": "SNS 攝影社團留言交流 ＆ 深度睡眠中的「腦脊髓液」洗滌機制",
+          "level": "N1~N2",
+          "title": "深い眠りが脳を洗い流す——脳脊髄液のリズムと記憶の整理",
+          "hasQuiz": false,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-07_2200.json",
+          "theme": "室友深夜家事分擔 ＆ 為何搖晃讓人想睡？大腦前庭神經與睡眠",
+          "level": "N2",
+          "title": "電車に揺られると眠くなる理由——脳幹の回路と睡眠バランス",
+          "hasQuiz": false,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-06",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-06_0800.json",
+          "theme": "客戶報價與交期協調 ＆ 國際能源價格波動與企業體質強化",
+          "level": "N1~N2",
+          "title": "資源価格の変動と日本経済——下振れリスクを見極める視点",
+          "hasQuiz": false,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-06_1700.json",
+          "theme": "商店街傍晚買菜對話 ＆ 預測海洋「植物性浮游生物」半年增減",
+          "level": "N2",
+          "title": "海の豊かさを先読みする——植物プランクトン増減の高精度予測",
+          "hasQuiz": false,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-06_2200.json",
+          "theme": "家庭週末溫泉旅行規劃 ＆ 夏目漱石《硝子戸の中》日常隨筆",
+          "level": "N1~N2",
+          "title": "小さな書斎から世界を見つめる——漱石『硝子戸の中』の静かな眼差し",
+          "hasQuiz": false,
+          "hasAudio": false
+        }
+      }
+    }
+  ]
+}

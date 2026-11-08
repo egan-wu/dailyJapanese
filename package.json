@@ -1,0 +1,15 @@
+{
+  "name": "yomuhi-daily-japanese",
+  "private": true,
+  "type": "module",
+  "description": "日日讀日文：每日 AI 產生的 JLPT 閱讀練習網站（GitHub Pages）",
+  "scripts": {
+    "dev": "python -m http.server 8123",
+    "validate": "node scripts/validate.mjs",
+    "manifest": "node scripts/build-manifest.mjs",
+    "generate": "node scripts/generate.mjs --slot auto"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

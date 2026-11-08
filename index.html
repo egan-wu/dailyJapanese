@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>日日讀日文｜YomuHi 每日三時段日文閱讀練習</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans-tc: 'Inter', 'Noto Sans TC', sans-serif;
+      --font-sans-jp: 'Noto Sans JP', sans-serif;
+      --font-serif-jp: 'Noto Serif JP', serif;
+    }
+    body {
+      font-family: var(--font-sans-tc);
+      background-color: #F6F4EE;
+      color: #1F2421;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .jp-sans { font-family: var(--font-sans-jp); }
+    .jp-serif { font-family: var(--font-serif-jp); }
+    /* Ruby furigana toggle styling - DEFAULT HIDE */
+    ruby { ruby-align: center; }
+    rt {
+      font-size: 0.62em;
+      color: #52635B;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: opacity 0.15s ease;
+      user-select: none;
+    }
+    body.hide-furigana rt { display: none; }
+    /* High-frequency JLPT Exam Vocab & Grammar Light Red Highlight */
+    .exam-hl {
+      background-color: #FFE4E6;
+      color: #881337;
+      border-bottom: 1.5px solid #FDA4AF;
+      padding: 0.06em 0.28em;
+      margin: 0 0.05em;
+      border-radius: 0.32rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+      display: inline;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+    .exam-hl:hover, .exam-hl:active {
+      background-color: #FECDD3;
+      border-bottom-color: #FB7185;
+    }
+    /* 紅底全部關閉，或依級數個別關閉 */
+    body.hide-exam-hl .exam-hl,
+    body.hl-off-N1 .exam-hl[data-level="N1"],
+    body.hl-off-N2 .exam-hl[data-level="N2"],
+    body.hl-off-N3 .exam-hl[data-level="N3"],
+    body.hl-off-N3 .exam-hl[data-level="N4"],
+    body.hl-off-N3 .exam-hl[data-level="N5"] {
+      background-color: transparent !important;
+      color: inherit !important;
+      border-bottom: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      font-weight: inherit !important;
+    }
+    .reading-text { line-height: 2.25; letter-spacing: 0.03em; }
+    body.hide-furigana .reading-text { line-height: 2.0; }
+    .dialogue-bubble { line-height: 2.05; }
+    body.hide-furigana .dialogue-bubble { line-height: 1.8; }
+    .speaking-active {
+      outline: 2px solid #059669;
+      background-color: #ECFDF5 !important;
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #EFECE6; }
+    ::-webkit-scrollbar-thumb { background: #C5BFB3; border-radius: 3px; }
+  </style>
+</head>
+<!-- Default: hide-furigana is ACTIVE so furigana is OFF by default -->
+<body class="hide-furigana min-h-screen flex flex-col pb-24 sm:pb-12 selection:bg-emerald-800 selection:text-white">
+
+  <!-- Sticky Top Header (Mobile-Optimized) -->
+  <header class="sticky top-0 z-30 bg-[#F6F4EE]/95 backdrop-blur-md border-b border-stone-200/90 shadow-xs">
+    <div class="max-w-3xl mx-auto px-3.5 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 shrink-0 rounded-xl bg-emerald-900 text-amber-50 flex flex-col items-center justify-center shadow-xs">
+          <span class="jp-serif text-sm font-bold leading-none">読</span>
+          <span class="text-[9px] tracking-widest opacity-80 mt-0.5">YOMU</span>
+        </div>
+        <div class="truncate">
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-stone-900 truncate">日日讀日文 <span class="hidden sm:inline text-emerald-800 font-normal text-sm jp-serif">｜毎日の日本語読解</span></h1>
+          <p class="text-[11px] text-stone-500 truncate">每日 08:00・17:00・22:00 ｜ 最新 3 天＋歷史存檔</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="btn-open-voice-modal" type="button"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer"
+          title="調整自然語音聲線與語速">
+          <span>🎙️<span class="hidden sm:inline"> 語音設定</span></span>
+        </button>
+        <button id="btn-open-vocab-modal" type="button"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100 transition cursor-pointer">
+          <span>★ 單字本</span>
+          <span id="badge-vocab-count" class="px-1.5 py-0.2 rounded-full bg-amber-200 text-amber-950 text-[11px] font-bold">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-toolbar -->
+    <div class="bg-stone-100/90 border-t border-stone-200/70">
+      <div class="max-w-3xl mx-auto px-3.5 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button id="btn-toggle-furigana" type="button"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer"
+            aria-pressed="false">
+            <span class="jp-sans text-[11px] px-1 rounded bg-stone-200 text-stone-700 font-bold">あ</span>
+            <span id="label-furigana">平假名：關閉</span>
+          </button>
+          <button id="btn-toggle-exam-hl" type="button"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-900 border border-rose-300 hover:bg-rose-200/70 transition cursor-pointer"
+            aria-pressed="true">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span id="label-exam-hl">常考紅底：開啟</span>
+          </button>
+          <button id="btn-toggle-all-trans" type="button"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer"
+            aria-pressed="false">
+            <span id="label-all-trans">譯文：預設隱藏</span>
+          </button>
+        </div>
+        <div class="inline-flex items-center rounded-lg bg-white border border-stone-300 p-0.5 text-xs">
+          <button id="btn-font-normal" type="button" class="px-2 py-0.5 rounded-md font-medium bg-stone-200 text-stone-900 transition cursor-pointer">標準字體</button>
+          <button id="btn-font-large" type="button" class="px-2 py-0.5 rounded-md font-medium text-stone-600 hover:text-stone-900 transition cursor-pointer">放大字體</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-3xl w-full mx-auto px-3.5 sm:px-6 py-4 sm:py-6 space-y-4">
+
+    <!-- 學習紀錄 -->
+    <section id="stats-bar" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div class="bg-white rounded-xl border border-stone-200/90 px-3 py-2.5">
+        <div class="text-[11px] text-stone-500">連續閱讀</div>
+        <div class="text-lg font-bold text-stone-900"><span id="stat-streak">0</span> <span class="text-xs font-medium text-stone-500">天</span></div>
+      </div>
+      <div class="bg-white rounded-xl border border-stone-200/90 px-3 py-2.5">
+        <div class="text-[11px] text-stone-500">近 7 天讀完</div>
+        <div class="text-lg font-bold text-stone-900"><span id="stat-week">0</span> <span class="text-xs font-medium text-stone-500">則</span></div>
+      </div>
+      <div class="bg-white rounded-xl border border-stone-200/90 px-3 py-2.5">
+        <div class="text-[11px] text-stone-500">讀解答對率</div>
+        <div class="text-lg font-bold text-stone-900" id="stat-accuracy">—</div>
+      </div>
+      <button id="btn-open-review" type="button" class="text-left bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-300 px-3 py-2.5 cursor-pointer transition">
+        <div class="text-[11px] text-amber-800">今日待複習單字</div>
+        <div class="text-lg font-bold text-amber-950"><span id="stat-due">0</span> <span class="text-xs font-medium text-amber-800">個 →</span></div>
+      </button>
+    </section>
+
+    <!-- Navigation: Days -> Slots -->
+    <section class="bg-white rounded-2xl p-3.5 sm:p-5 border border-stone-200/90 shadow-xs space-y-3.5">
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">1. 選擇日期（最新 → 最舊）</span>
+          <span id="progress-counter" class="text-[11px] font-semibold text-stone-600 bg-stone-100 px-2.5 py-0.5 rounded-full border border-stone-200">
+            已完成 0 / 0 則
+          </span>
+        </div>
+        <div id="day-tabs-container" class="grid grid-cols-3 gap-2" role="tablist" aria-label="日期選擇"></div>
+      </div>
+      <div class="pt-2 border-t border-stone-100">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">2. 選擇時段（08:00 / 17:00 / 22:00）</span>
+          <button id="btn-expand-collapse-both" type="button" class="text-[11px] font-semibold text-emerald-800 hover:underline cursor-pointer">展開兩大區塊 ▼</button>
+        </div>
+        <div id="slot-tabs-container" class="grid grid-cols-3 gap-1.5 sm:gap-2 bg-stone-100 p-1.5 rounded-xl border border-stone-200/80" role="tablist" aria-label="時段選擇"></div>
+      </div>
+    </section>
+
+    <!-- Load error -->
+    <div id="load-error" class="hidden bg-rose-50 border border-rose-300 text-rose-900 rounded-xl px-4 py-3 text-sm"></div>
+
+    <div id="content-root" class="space-y-4">
+      <div id="active-slot-header" class="flex flex-wrap items-center justify-between gap-2 bg-emerald-950 text-stone-100 px-4 py-3 rounded-2xl shadow-xs">
+        <span class="text-xs text-emerald-200">載入中…</span>
+      </div>
+
+      <!-- Exam highlight tip + level filter -->
+      <div id="exam-tip-banner" class="bg-rose-50/90 border border-rose-200 rounded-xl px-3.5 py-2.5 space-y-2 text-xs text-rose-950">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="px-1.5 py-0.5 rounded bg-rose-200 text-rose-950 font-bold text-[11px] shrink-0">常考標記</span>
+          <span id="exam-tip-text" class="truncate">點擊文章內的「淡紅底」單字或文法，即可在此查看考點解析</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[11px] text-rose-800">紅底顯示級數：</span>
+          <button type="button" data-hl-level="N1" class="hl-level-btn px-2 py-0.5 rounded-md text-[11px] font-bold border cursor-pointer">N1</button>
+          <button type="button" data-hl-level="N2" class="hl-level-btn px-2 py-0.5 rounded-md text-[11px] font-bold border cursor-pointer">N2</button>
+          <button type="button" data-hl-level="N3" class="hl-level-btn px-2 py-0.5 rounded-md text-[11px] font-bold border cursor-pointer">N3 以下</button>
+        </div>
+      </div>
+
+      <!-- ZONE 1: Dialogue -->
+      <section class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
+        <button id="btn-accordion-zone1" type="button"
+          class="w-full text-left bg-gradient-to-r from-amber-50/90 via-stone-50 to-white px-4 sm:px-5 py-4 flex items-center justify-between gap-3 hover:bg-amber-50/60 transition cursor-pointer"
+          aria-expanded="false">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-amber-800 text-white">第一區・對話</span>
+              <span id="dialogue-scene-badge" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-200">場景</span>
+              <span id="dialogue-char-count" class="text-[11px] text-stone-500 font-mono"></span>
+            </div>
+            <h3 id="dialogue-title" class="text-base sm:text-lg font-bold text-stone-900 mt-1.5 truncate">日常情境對話</h3>
+            <p id="dialogue-tone-note" class="text-xs text-stone-500 mt-0.5 truncate"></p>
+          </div>
+          <span id="zone1-status-pill" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-900 text-white shadow-2xs">點擊展開 ▼</span>
+        </button>
+
+        <div id="zone1-body" class="hidden border-t border-stone-200/80">
+          <div class="px-4 sm:px-5 py-2.5 bg-stone-50 border-b border-stone-200/70 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <button id="btn-speak-dialogue" type="button"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-900 text-white hover:bg-emerald-800 shadow-2xs transition cursor-pointer">
+                <span>🔊 朗讀對話</span>
+              </button>
+              <span id="current-voice-tag-1" class="text-[11px] text-stone-500 truncate max-w-[160px] sm:max-w-xs">自動優選自然日文語音</span>
+            </div>
+            <span class="text-[11px] text-rose-800 font-medium">🖍️ 淡紅底＝JLPT 常考單字／句型</span>
+          </div>
+          <div id="dialogue-lines-container" class="p-4 sm:p-5 space-y-3.5 jp-sans"></div>
+          <div class="px-4 sm:px-5 py-3.5 border-t border-stone-200/80 bg-amber-50/25">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-stone-700">🇹🇼 繁體中文翻譯（日常對話）</span>
+              <button id="btn-toggle-dialogue-trans" type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-emerald-900 border border-stone-300 hover:bg-stone-100 transition cursor-pointer">展開中文翻譯</button>
+            </div>
+            <div id="dialogue-trans-box" class="hidden mt-3 pt-3 border-t border-stone-200/70 space-y-2 text-sm text-stone-700 leading-relaxed"></div>
+          </div>
+          <div class="p-4 sm:p-5 bg-stone-50/80 border-t border-stone-200/70">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-rose-900 mb-2.5 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span>對話單字與口語文型（點擊 ☆ 收藏並加入複習）</span>
+            </h4>
+            <div id="dialogue-vocab-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ZONE 2: Article -->
+      <section class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
+        <button id="btn-accordion-zone2" type="button"
+          class="w-full text-left bg-gradient-to-r from-emerald-50/90 via-stone-50 to-white px-4 sm:px-5 py-4 flex items-center justify-between gap-3 hover:bg-emerald-50/60 transition cursor-pointer"
+          aria-expanded="false">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-900 text-white">第二區・讀解</span>
+              <span id="article-genre-badge" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-900 border border-emerald-200">主題類別</span>
+              <span id="article-jlpt-badge" class="px-2 py-0.5 rounded-full text-xs font-bold bg-stone-800 text-amber-200">JLPT</span>
+              <span id="article-char-count" class="text-[11px] text-stone-500 font-mono"></span>
+              <span id="article-quiz-badge" class="hidden px-2 py-0.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-900 border border-sky-200">附讀解題</span>
+            </div>
+            <h3 id="article-title" class="text-base sm:text-xl font-bold text-stone-900 mt-1.5 jp-serif leading-snug">專欄文章標題</h3>
+            <p class="text-xs text-stone-500 mt-0.5">建議先計時閱讀、作答讀解題，再看中文翻譯</p>
+          </div>
+          <span id="zone2-status-pill" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-900 text-white shadow-2xs">點擊展開 ▼</span>
+        </button>
+
+        <div id="zone2-body" class="hidden border-t border-stone-200/80">
+          <div class="px-4 sm:px-5 py-2.5 bg-stone-50 border-b border-stone-200/70 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="btn-timer" type="button"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-900 text-white hover:bg-sky-800 shadow-2xs transition cursor-pointer">
+                <span>⏱ 開始計時閱讀</span>
+              </button>
+              <button id="btn-speak-article" type="button"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-900 text-white hover:bg-emerald-800 shadow-2xs transition cursor-pointer">
+                <span>🔊 朗讀專欄</span>
+              </button>
+              <span id="current-voice-tag-2" class="text-[11px] text-stone-500 truncate max-w-[160px] sm:max-w-xs">自動優選自然日文語音</span>
+            </div>
+            <div id="article-source-bar" class="text-[11px] text-stone-600"></div>
+          </div>
+
+          <div id="article-paragraphs-container" class="p-4 sm:p-6 space-y-5 jp-serif reading-text text-stone-900 text-base sm:text-[17px]"></div>
+
+          <!-- 讀解題 -->
+          <div id="quiz-section" class="hidden px-4 sm:px-6 py-4 border-t border-stone-200/80 bg-sky-50/40">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-sky-950">📝 讀解練習（JLPT 題型）</span>
+              <span id="quiz-score" class="text-xs font-bold text-sky-900"></span>
+            </div>
+            <div id="quiz-list" class="space-y-4"></div>
+            <div class="mt-4 flex items-center justify-end gap-2">
+              <button id="btn-quiz-retry" type="button" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-sky-900 border border-sky-300 hover:bg-sky-100 cursor-pointer">重新作答</button>
+              <button id="btn-quiz-submit" type="button" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-900 text-white hover:bg-sky-800 cursor-pointer">提交答案</button>
+            </div>
+          </div>
+
+          <div class="px-4 sm:px-5 py-4 border-t border-stone-200/80 bg-emerald-50/25">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-stone-700">🇹🇼 繁體中文對照翻譯</span>
+              <button id="btn-toggle-article-trans" type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-emerald-900 border border-stone-300 hover:bg-stone-100 transition cursor-pointer">展開中文翻譯</button>
+            </div>
+            <div id="article-trans-box" class="hidden mt-3 pt-3 border-t border-stone-200/70 space-y-3 text-sm sm:text-[15px] text-stone-700 leading-relaxed"></div>
+          </div>
+
+          <div class="p-4 sm:p-6 bg-stone-50/90 border-t border-stone-200/80 space-y-5">
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-rose-900 mb-2.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>📚 本文單字（點擊 ☆ 收藏並加入複習）</span>
+              </h4>
+              <div id="article-vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+            </div>
+            <div class="pt-3 border-t border-stone-200/80">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-rose-900 mb-2.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>🔍 本文文法</span>
+              </h4>
+              <div id="article-grammar-list" class="space-y-2.5"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 歷史存檔 -->
+    <section class="bg-white rounded-2xl p-4 sm:p-5 border border-stone-200/90 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-emerald-800">📂 歷史文章存檔</div>
+          <p class="text-xs text-stone-600 leading-relaxed">所有文章都會保留，可以隨時回頭複習。<span id="archive-count"></span></p>
+        </div>
+        <select id="archive-select" class="shrink-0 rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+          <option value="">選擇日期…</option>
+        </select>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Bar -->
+  <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-300 shadow-lg px-2 py-2 flex items-center justify-around gap-1" aria-label="手機快捷工具列">
+    <button id="mob-btn-furigana" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>あ 假名</span>
+      <span id="mob-label-furigana" class="text-[10px] font-normal text-stone-500">關閉</span>
+    </button>
+    <button id="mob-btn-exam" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-rose-100 text-rose-900 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>🖍️ 常考紅底</span>
+      <span id="mob-label-exam" class="text-[10px] font-normal text-rose-700">開啟</span>
+    </button>
+    <button id="mob-btn-trans" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>🇹🇼 譯文</span>
+      <span id="mob-label-trans" class="text-[10px] font-normal text-stone-500">隱藏</span>
+    </button>
+    <button id="mob-btn-voice" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>🎙️ 語音</span>
+      <span class="text-[10px] font-normal text-stone-500">設定</span>
+    </button>
+  </nav>
+
+  <!-- Voice Settings Modal -->
+  <div id="voice-modal" class="fixed inset-0 z-50 hidden bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full flex flex-col shadow-xl border border-stone-200 overflow-hidden">
+      <div class="px-5 py-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-stone-900">🎙️ 日文語音與朗讀設定</h3>
+          <p class="text-xs text-stone-500">優先選取自然語音（Natural / Google / Kyoko）與分角色朗讀</p>
+        </div>
+        <button id="btn-close-voice-modal" type="button" class="p-1.5 rounded-lg text-stone-500 hover:bg-stone-200/60 cursor-pointer">✕</button>
+      </div>
+      <div class="p-5 space-y-4 text-xs sm:text-sm">
+        <div>
+          <label for="select-jp-voice" class="block font-bold text-stone-800 mb-1.5">1. 選擇日文發音人</label>
+          <select id="select-jp-voice" class="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs sm:text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+            <option value="auto">✨ 自動優選最自然日文語音（推薦）</option>
+          </select>
+          <div id="voice-none-hint" class="hidden mt-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-[11px] text-rose-900 leading-relaxed space-y-1">
+            <p class="font-bold">⚠️ 找不到日文語音，朗讀會被念成中文，所以已停用。</p>
+            <p>擇一解決：</p>
+            <ul class="list-disc pl-4 space-y-0.5">
+              <li><strong>Windows</strong>：設定 → 時間與語言 → 語音 → 新增語音 → 選「日本語」，裝好後重新開啟瀏覽器。</li>
+              <li><strong>改用 Edge 或 Chrome</strong>：內建線上日文語音（Nanami／Google 日本語），不用另外安裝。</li>
+              <li><strong>iPhone</strong>：設定 → 輔助使用 → 朗讀內容 → 聲音 → 日文。<strong>Android</strong>：設定 → 文字轉語音 → 安裝日文語音資料。</li>
+              <li>或在下方填入 OpenAI API Key 使用 AI 語音。</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-stone-800 mb-1.5">2. 朗讀語速</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" data-rate="0.85" class="rate-btn py-2 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 cursor-pointer">0.85x 慢速清晰</button>
+            <button type="button" data-rate="0.95" class="rate-btn py-2 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 cursor-pointer">0.95x 自然語速</button>
+            <button type="button" data-rate="1.05" class="rate-btn py-2 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 cursor-pointer">1.05x 正常偏快</button>
+          </div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2">
+          <div class="font-bold text-amber-950 text-xs flex items-center justify-between">
+            <span>3. 進階：OpenAI AI 語音（選填）</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">選配功能</span>
+          </div>
+          <p class="text-[11px] text-amber-900 leading-relaxed">
+            填入 <strong>OpenAI API Key</strong>（<code class="font-mono">sk-...</code>）即可使用 <code class="font-mono">gpt-4o-mini-tts</code> 語音；留空則使用免費的瀏覽器語音。金鑰只存在這台裝置的瀏覽器裡，建議使用權限受限的金鑰。
+          </p>
+          <input id="input-openai-key" type="password" placeholder="sk-...（留空則使用瀏覽器語音）"
+            class="w-full rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs text-stone-800 focus:outline-none" />
+        </div>
+      </div>
+      <div class="px-5 py-3 bg-stone-50 border-t border-stone-200 flex items-center justify-between">
+        <button id="btn-test-voice" type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-200 text-stone-800 hover:bg-stone-300 cursor-pointer">🔊 試聽目前語音</button>
+        <button id="btn-save-voice-modal" type="button" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-900 text-white hover:bg-emerald-800 cursor-pointer">完成設定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vocabulary Modal: saved list + spaced-repetition review -->
+  <div id="vocab-modal" class="fixed inset-0 z-50 hidden bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] flex flex-col shadow-xl border border-stone-200 overflow-hidden">
+      <div class="px-5 py-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
+        <div class="inline-flex rounded-lg bg-white border border-stone-300 p-0.5 text-xs">
+          <button id="tab-vocab-review" type="button" class="px-3 py-1 rounded-md font-semibold cursor-pointer">🔁 今日複習</button>
+          <button id="tab-vocab-list" type="button" class="px-3 py-1 rounded-md font-semibold cursor-pointer">★ 收藏清單</button>
+        </div>
+        <button id="btn-close-vocab-modal" type="button" class="p-1.5 rounded-lg text-stone-500 hover:bg-stone-200/60 cursor-pointer">✕</button>
+      </div>
+      <div id="vocab-review-pane" class="p-5 overflow-y-auto flex-1"></div>
+      <div id="vocab-list-pane" class="hidden p-5 overflow-y-auto space-y-2.5 flex-1"></div>
+      <div class="px-5 py-3 bg-stone-50 border-t border-stone-200 flex items-center justify-between">
+        <button id="btn-clear-vocab" type="button" class="text-xs text-rose-700 hover:underline cursor-pointer">清空全部收藏</button>
+        <button id="btn-close-vocab-footer" type="button" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-900 text-white hover:bg-emerald-800 cursor-pointer">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-msg" class="fixed bottom-16 sm:bottom-5 right-4 z-50 hidden px-4 py-2.5 rounded-xl bg-stone-900 text-white text-xs font-medium shadow-lg max-w-xs"></div>
+
+  <footer class="max-w-3xl w-full mx-auto px-4 py-6 text-center text-xs text-stone-400 border-t border-stone-200/60 mt-4">
+    日日讀日文 YomuHi ｜ 文章由 AI 每日產生，學習紀錄只儲存在這台裝置的瀏覽器
+  </footer>
+
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>

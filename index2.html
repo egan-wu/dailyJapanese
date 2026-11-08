@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>日日讀日文｜YomuHi 每日三時段日文閱讀練習</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans-tc: 'Inter', 'Noto Sans TC', sans-serif;
+      --font-sans-jp: 'Noto Sans JP', sans-serif;
+      --font-serif-jp: 'Noto Serif JP', serif;
+    }
+    body {
+      font-family: var(--font-sans-tc);
+      background-color: #F6F4EE;
+      color: #1F2421;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .jp-sans {
+      font-family: var(--font-sans-jp);
+    }
+    .jp-serif {
+      font-family: var(--font-serif-jp);
+    }
+    /* Ruby furigana toggle styling - DEFAULT HIDE */
+    ruby {
+      ruby-align: center;
+    }
+    rt {
+      font-size: 0.62em;
+      color: #52635B;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: opacity 0.15s ease;
+      user-select: none;
+    }
+    body.hide-furigana rt {
+      display: none;
+    }
+    /* High-frequency JLPT Exam Vocab & Grammar Light Red Highlight */
+    .exam-hl {
+      background-color: #FFE4E6; /* rose-100 */
+      color: #881337; /* rose-900 */
+      border-bottom: 1.5px solid #FDA4AF; /* rose-300 */
+      padding: 0.06em 0.28em;
+      margin: 0 0.05em;
+      border-radius: 0.32rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+      display: inline;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+    .exam-hl:hover, .exam-hl:active {
+      background-color: #FECDD3; /* rose-200 */
+      border-bottom-color: #FB7185;
+    }
+    body.hide-exam-hl .exam-hl {
+      background-color: transparent !important;
+      color: inherit !important;
+      border-bottom: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      font-weight: inherit !important;
+    }
+    .reading-text {
+      line-height: 2.25;
+      letter-spacing: 0.03em;
+    }
+    body.hide-furigana .reading-text {
+      line-height: 2.0;
+    }
+    .dialogue-bubble {
+      line-height: 2.05;
+    }
+    body.hide-furigana .dialogue-bubble {
+      line-height: 1.8;
+    }
+    .speaking-active {
+      outline: 2px solid #059669;
+      background-color: #ECFDF5 !important;
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #EFECE6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C5BFB3;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<!-- Default: hide-furigana is ACTIVE so furigana is OFF by default -->
+<body class="hide-furigana min-h-screen flex flex-col pb-24 sm:pb-12 selection:bg-emerald-800 selection:text-white">
+
+  <!-- Sticky Top Header (Mobile-Optimized) -->
+  <header class="sticky top-0 z-30 bg-[#F6F4EE]/95 backdrop-blur-md border-b border-stone-200/90 shadow-xs">
+    <div class="max-w-3xl mx-auto px-3.5 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      <!-- Brand -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 shrink-0 rounded-xl bg-emerald-900 text-amber-50 flex flex-col items-center justify-center shadow-xs">
+          <span class="jp-serif text-sm font-bold leading-none">読</span>
+          <span class="text-[9px] tracking-widest opacity-80 mt-0.5">YOMU</span>
+        </div>
+        <div class="truncate">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-stone-900 truncate">日日讀日文 <span class="hidden sm:inline text-emerald-800 font-normal text-sm jp-serif">｜毎日の日本語読解</span></h1>
+          </div>
+          <p class="text-[11px] text-stone-500 truncate">每日 08:00・17:00・22:00 ｜ 保留最新 3 天</p>
+        </div>
+      </div>
+
+      <!-- Desktop & Tablet Quick Actions (also accessible on mobile bottom bar) -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="btn-open-voice-modal" type="button"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer"
+          title="調整自然語音聲線與語速">
+          <span>🎙️ 語音設定</span>
+        </button>
+        <button id="btn-open-vocab-modal" type="button"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100 transition cursor-pointer">
+          <span>★ 單字本</span>
+          <span id="badge-vocab-count" class="px-1.5 py-0.2 rounded-full bg-amber-200 text-amber-950 text-[11px] font-bold">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-toolbar for Desktop/Mobile Reading Toggles -->
+    <div class="bg-stone-100/90 border-t border-stone-200/70">
+      <div class="max-w-3xl mx-auto px-3.5 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <!-- (1) Furigana Toggle (Default: OFF) -->
+          <button id="btn-toggle-furigana" type="button"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer"
+            aria-pressed="false">
+            <span class="jp-sans text-[11px] px-1 rounded bg-stone-200 text-stone-700 font-bold">あ</span>
+            <span id="label-furigana">平假名：關閉</span>
+          </button>
+
+          <!-- (5) Exam Highlight Toggle (Default: ON with light red background) -->
+          <button id="btn-toggle-exam-hl" type="button"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-900 border border-rose-300 hover:bg-rose-200/70 transition cursor-pointer"
+            aria-pressed="true">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span id="label-exam-hl">常考紅底：開啟</span>
+          </button>
+
+          <!-- (4) Global Translation Toggle (Default: OFF) -->
+          <button id="btn-toggle-all-trans" type="button"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer"
+            aria-pressed="false">
+            <span id="label-all-trans">譯文：預設隱藏</span>
+          </button>
+        </div>
+
+        <!-- Font size toggle -->
+        <div class="inline-flex items-center rounded-lg bg-white border border-stone-300 p-0.5 text-xs">
+          <button id="btn-font-normal" type="button" class="px-2 py-0.5 rounded-md font-medium bg-stone-200 text-stone-900 transition cursor-pointer">標準字體</button>
+          <button id="btn-font-large" type="button" class="px-2 py-0.5 rounded-md font-medium text-stone-600 hover:text-stone-900 transition cursor-pointer">放大字體</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Single-Column Mobile-Friendly Container (max-w-3xl) -->
+  <main class="flex-1 max-w-3xl w-full mx-auto px-3.5 sm:px-6 py-4 sm:py-6 space-y-4">
+
+    <!-- Compact Dual-Layer Navigation Card (Level 1: 3 Days -> Level 2: 3 Slots) -->
+    <section class="bg-white rounded-2xl p-3.5 sm:p-5 border border-stone-200/90 shadow-xs space-y-3.5">
+      <!-- Level 1: 3 Days (Newest to Oldest) -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">1. 選擇日期（最新 → 最舊，保留 3 天）</span>
+          <span id="progress-counter" class="text-[11px] font-semibold text-stone-600 bg-stone-100 px-2.5 py-0.5 rounded-full border border-stone-200">
+            已完成 0 / 9 則
+          </span>
+        </div>
+        <div id="day-tabs-container" class="grid grid-cols-3 gap-2" role="tablist" aria-label="日期選擇">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Level 2: 3 Time Slots (08:00, 17:00, 22:00) -->
+      <div class="pt-2 border-t border-stone-100">
+        <div class="flex items-center justify-between mb-1.5">
+          <span id="slot-schedule-hint" class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">2. 選擇時段（08:00 / 17:00 / 22:00）</span>
+          <button id="btn-expand-collapse-both" type="button" class="text-[11px] font-semibold text-emerald-800 hover:underline cursor-pointer">
+            展開兩大區塊 ▼
+          </button>
+        </div>
+        <div id="slot-tabs-container" class="grid grid-cols-3 gap-1.5 sm:gap-2 bg-stone-100 p-1.5 rounded-xl border border-stone-200/80" role="tablist" aria-label="時段選擇">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Slot Compact Info Bar -->
+    <div id="active-slot-header" class="flex flex-wrap items-center justify-between gap-2 bg-emerald-950 text-stone-100 px-4 py-3 rounded-2xl shadow-xs">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Interactive Tip Banner for Exam Highlight -->
+    <div id="exam-tip-banner" class="bg-rose-50/90 border border-rose-200 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2 text-xs text-rose-950">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="px-1.5 py-0.5 rounded bg-rose-200 text-rose-950 font-bold text-[11px] shrink-0">常考標記</span>
+        <span id="exam-tip-text" class="truncate">點擊文章內的「淡紅底」常考單字或文法，即可在此即時查看考點解析！</span>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- VERTICAL STACK: ZONE 1 (TOP) & ZONE 2 (BOTTOM), BOTH COLLAPSED BY DEFAULT -->
+    <!-- =================================================================== -->
+    <div class="space-y-4">
+
+      <!-- ZONE 1 (TOP): Daily Life Extended Conversation (~170-220 chars) -->
+      <section class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
+        <!-- Accordion Header Button -->
+        <button id="btn-accordion-zone1" type="button"
+          class="w-full text-left bg-gradient-to-r from-amber-50/90 via-stone-50 to-white px-4 sm:px-5 py-4 flex items-center justify-between gap-3 hover:bg-amber-50/60 transition cursor-pointer"
+          aria-expanded="false">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-amber-800 text-white">第一區・上方</span>
+              <span id="dialogue-scene-badge" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-200">場景</span>
+              <span id="dialogue-char-count" class="text-[11px] text-stone-500 font-mono">約 190 字</span>
+            </div>
+            <h3 id="dialogue-title" class="text-base sm:text-lg font-bold text-stone-900 mt-1.5 truncate">日常情境對話</h3>
+            <p id="dialogue-tone-note" class="text-xs text-stone-500 mt-0.5 truncate">口吻設定</p>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <span id="zone1-status-pill" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-900 text-white shadow-2xs">
+              點擊展開 ▼
+            </span>
+          </div>
+        </button>
+
+        <!-- Collapsible Body of Zone 1 (Hidden by default per requirement #7) -->
+        <div id="zone1-body" class="hidden border-t border-stone-200/80">
+          <!-- Audio Control Bar inside Zone 1 -->
+          <div class="px-4 sm:px-5 py-2.5 bg-stone-50 border-b border-stone-200/70 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <button id="btn-speak-dialogue" type="button"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-900 text-white hover:bg-emerald-800 shadow-2xs transition cursor-pointer">
+                <span>🔊 朗讀對話</span>
+              </button>
+              <span id="current-voice-tag-1" class="text-[11px] text-stone-500 truncate max-w-[160px] sm:max-w-xs">自動優選自然日文語音</span>
+            </div>
+            <span class="text-[11px] text-rose-800 font-medium">🖍️ 淡紅底＝JLPT常考單字／句型</span>
+          </div>
+
+          <!-- Japanese Dialogue Lines -->
+          <div id="dialogue-lines-container" class="p-4 sm:p-5 space-y-3.5 jp-sans">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Dialogue Traditional Chinese Translation (Hidden by default per requirement #4) -->
+          <div class="px-4 sm:px-5 py-3.5 border-t border-stone-200/80 bg-amber-50/25">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-stone-700">🇹🇼 繁體中文翻譯（日常對話）</span>
+              <button id="btn-toggle-dialogue-trans" type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-emerald-900 border border-stone-300 hover:bg-stone-100 transition cursor-pointer">
+                展開中文翻譯
+              </button>
+            </div>
+            <div id="dialogue-trans-box" class="hidden mt-3 pt-3 border-t border-stone-200/70 space-y-2 text-sm text-stone-700 leading-relaxed">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Dialogue Exam Vocabulary & Expressions -->
+          <div class="p-4 sm:p-5 bg-stone-50/80 border-t border-stone-200/70">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-rose-900 mb-2.5 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span>第一區・常考單字與口語文型整理（點擊 ★ 收藏）</span>
+            </h4>
+            <div id="dialogue-vocab-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ZONE 2 (BOTTOM): JLPT N3~N1 Reading Column (~540-650 chars) -->
+      <section class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
+        <!-- Accordion Header Button -->
+        <button id="btn-accordion-zone2" type="button"
+          class="w-full text-left bg-gradient-to-r from-emerald-50/90 via-stone-50 to-white px-4 sm:px-5 py-4 flex items-center justify-between gap-3 hover:bg-emerald-50/60 transition cursor-pointer"
+          aria-expanded="false">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-900 text-white">第二區・下方</span>
+              <span id="article-genre-badge" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-900 border border-emerald-200">主題類別</span>
+              <span id="article-jlpt-badge" class="px-2 py-0.5 rounded-full text-xs font-bold bg-stone-800 text-amber-200">JLPT N2</span>
+              <span id="article-char-count" class="text-[11px] text-stone-500 font-mono">約 580 字</span>
+            </div>
+            <h3 id="article-title" class="text-base sm:text-xl font-bold text-stone-900 mt-1.5 jp-serif leading-snug">專欄文章標題</h3>
+            <p class="text-xs text-stone-500 mt-0.5">點擊展開長文閱讀、常考單字文法淡紅底標記與中譯對照</p>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <span id="zone2-status-pill" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-900 text-white shadow-2xs">
+              點擊展開 ▼
+            </span>
+          </div>
+        </button>
+
+        <!-- Collapsible Body of Zone 2 (Hidden by default per requirement #7) -->
+        <div id="zone2-body" class="hidden border-t border-stone-200/80">
+          <!-- Audio & Source Bar inside Zone 2 -->
+          <div class="px-4 sm:px-5 py-2.5 bg-stone-50 border-b border-stone-200/70 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <button id="btn-speak-article" type="button"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-900 text-white hover:bg-emerald-800 shadow-2xs transition cursor-pointer">
+                <span>🔊 朗讀專欄</span>
+              </button>
+              <span id="current-voice-tag-2" class="text-[11px] text-stone-500 truncate max-w-[160px] sm:max-w-xs">自動優選自然日文語音</span>
+            </div>
+            <div id="article-source-bar" class="text-[11px] text-stone-600">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Japanese Reading Passage (3-4 full paragraphs, 540-650 chars) -->
+          <div id="article-paragraphs-container" class="p-4 sm:p-6 space-y-5 jp-serif reading-text text-stone-900 text-base sm:text-[17px]">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Article Trad Chinese Translation (Hidden by default per requirement #4) -->
+          <div class="px-4 sm:px-5 py-4 border-t border-stone-200/80 bg-emerald-50/25">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-stone-700">🇹🇼 繁體中文完整對照翻譯（專欄長文）</span>
+              <button id="btn-toggle-article-trans" type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-emerald-900 border border-stone-300 hover:bg-stone-100 transition cursor-pointer">
+                展開中文翻譯
+              </button>
+            </div>
+            <div id="article-trans-box" class="hidden mt-3 pt-3 border-t border-stone-200/70 space-y-3 text-sm sm:text-[15px] text-stone-700 leading-relaxed">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- JLPT High-Frequency Exam Vocabulary & Grammar Analysis (with Light Red Badges) -->
+          <div class="p-4 sm:p-6 bg-stone-50/90 border-t border-stone-200/80 space-y-5">
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-rose-900 mb-2.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>📚 JLPT N3~N1 常考單字（頻出語彙）淡紅底對照表</span>
+              </h4>
+              <div id="article-vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-stone-200/80">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-rose-900 mb-2.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>🔍 JLPT N3~N1 常考文法（頻出文型）淡紅底解析</span>
+              </h4>
+              <div id="article-grammar-list" class="space-y-2.5">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- GitHub Pages & Scheduled Update Info Card -->
+    <section class="bg-white rounded-2xl p-4 sm:p-5 border border-stone-200/90 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-emerald-800">⚙️ 每日 08:00 / 17:00 / 22:00 自動化更新（方案 B）</div>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            本頁面已針對手機單手閱讀、預設隱藏平假名與中譯、兩大區上下摺疊及常考單字文法淡紅底標記完成最佳化。
+          </p>
+        </div>
+        <button id="btn-export-json" type="button"
+          class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-900 text-white hover:bg-stone-800 transition cursor-pointer">
+          📋 複製目前 3 日 JSON 資料結構
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Floating Quick-Control Bar (Thumb-friendly on phones) -->
+  <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-300 shadow-lg px-2 py-2 flex items-center justify-around gap-1" aria-label="手機快捷工具列">
+    <button id="mob-btn-furigana" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>あ 假名</span>
+      <span id="mob-label-furigana" class="text-[10px] font-normal text-stone-500">關閉</span>
+    </button>
+    <button id="mob-btn-exam" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-rose-100 text-rose-900 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>🖍️ 常考紅底</span>
+      <span id="mob-label-exam" class="text-[10px] font-normal text-rose-700">開啟</span>
+    </button>
+    <button id="mob-btn-trans" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>🇹🇼 譯文</span>
+      <span id="mob-label-trans" class="text-[10px] font-normal text-stone-500">隱藏</span>
+    </button>
+    <button id="mob-btn-voice" type="button" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer">
+      <span>🎙️ 語音</span>
+      <span class="text-[10px] font-normal text-stone-500">自然聲線</span>
+    </button>
+  </nav>
+
+  <!-- Natural Voice & Speech Settings Modal -->
+  <div id="voice-modal" class="fixed inset-0 z-50 hidden bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full flex flex-col shadow-xl border border-stone-200 overflow-hidden">
+      <div class="px-5 py-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-stone-900">🎙️ 自然日文語音與朗讀設定</h3>
+          <p class="text-xs text-stone-500">優先選取神經自然語音（Natural / Google / Kyoko）與分角色朗讀</p>
+        </div>
+        <button id="btn-close-voice-modal" type="button" class="p-1.5 rounded-lg text-stone-500 hover:bg-stone-200/60 cursor-pointer">✕</button>
+      </div>
+      <div class="p-5 space-y-4 text-xs sm:text-sm">
+        <div>
+          <label for="select-jp-voice" class="block font-bold text-stone-800 mb-1.5">1. 選擇日文發音人（自動推薦最自然聲線）</label>
+          <select id="select-jp-voice" class="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs sm:text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+            <option value="auto">✨ 自動優選最自然日文語音（推薦）</option>
+          </select>
+          <p class="text-[11px] text-stone-500 mt-1">
+            💡 提示：在電腦版 Edge / Chrome 或手機 iOS / Android 上，系統會自動優先挑選 <code class="bg-stone-100 px-1 rounded">Natural (Nanami/Keita)</code>、<code class="bg-stone-100 px-1 rounded">Google 日本語</code> 或 <code class="bg-stone-100 px-1 rounded">Kyoko/Otoya</code> 等高自然度語音。
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-800 mb-1.5">2. 朗讀語速（Speech Rate）</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" data-rate="0.85" class="rate-btn py-2 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 cursor-pointer">0.85x 慢速清晰</button>
+            <button type="button" data-rate="0.95" class="rate-btn py-2 rounded-xl border border-emerald-800 bg-emerald-900 text-white text-xs font-semibold cursor-pointer">0.95x 自然語速</button>
+            <button type="button" data-rate="1.05" class="rate-btn py-2 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 cursor-pointer">1.05x 正常偏快</button>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2">
+          <div class="font-bold text-amber-950 text-xs flex items-center justify-between">
+            <span>3. 進階：OpenAI 超擬真 AI 語音（選填）</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">選配功能</span>
+          </div>
+          <p class="text-[11px] text-amber-900 leading-relaxed">
+            若想在 GitHub Pages 上使用真人級 AI 語音（<code class="font-mono">gpt-4o-mini-tts</code>），可在此輸入您的 OpenAI API Key（僅儲存於您手機瀏覽器本機）：
+          </p>
+          <input id="input-openai-key" type="password" placeholder="sk-...（留空則使用免費瀏覽器自然語音）"
+            class="w-full rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs text-stone-800 focus:outline-none" />
+        </div>
+      </div>
+      <div class="px-5 py-3 bg-stone-50 border-t border-stone-200 flex items-center justify-between">
+        <button id="btn-test-voice" type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-200 text-stone-800 hover:bg-stone-300 cursor-pointer">🔊 試聽目前語音</button>
+        <button id="btn-save-voice-modal" type="button" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-900 text-white hover:bg-emerald-800 cursor-pointer">完成設定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved Vocabulary Modal -->
+  <div id="vocab-modal" class="fixed inset-0 z-50 hidden bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] flex flex-col shadow-xl border border-stone-200 overflow-hidden">
+      <div class="px-5 py-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-stone-900">★ 我的常考單字收藏本</h3>
+          <p class="text-xs text-stone-500">點擊單字旁的星號即可加入或移除（自動儲存於瀏覽器）</p>
+        </div>
+        <button id="btn-close-vocab-modal" type="button" class="p-1.5 rounded-lg text-stone-500 hover:bg-stone-200/60 cursor-pointer">✕</button>
+      </div>
+      <div id="saved-vocab-container" class="p-5 overflow-y-auto space-y-2.5 flex-1">
+        <!-- Populated by JS -->
+      </div>
+      <div class="px-5 py-3 bg-stone-50 border-t border-stone-200 flex items-center justify-between">
+        <button id="btn-clear-vocab" type="button" class="text-xs text-rose-700 hover:underline cursor-pointer">清空全部收藏</button>
+        <button id="btn-close-vocab-footer" type="button" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-900 text-white hover:bg-emerald-800 cursor-pointer">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-msg" class="fixed bottom-16 sm:bottom-5 right-4 z-50 hidden px-4 py-2.5 rounded-xl bg-stone-900 text-white text-xs font-medium shadow-lg max-w-xs">
+    已複製到剪貼簿！
+  </div>
+
+  <footer class="max-w-3xl w-full mx-auto px-4 py-6 text-center text-xs text-stone-400 border-t border-stone-200/60 mt-4">
+    日日讀日文 YomuHi ｜ 專為每日 08:00・17:00・22:00 手機與電腦閱讀最佳化的 GitHub Pages 網站
+  </footer>
+
+  <script>
+    // =========================================================================
+    // 3 Days x 3 Slots Dataset (Expanded Zone 1 ~180-210 chars, Expanded Zone 2 ~550-640 chars)
+    // Inline <span class="exam-hl" data-tip="..."> marks JLPT High-Frequency Vocab & Grammar in light red
+    // =========================================================================
+    const READING_DAYS = [
+  {
+    "date": "2026-11-08",
+    "dayLabel": "11月8日（週日）",
+    "badge": "最新・今日",
+    "slots": {
+      "08:00": {
+        "time": "08:00",
+        "periodName": "晨間篇",
+        "icon": "🌅",
+        "themeSummary": "職場晨間專案應變 ＆ 2026日本經濟「人」的結構改革",
+        "dialogue": {
+          "scene": "職場・晨間專案會議應變",
+          "title": "臨時提前的客戶簡報與團隊分工",
+          "tone": "自然商務口吻（同事間緊湊但互相支援的晨間對話）",
+          "charCount": "198 字",
+          "lines": [
+            {
+              "speaker": "佐藤",
+              "role": "專案組長",
+              "jp": "朝からごめん！<ruby>十<rt>じゅう</rt>時<rt>じ</rt></ruby>からの<ruby>企<rt>き</rt>画<rt>かく</rt>会<rt>かい</rt>議<rt>ぎ</rt></ruby>だけど、<span class=\"exam-hl\" data-tip=\"【N2常考單字】先方（せんぽう）：對方、客戶方\"><ruby>先<rt>せん</rt>方<rt>ぽう</rt></ruby></span>の<ruby>都<rt>つ</rt>合<rt>ごう</rt></ruby>で<ruby>発<rt>はっ</rt>表<rt>ぴょう</rt></ruby>の<ruby>順<rt>じゅん</rt>番<rt>ばん</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N1/商務常考】前倒し（まえだおし）：將原定時程提前\"><ruby>前<rt>まえ</rt>倒<rt>だお</rt></ruby>し</span>になったんだ。",
+              "plainJp": "朝からごめん！十時からの企画会議だけど、先方の都合で発表の順番が前倒しになったんだ。",
+              "zh": "佐藤：一大早就不好意思！十點開始的企劃會議，因為客戶那邊的行程安排，我們的發表順序提早了。"
+            },
+            {
+              "speaker": "林",
+              "role": "企劃擔當",
+              "jp": "えっ、本当ですか？<ruby>見<rt>み</rt>積<rt>つも</rt></ruby>りの<ruby>最<rt>さい</rt>終<rt>しゅう</rt>確<rt>かく</rt>認<rt>にん</rt></ruby>がまだ<ruby>少<rt>すこ</rt></ruby>し<ruby>残<rt>のこ</rt></ruby>っていて、<span class=\"exam-hl\" data-tip=\"【N2常考文法】～最中だ（さいちゅうだ）：正當……的時候\">まさに<ruby>今<rt>いま</rt></ruby>チェックしている<ruby>最<rt>さい</rt>中<rt>ちゅう</rt></ruby></span>なんですが……。",
+              "plainJp": "えっ、本当ですか？見積りの最終確認がまだ少し残っていて、まさに今チェックしている最中なんですが……。",
+              "zh": "林：咦，真的嗎？報價單的最終確認還剩下一點點，我現在才正在核對當中耶……。"
+            },
+            {
+              "speaker": "佐藤",
+              "role": "專案組長",
+              "jp": "<ruby>数<rt>すう</rt>字<rt>じ</rt></ruby>の<span class=\"exam-hl\" data-tip=\"【N1常考單字】照合（しょうごう）：核對、比對資料\"><ruby>照<rt>しょう</rt>合<rt>ごう</rt></ruby></span>なら<ruby>僕<rt>ぼく</rt></ruby>も<ruby>手<rt>て</rt>伝<rt>つだ</rt></ruby>うよ。<ruby>林<rt>はやし</rt></ruby>さんはグラフの<ruby>差<rt>さ</rt></ruby>し<ruby>替<rt>か</rt></ruby>えに<ruby>集<rt>しゅう</rt>中<rt>ちゅう</rt></ruby>してもらえるかな？",
+              "plainJp": "数字の照合なら僕も手伝うよ。林さんはグラフの差し替えに集中してもらえるかな？",
+              "zh": "佐藤：核對數字的話我也來幫忙吧。林小姐可以專心負責替換圖表嗎？"
+            },
+            {
+              "speaker": "林",
+              "role": "企劃擔當",
+              "jp": "ありがとうございます、<ruby>助<rt>たす</rt></ruby>かります！<ruby>手<rt>て</rt>分<rt>わ</rt></ruby>けすれば、<ruby>九<rt>く</rt>時<rt>じ</rt>半<rt>はん</rt></ruby>までには<span class=\"exam-hl\" data-tip=\"【N2常考副詞】なんとか：設法、總算能夠……\">なんとか</span><ruby>間<rt>ま</rt></ruby>に<ruby>合<rt>あ</rt></ruby>いそうです。",
+              "plainJp": "ありがとうございます、助かります！手分けすれば、九時半までにはなんとか間に合いそうです。",
+              "zh": "林：非常感謝，幫大忙了！只要我們分工合作，九點半前應該總算能趕得上。"
+            },
+            {
+              "speaker": "佐藤",
+              "role": "專案組長",
+              "jp": "よし、<span class=\"exam-hl\" data-tip=\"【N2常考文法】～次第（しだい）：一……之後就立刻……\"><ruby>準<rt>じゅん</rt>備<rt>び</rt></ruby>が<ruby>整<rt>ととの</rt></ruby>い<ruby>次<rt>し</rt>第<rt>だい</rt></ruby></span>、オンライン<ruby>会<rt>かい</rt>議<rt>ぎ</rt>室<rt>しつ</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ってマイクのテストをしておこう。",
+              "plainJp": "よし、準備が整い次第、オンライン会議室に入ってマイクのテストをしておこう。",
+              "zh": "佐藤：好，等準備一就緒，我們就立刻進線上會議室先把麥克風測試好吧。"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "先方（せんぽう）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "對方、客戶方（商務書信與對話極高頻詞）"
+            },
+            {
+              "word": "前倒し（まえだおし）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "將原定計畫或時程提前進行"
+            },
+            {
+              "word": "照合（しょうごう）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "核對、對照確認（如：データを照合する）"
+            },
+            {
+              "word": "～次第（しだい）",
+              "level": "JLPT N2 常考文法",
+              "meaning": "接於動詞ます形後，表示「一……就立刻……」"
+            }
+          ]
+        },
+        "article": {
+          "genre": "經濟・產業結構",
+          "jlpt": "JLPT N1~N2",
+          "title": "2026年の日本経済を左右するキーワード「人」と構造変化",
+          "charCount": "578 字",
+          "sourceTitle": "日本総研：2026年の日本経済、キーワードは「人」",
+          "sourceUrl": "https://www.jri.co.jp/page.jsp?id=112709",
+          "secondarySourceTitle": "日経BOOKプラス：2026年の日本・欧州・新興国の経済展望",
+          "secondarySourceUrl": "https://bookplus.nikkei.com/atcl/column/110500591/110500003/",
+          "paragraphs": [
+            "<ruby>二<rt>に</rt>千<rt>せん</rt>二<rt>に</rt>十<rt>じゅう</rt>六<rt>ろく</rt>年<rt>ねん</rt></ruby>の<ruby>日<rt>に</rt>本<rt>ほん</rt>経<rt>けい</rt>済<rt>ざい</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考文法】～上で（うえで）：在……方面、在……之際\"><ruby>読<rt>よ</rt></ruby>み<ruby>解<rt>と</rt></ruby>く<ruby>上<rt>うえ</rt></ruby>で</span>、<ruby>最<rt>もっと</rt></ruby>も<ruby>重<rt>じゅう</rt>要<rt>よう</rt></ruby>なキーワードとして<ruby>浮<rt>ふ</rt>上<rt>じょう</rt></ruby>しているのが「<ruby>人<rt>ひと</rt></ruby>」<span class=\"exam-hl\" data-tip=\"【N2常考文法】～をめぐる：圍繞著……（議題或爭點）\">をめぐる</span><ruby>構<rt>こう</rt>造<rt>ぞう</rt>変<rt>へん</rt>化<rt>か</rt></ruby>である。<ruby>少<rt>しょう</rt>子<rt>し</rt>高<rt>こう</rt>齢<rt>れい</rt>化<rt>か</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～に伴う（にともなう）：伴隨著……而發生\">に<ruby>伴<rt>ともな</rt></ruby>う</span><ruby>深<rt>しん</rt>刻<rt>こく</rt></ruby>な<ruby>人<rt>ひと</rt>手<rt>で</rt>不<rt>ぶ</rt>足<rt>そく</rt></ruby>は、<span class=\"exam-hl\" data-tip=\"【N2常考副詞】もはや：事到如今已經（不再）……\">もはや</span><ruby>一<rt>いち</rt>時<rt>じ</rt>的<rt>てき</rt></ruby>な<ruby>景<rt>けい</rt>気<rt>き</rt>変<rt>へん</rt>動<rt>どう</rt></ruby>の<ruby>結<rt>けっ</rt>果<rt>か</rt></ruby>ではなく、<ruby>企<rt>き</rt>業<rt>ぎょう</rt></ruby>の<ruby>成<rt>せい</rt>長<rt>ちょう</rt></ruby>そのものを<span class=\"exam-hl\" data-tip=\"【N2常考單字】制約（せいやく）：限制、束縛\"><ruby>制<rt>せい</rt>約<rt>やく</rt></ruby></span>する<span class=\"exam-hl\" data-tip=\"【N1常考單字】恒常的（こうじょうてき）：常態性的、長久不變的\"><ruby>恒<rt>こう</rt>常<rt>じょう</rt>的<rt>てき</rt></ruby></span>な<ruby>課<rt>か</rt>題<rt>だい</rt></ruby>となった。",
+            "こうした<ruby>状<rt>じょう</rt>況<rt>きょう</rt></ruby>の<ruby>中<rt>なか</rt></ruby>、<ruby>継<rt>けい</rt>続<rt>ぞく</rt>的<rt>てき</rt></ruby>な<ruby>賃<rt>ちん</rt>上<rt>あ</rt></ruby>げによって<ruby>優<rt>ゆう</rt>秀<rt>しゅう</rt></ruby>な<ruby>人<rt>じん</rt>材<rt>ざい</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N1常考單字】つなぎ留める：挽留、留住（人才或人心）\">つなぎ<ruby>留<rt>と</rt></ruby>めよう</span>とする<ruby>動<rt>うご</rt></ruby>きが<ruby>広<rt>ひろ</rt></ruby>がる<span class=\"exam-hl\" data-tip=\"【N2常考文法】～一方で（いっぽうで）：一方面……另一方面……\"><ruby>一<rt>いっ</rt>方<rt>ぽう</rt></ruby>で</span>、<ruby>生<rt>せい</rt>成<rt>せい</rt></ruby>AIをはじめとするデジタル<ruby>投<rt>とう</rt>資<rt>し</rt></ruby>によって<ruby>業<rt>ぎょう</rt>務<rt>む</rt>効<rt>こう</rt>率<rt>りつ</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N1常考單字】底上げ（そこあげ）：全面墊高、提升基礎水準\"><ruby>底<rt>そこ</rt>上<rt>あ</rt></ruby>げ</span>し、<ruby>生<rt>せい</rt>産<rt>さん</rt>性<rt>せい</rt></ruby>を<ruby>高<rt>たか</rt></ruby>める<ruby>取<rt>と</rt></ruby>り<ruby>組<rt>く</rt></ruby>みが<span class=\"exam-hl\" data-tip=\"【N1常考單字】急務（きゅうむ）：當務之急\"><ruby>急<rt>きゅう</rt>務<rt>む</rt></ruby></span>となっている。<ruby>従来<rt>じゅうらい</rt></ruby>のように<ruby>長<rt>ちょう</rt>時<rt>じ</rt>間<rt>かん</rt>労<rt>ろう</rt>働<rt>どう</rt></ruby>で<ruby>不<rt>ふ</rt>足<rt>そく</rt></ruby>を<ruby>補<rt>おぎな</rt></ruby>うやり<ruby>方<rt>かた</rt></ruby>は<ruby>限<rt>げん</rt>界<rt>かい</rt></ruby>を<ruby>迎<rt>むか</rt></ruby>えており、<ruby>定<rt>てい</rt>型<rt>けい</rt>業<rt>ぎょう</rt>務<rt>む</rt></ruby>の<ruby>自<rt>じ</rt>動<rt>どう</rt>化<rt>か</rt></ruby>と<ruby>人<rt>じん</rt>材<rt>ざい</rt></ruby>の<ruby>再<rt>さい</rt>配<rt>はい</rt>置<rt>ち</rt></ruby>を<ruby>同<rt>どう</rt>時<rt>じ</rt></ruby>に<ruby>推<rt>お</rt></ruby>し<ruby>進<rt>すす</rt></ruby>めなければならない。",
+            "さらに、<ruby>物<rt>ぶっ</rt>価<rt>か</rt>上<rt>じょう</rt>昇<rt>しょう</rt></ruby>を<ruby>上<rt>うわ</rt>回<rt>まわ</rt></ruby>る<ruby>実<rt>じっ</rt>質<rt>しつ</rt>賃<rt>ちん</rt>金<rt>ぎん</rt></ruby>のプラス<ruby>定<rt>てい</rt>着<rt>ちゃく</rt></ruby>が<ruby>個<rt>こ</rt>人<rt>じん</rt>消<rt>しょう</rt>費<rt>ひ</rt></ruby>を<ruby>下<rt>した</rt>支<rt>ざさ</rt></ruby>えするかも<ruby>注<rt>ちゅう</rt>視<rt>し</rt></ruby>される。<ruby>単<rt>たん</rt></ruby>に<ruby>労<rt>ろう</rt>働<rt>どう</rt>力<rt>りょく</rt></ruby>の「<ruby>数<rt>かず</rt></ruby>」を<ruby>確<rt>かく</rt>保<rt>ほ</rt></ruby>するだけでなく、<ruby>働<rt>はたら</rt></ruby>き<ruby>手<rt>て</rt></ruby><ruby>一人<rt>ひとり</rt></ruby>ひとりが<ruby>専<rt>せん</rt>門<rt>もん</rt>性<rt>せい</rt></ruby>を<ruby>磨<rt>みが</rt></ruby>き、<ruby>創<rt>そう</rt>造<rt>ぞう</rt>的<rt>てき</rt></ruby>な<ruby>価<rt>か</rt>値<rt>ち</rt></ruby>を<ruby>発<rt>はっ</rt>揮<rt>き</rt></ruby>できる<ruby>環<rt>かん</rt>境<rt>きょう</rt></ruby>をいかに<ruby>整<rt>ととの</rt></ruby>えるかが、<ruby>日<rt>に</rt>本<rt>ほん</rt>企<rt>き</rt>業<rt>ぎょう</rt></ruby>の<ruby>競<rt>きょう</rt>争<rt>そう</rt>力<rt>りょく</rt></ruby>を<ruby>分<rt>わ</rt></ruby>ける<span class=\"exam-hl\" data-tip=\"【N1常考單字】分水嶺（ぶんすいれい）：分水嶺、關鍵轉折點\"><ruby>分<rt>ぶん</rt>水<rt>すい</rt>嶺<rt>れい</rt></ruby></span>となるだろう。"
+          ],
+          "plainParagraphs": [
+            "二千二十六年の日本経済を読み解く上で、最も重要なキーワードとして浮上しているのが「人」をめぐる構造変化である。少子高齢化に伴う深刻な人手不足は、もはや一時的な景気変動の結果ではなく、企業の成長そのものを制約する恒常的な課題となった。",
+            "こうした状況の中、継続的な賃上げによって優秀な人材をつなぎ留めようとする動きが広がる一方で、生成AIをはじめとするデジタル投資によって業務効率を底上げし、生産性を高める取り組みが急務となっている。従来のように長時間労働で不足を補うやり方は限界を迎えており、定型業務の自動化と人材の再配置を同時に推し進めなければならない。",
+            "さらに、物価上昇を上回る実質賃金のプラス定着が個人消費を下支えするかも注視される。単に労働力の「数」を確保するだけでなく、働き手一人ひとりが専門性を磨き、創造的な価値を発揮できる環境をいかに整えるかが、日本企業の競争力を分ける分水嶺となるだろう。"
+          ],
+          "plainJp": "二千二十六年の日本経済を読み解く上で、最も重要なキーワードとして浮上しているのが「人」をめぐる構造変化である。少子高齢化に伴う深刻な人手不足は、もはや一時的な景気変動の結果ではなく、企業の成長そのものを制約する恒常的な課題となった。こうした状況の中、継続的な賃上げによって優秀な人材をつなぎ留めようとする動きが広がる一方で、生成AIをはじめとするデジタル投資によって業務効率を底上げし、生産性を高める取り組みが急務となっている。従来のように長時間労働で不足を補うやり方は限界を迎えており、定型業務の自動化と人材の再配置を同時に推し進めなければならない。さらに、物価上昇を上回る実質賃金のプラス定着が個人消費を下支えするかも注視される。単に労働力の「数」を確保するだけでなく、働き手一人ひとりが専門性を磨き、創造的な価値を発揮できる環境をいかに整えるかが、日本企業の競争力を分ける分水嶺となるだろう。",
+          "translation": [
+            "在解讀 2026 年日本經濟時，作為最關鍵的核心詞彙浮現出來的，便是圍繞著「人」的結構性變化。伴隨少子高齡化而來的嚴重人手不足，事到如今已不再只是暫時性景氣波動的結果，而是成為限制企業成長本身的常態性課題。",
+            "在這樣的局勢下，透過持續加薪來留住優秀人才的趨勢日益擴大；另一方面，藉由生成式 AI 等數位投資來全面墊高業務效率、提升生產力的舉措也成為當務之急。過去那種靠長工時來填補人力缺口的做法已走到極限，企業必須同時推進例行業務自動化與人才重新配置。",
+            "此外，超越物價漲幅的實質薪資正成長能否定型並支撐個人消費，也是各方關注的焦點。未來不單只是確保勞動力「數量」，如何打造讓每位工作者都能磨練專業、發揮創造性價值的環境，將成為決定日本企業競爭力的分水嶺。"
+          ],
+          "vocab": [
+            {
+              "word": "恒常的（こうじょうてき）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "常態性的、長久固定不變的"
+            },
+            {
+              "word": "つなぎ留める（つなぎとめる）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "留住（人才或人心）、挽留"
+            },
+            {
+              "word": "底上げ（そこあげ）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "全面提升、墊高基礎水準"
+            },
+            {
+              "word": "急務（きゅうむ）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "當務之急、刻不容緩的任務"
+            },
+            {
+              "word": "上回る（うわまわる）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "超越、高於（某個基準或數值）"
+            },
+            {
+              "word": "分水嶺（ぶんすいれい）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "分水嶺、決定性的轉折點"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "～上で（うえで）",
+              "level": "JLPT N2 常考文法",
+              "explanation": "前接動詞辞書形，表示「在進行……方面、為了……之際」（日本経済を読み解く上で）。"
+            },
+            {
+              "pattern": "～をめぐる / ～をめぐって",
+              "level": "JLPT N2 常考文法",
+              "explanation": "表示「圍繞著……（核心議題或爭點）」，讀解長文最常出現的主題標記句型。"
+            },
+            {
+              "pattern": "～に伴う（にともなう）",
+              "level": "JLPT N2 常考文法",
+              "explanation": "表示「伴隨著前項變化，後項也隨之發生」（少子高齢化に伴う深刻な人手不足）。"
+            },
+            {
+              "pattern": "～をはじめ（とする）",
+              "level": "JLPT N2 常考文法",
+              "explanation": "表示「以……為首、為代表」（生成AIをはじめとするデジタル投資）。"
+            }
+          ]
+        }
+      },
+      "17:00": {
+        "time": "17:00",
+        "periodName": "午後篇",
+        "icon": "🌇",
+        "themeSummary": "朋友深海展話題閒聊 ＆ 深海熱水噴出孔的「電氣合成」微生物",
+        "dialogue": {
+          "scene": "朋友・傍晚咖啡廳聚會",
+          "title": "深海特展的奇特生物貼紙",
+          "tone": "朋友間自然的平語（タメ口）與分享新知的語氣",
+          "charCount": "196 字",
+          "lines": [
+            {
+              "speaker": "美咲",
+              "role": "大學友人",
+              "jp": "ねえ、<ruby>先<rt>せん</rt>週<rt>しゅう</rt></ruby><ruby>行<rt>い</rt></ruby>ってきた<ruby>科<rt>か</rt>学<rt>がく</rt>博<rt>はく</rt>物<rt>ぶつ</rt>館<rt>かん</rt></ruby>の<ruby>深<rt>しん</rt>海<rt>かい</rt>展<rt>てん</rt></ruby>、<span class=\"exam-hl\" data-tip=\"【N2常考文法】思っていた以上に：比原本想像的還要更……\"><ruby>思<rt>おも</rt></ruby>っていた<ruby>以<rt>い</rt>上<rt>じょう</rt></ruby>に</span><ruby>面<rt>おも</rt>白<rt>しろ</rt></ruby>かったよ！これ、お<ruby>土<rt>み</rt>産<rt>やげ</rt></ruby>のステッカー。",
+              "plainJp": "ねえ、先週行ってきた科学博物館の深海展、思っていた以上に面白かったよ！これ、お土産のステッカー。",
+              "zh": "美咲：欸，我上週去科學博物館看的深海展，比想像中還要有趣超多喔！這個給妳，是伴手禮貼紙。"
+            },
+            {
+              "speaker": "結衣",
+              "role": "大學友人",
+              "jp": "わあ、イラストがゆるくて<ruby>可<rt>か</rt>愛<rt>わい</rt></ruby>い！でもこれ、<ruby>何<rt>なに</rt></ruby>の<ruby>生<rt>い</rt></ruby>き<ruby>物<rt>もの</rt></ruby>？<ruby>太<rt>たい</rt>陽<rt>よう</rt></ruby>の<ruby>光<rt>ひかり</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N3/N2常考副詞】一切～ない（いっさい～ない）：完全不……、絲毫不……\"><ruby>一<rt>いっ</rt>切<rt>さい</rt></ruby><ruby>届<rt>とど</rt></ruby>かない</span><ruby>海<rt>かい</rt>底<rt>てい</rt></ruby>にいるんだよね？",
+              "plainJp": "わあ、イラストがゆるくて可愛い！でもこれ、何の生き物？太陽の光が一切届かない海底にいるんだよね？",
+              "zh": "結衣：哇，插畫風格懶洋洋的好可愛！不過這是什麼生物呀？牠們住在連陽光都完全照不到的海底對吧？"
+            },
+            {
+              "speaker": "美咲",
+              "role": "大學友人",
+              "jp": "そう！<ruby>沖<rt>おき</rt>縄<rt>なわ</rt></ruby>の<ruby>深<rt>しん</rt>海<rt>かい</rt></ruby>で<ruby>熱<rt>ねっ</rt>水<rt>すい</rt></ruby>が<ruby>噴<rt>ふ</rt></ruby>き<ruby>出<rt>だ</rt></ruby>す<ruby>場<rt>ば</rt>所<rt>しょ</rt></ruby>のすぐそばにいて、<ruby>電<rt>でん</rt>気<rt>き</rt></ruby>をエネルギーにして<ruby>増<rt>ふ</rt></ruby>える<ruby>微<rt>び</rt>生<rt>せい</rt>物<rt>ぶつ</rt></ruby><span class=\"exam-hl\" data-tip=\"【N3常考口語傳聞】～なんだって：聽說……、據說……\">なんだって</span>。",
+              "plainJp": "そう！沖縄の深海で熱水が噴き出す場所のすぐそばにいて、電気をエネルギーにして増える微生物なんだって。",
+              "zh": "美咲：對呀！聽說牠們住在沖繩深海熱水噴發口旁邊，是靠電能來繁殖的微生物喔。"
+            },
+            {
+              "speaker": "結衣",
+              "role": "大學友人",
+              "jp": "えっ、<ruby>光<rt>こう</rt>合<rt>ごう</rt>成<rt>せい</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～ではなくて / ～ではなく：不是……而是……\">じゃなくて</span>「<ruby>電<rt>でん</rt>気<rt>き</rt></ruby>」で<ruby>生<rt>い</rt></ruby>きてるの？まるでSF<ruby>映画<rt>えいが</rt></ruby>みたいだね。",
+              "plainJp": "えっ、光合成じゃなくて「電気」で生きてるの？まるでSF映画みたいだね。",
+              "zh": "結衣：咦，不是靠光合作用，而是靠「電」活著的嗎？簡直像科幻電影一樣耶。"
+            },
+            {
+              "speaker": "美咲",
+              "role": "大學友人",
+              "jp": "だよね。展示の<ruby>映<rt>えい</rt>像<rt>ぞう</rt></ruby>も<ruby>迫<rt>はく</rt>力<rt>りょく</rt></ruby>があったから、<ruby>期<rt>き</rt>間<rt>かん</rt></ruby>が<ruby>終<rt>お</rt></ruby>わる<ruby>前<rt>まえ</rt></ruby>にぜひ<ruby>行<rt>い</rt></ruby>ってみて！",
+              "plainJp": "だよね。展示の映像も迫力があったから、期間が終わる前にぜひ行ってみて！",
+              "zh": "美咲：就是說啊。展場的影像也很震撼，在展期結束前妳一定要去看看！"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "一切～ない（いっさい～ない）",
+              "level": "JLPT N2 常考副詞",
+              "meaning": "完全不……、絲毫沒有……（後接否定）"
+            },
+            {
+              "word": "噴き出す（ふきだす）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "噴發、噴湧而出"
+            },
+            {
+              "word": "迫力（はくりょく）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "魄力、震撼力（迫力がある）"
+            },
+            {
+              "word": "～なんだって",
+              "level": "JLPT N3 常考文法",
+              "meaning": "口語傳聞助動詞，表示「聽說……、據說……」"
+            }
+          ]
+        },
+        "article": {
+          "genre": "生物・地球科學",
+          "jlpt": "JLPT N2",
+          "title": "太陽光の代わりに「電気」で生きる——深海微生物の電気合成",
+          "charCount": "595 字",
+          "sourceTitle": "Science Portal：深海熱水噴出孔近くの微生物、「光合成」ならぬ「電気合成」で増殖",
+          "sourceUrl": "https://scienceportal.jst.go.jp/newsflash/20260728_n01/",
+          "paragraphs": [
+            "<ruby>地<rt>ち</rt>球<rt>きゅう</rt>上<rt>じょう</rt></ruby>の<ruby>生<rt>せい</rt>命<rt>めい</rt>活<rt>かつ</rt>動<rt>どう</rt></ruby>を<ruby>支<rt>ささ</rt></ruby>えるエネルギー<ruby>源<rt>げん</rt></ruby><span class=\"exam-hl\" data-tip=\"【N3常考文法】～といえば：說到……、提起……\">といえば</span>、<ruby>植<rt>しょく</rt>物<rt>ぶつ</rt></ruby>などが<ruby>太<rt>たい</rt>陽<rt>よう</rt>光<rt>こう</rt></ruby>を<ruby>利<rt>り</rt>用<rt>よう</rt></ruby>して<ruby>二<rt>に</rt>酸<rt>さん</rt>化<rt>か</rt>炭<rt>たん</rt>素<rt>そ</rt></ruby>から<ruby>有<rt>ゆう</rt>機<rt>き</rt>物<rt>ぶつ</rt></ruby>を<ruby>作<rt>つく</rt></ruby>り<ruby>出<rt>だ</rt></ruby>す「<ruby>光<rt>こう</rt>合<rt>ごう</rt>成<rt>せい</rt></ruby>」がよく<ruby>知<rt>し</rt></ruby>られている。しかし、<ruby>太<rt>たい</rt>陽<rt>よう</rt></ruby>の<ruby>光<rt>ひかり</rt></ruby>が<ruby>一<rt>いっ</rt>切<rt>さい</rt></ruby><ruby>届<rt>とど</rt></ruby>かない<ruby>沖<rt>おき</rt>縄<rt>なわ</rt></ruby>の<ruby>深<rt>しん</rt>海<rt>かい</rt>熱<rt>ねっ</rt>水<rt>すい</rt>噴<rt>ふん</rt>出<rt>しゅつ</rt>孔<rt>こう</rt></ruby><ruby>付<rt>ふ</rt>近<rt>きん</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～において：在……（場所、領域或情況下）\">において</span>、<ruby>微<rt>び</rt>弱<rt>じゃく</rt></ruby>な<ruby>電<rt>でん</rt>気<rt>き</rt></ruby>をエネルギーとして<span class=\"exam-hl\" data-tip=\"【N1常考單字】増殖（ぞうしょく）：增殖、繁殖增加\"><ruby>増<rt>ぞう</rt>殖<rt>しょく</rt></ruby></span>する<ruby>微<rt>び</rt>生<rt>せい</rt>物<rt>ぶつ</rt></ruby>が<ruby>自<rt>し</rt>然<rt>ぜん</rt>環<rt>かん</rt>境<rt>きょう</rt></ruby>に<ruby>生<rt>せい</rt>息<rt>そく</rt></ruby>することが<span class=\"exam-hl\" data-tip=\"【N2常考單字】実証（じっしょう）：實證、透過實驗證明\"><ruby>実<rt>じっ</rt>証<rt>しょう</rt></ruby></span>された。",
+            "<ruby>海<rt>かい</rt>洋<rt>よう</rt>研<rt>けん</rt>究<rt>きゅう</rt>開<rt>かい</rt>発<rt>はつ</rt>機<rt>き</rt>構<rt>こう</rt></ruby>（JAMSTEC）などの<ruby>研<rt>けん</rt>究<rt>きゅう</rt></ruby>グループは、チムニーと<ruby>呼<rt>よ</rt></ruby>ばれる<ruby>熱<rt>ねっ</rt>水<rt>すい</rt></ruby>の<ruby>噴<rt>ふ</rt></ruby>き<ruby>出<rt>だ</rt></ruby>し<ruby>口<rt>ぐち</rt></ruby><ruby>周<rt>しゅう</rt>辺<rt>へん</rt></ruby>で、<ruby>約<rt>やく</rt>六<rt>ろっ</rt>百<rt>ぴゃく</rt></ruby>ミリボルト（<ruby>一<rt>いっ</rt>般<rt>ぱん</rt>的<rt>てき</rt></ruby>な<ruby>乾<rt>かん</rt>電<rt>でん</rt>池<rt>ち</rt></ruby>の<ruby>四<rt>よん</rt>割<rt>わり</rt></ruby><ruby>程<rt>てい</rt>度<rt>ど</rt></ruby>）の<ruby>電<rt>でん</rt>位<rt>い</rt>差<rt>さ</rt></ruby>が<ruby>自<rt>し</rt>然<rt>ぜん</rt></ruby>に<ruby>生<rt>しょう</rt></ruby>じていることに<span class=\"exam-hl\" data-tip=\"【N2常考單字】着目（ちゃくもく）：著眼、關注於……\"><ruby>着<rt>ちゃく</rt>目<rt>もく</rt></ruby></span>した。<ruby>実<rt>じっ</rt>験<rt>けん</rt>室<rt>しつ</rt></ruby>で<ruby>同<rt>どう</rt>等<rt>とう</rt></ruby>の<ruby>環<rt>かん</rt>境<rt>きょう</rt></ruby>を<ruby>再<rt>さい</rt>現<rt>げん</rt></ruby>し、<ruby>栄<rt>えい</rt>養<rt>よう</rt></ruby>となる<ruby>有<rt>ゆう</rt>機<rt>き</rt>物<rt>ぶつ</rt></ruby>を<ruby>除<rt>のぞ</rt></ruby>いた<ruby>人<rt>じん</rt>工<rt>こう</rt>海<rt>かい</rt>水<rt>すい</rt></ruby>に<ruby>岩<rt>がん</rt>石<rt>せき</rt>片<rt>へん</rt></ruby>をつけて<ruby>電<rt>でん</rt>気<rt>き</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考文法】～たところ：嘗試做了……之後，結果發現……\"><ruby>流<rt>なが</rt></ruby>したところ</span>、<ruby>特<rt>とく</rt>定<rt>てい</rt></ruby>の<ruby>細<rt>さい</rt>菌<rt>きん</rt></ruby>が<ruby>二<rt>に</rt>酸<rt>さん</rt>化<rt>か</rt>炭<rt>たん</rt>素<rt>そ</rt></ruby>を<ruby>細<rt>さい</rt>胞<rt>ぼう</rt>内<rt>ない</rt></ruby>に<span class=\"exam-hl\" data-tip=\"【N2常考單字】取り込む（とりこむ）：攝入、吸收、採納\"><ruby>取<rt>と</rt></ruby>り<ruby>込<rt>こ</rt></ruby>んで</span><ruby>有<rt>ゆう</rt>機<rt>き</rt>物<rt>ぶつ</rt></ruby>に<ruby>変<rt>へん</rt>換<rt>かん</rt></ruby>し、<ruby>増<rt>ふ</rt></ruby>えることが<ruby>確<rt>かく</rt>認<rt>にん</rt></ruby>された。",
+            "<ruby>電<rt>でん</rt>子<rt>し</rt></ruby>のやり<ruby>取<rt>と</rt></ruby>りが<ruby>起<rt>お</rt></ruby>こりやすい<ruby>境<rt>きょう</rt>界<rt>かい</rt></ruby>は、<ruby>深<rt>しん</rt>海<rt>かい</rt></ruby>だけでなく<ruby>潮<rt>しお</rt>干<rt>ひ</rt>狩<rt>が</rt></ruby>りの<ruby>砂<rt>すな</rt>浜<rt>はま</rt></ruby>や<ruby>鉱<rt>こう</rt>山<rt>ざん</rt></ruby>など<span class=\"exam-hl\" data-tip=\"【N1常考片語】思いのほか（おもいのほか）：出乎意料地、比預想更……\"><ruby>思<rt>おも</rt></ruby>いのほか</span><ruby>身<rt>み</rt>近<rt>ぢか</rt></ruby>な<ruby>場<rt>ば</rt>所<rt>しょ</rt></ruby>にも<ruby>存<rt>そん</rt>在<rt>ざい</rt></ruby>するという。<ruby>光<rt>こう</rt>合<rt>ごう</rt>成<rt>せい</rt></ruby><span class=\"exam-hl\" data-tip=\"【N1常考文法】～ならぬ：不是 A 而是 B（文語否定連體形）\">ならぬ</span>「<ruby>電<rt>でん</rt>気<rt>き</rt>合<rt>ごう</rt>成<rt>せい</rt></ruby>」という<ruby>巧<rt>たく</rt></ruby>みな<ruby>生<rt>せい</rt>存<rt>ぞん</rt>戦<rt>せん</rt>略<rt>りゃく</rt></ruby>は、<ruby>地<rt>ち</rt>球<rt>きゅう</rt></ruby><ruby>初<rt>しょ</rt>期<rt>き</rt></ruby>の<ruby>生<rt>せい</rt>命<rt>めい</rt></ruby>の<ruby>起<rt>き</rt>源<rt>げん</rt></ruby>を<ruby>探<rt>さぐ</rt></ruby>る<span class=\"exam-hl\" data-tip=\"【N2常考單字】手がかり（てがかり）：線索、突破口\"><ruby>手<rt>て</rt></ruby>がかり</span>としても<ruby>大<rt>おお</rt></ruby>きな<ruby>注<rt>ちゅう</rt>目<rt>もく</rt></ruby>を<ruby>集<rt>あつ</rt></ruby>めている。"
+          ],
+          "plainParagraphs": [
+            "地球上の生命活動を支えるエネルギー源といえば、植物などが太陽光を利用して二酸化炭素から有機物を作り出す「光合成」がよく知られている。しかし、太陽の光が一切届かない沖縄の深海熱水噴出孔付近において、微弱な電気をエネルギーとして増殖する微生物が自然環境に生息することが実証された。",
+            "海洋研究開発機構（JAMSTEC）などの研究グループは、チムニーと呼ばれる熱水の噴き出し口周辺で、約六百ミリボルト（一般的な乾電池の四割程度）の電位差が自然に生じていることに着目した。実験室で同等の環境を再現し、栄養となる有機物を除いた人工海水に岩石片をつけて電気を流したところ、特定の細菌が二酸化炭素を細胞内に取り込んで有機物に変換し、増えることが確認された。",
+            "電子のやり取りが起こりやすい境界は、深海だけでなく潮干狩りの砂浜や鉱山など思いのほか身近な場所にも存在するという。光合成ならぬ「電気合成」という巧みな生存戦略は、地球初期の生命の起源を探る手がかりとしても大きな注目を集めている。"
+          ],
+          "plainJp": "地球上の生命活動を支えるエネルギー源といえば、植物などが太陽光を利用して二酸化炭素から有機物を作り出す「光合成」がよく知られている。しかし、太陽の光が一切届かない沖縄の深海熱水噴出孔付近において、微弱な電気をエネルギーとして増殖する微生物が自然環境に生息することが実証された。海洋研究開発機構（JAMSTEC）などの研究グループは、チムニーと呼ばれる熱水の噴き出し口周辺で、約六百ミリボルト（一般的な乾電池の四割程度）の電位差が自然に生じていることに着目した。実験室で同等の環境を再現し、栄養となる有機物を除いた人工海水に岩石片をつけて電気を流したところ、特定の細菌が二酸化炭素を細胞内に取り込んで有機物に変換し、増えることが確認された。電子のやり取りが起こりやすい境界は、深海だけでなく潮干狩りの砂浜や鉱山など思いのほか身近な場所にも存在するという。光合成ならぬ「電気合成」という巧みな生存戦略は、地球初期の生命の起源を探る手がかりとしても大きな注目を集めている。",
+          "translation": [
+            "說到支撐地球生命活動的能量來源，大家最熟悉的是植物利用太陽光將二氧化碳轉化為有機物的「光合作用」。然而，在陽光完全無法抵達的沖繩深海熱水噴出孔附近，科學家證實了自然環境中確實棲息著能以微弱電力作為能量進行增殖的微生物。",
+            "日本海洋研究開發機構（JAMSTEC）等研究團隊，注意到被稱為「黑煙囪（Chimney）」的熱水噴發口周圍自然產生了約 600 毫伏特（約一般乾電池 4 成）的電位差。研究人員在實驗室重現同等環境，將岩石碎片放入去除有機物的人工海水中通電後，確認特定細菌會將二氧化碳吸入細胞內轉化為有機物並增殖。",
+            "據悉，容易發生電子轉移的氧化還原邊界，不僅存在於深海，也出乎意料地存在於挖蛤蜊的沙灘或礦山等日常生活周遭。這種不靠光合作用而是靠「電氣合成」的巧妙生存策略，作為探索地球初期生命起源的重要線索正備受矚目。"
+          ],
+          "vocab": [
+            {
+              "word": "増殖（ぞうしょく）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "增殖、繁殖增加（細胞或微生物）"
+            },
+            {
+              "word": "実証（じっしょう）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "實證、透過實驗或實例證明"
+            },
+            {
+              "word": "着目（ちゃくもく）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "著眼、注意到某個關鍵現象"
+            },
+            {
+              "word": "取り込む（とりこむ）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "攝入、吸收、採納"
+            },
+            {
+              "word": "思いのほか（おもいのほか）",
+              "level": "JLPT N1 常考副詞",
+              "meaning": "出乎意料地、比預期還要更……"
+            },
+            {
+              "word": "手がかり（てがかり）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "線索、突破口"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "～において / ～における",
+              "level": "JLPT N2 常考文法",
+              "explanation": "書面語，表示動作或現象發生的「場所、領域或狀況」（深海熱水噴出孔付近において）。"
+            },
+            {
+              "pattern": "～たところ",
+              "level": "JLPT N2 常考文法",
+              "explanation": "前接動詞過去式，表示「嘗試做了某動作後，發現了後項結果」（電気を流したところ、確認された）。"
+            },
+            {
+              "pattern": "～ならぬ",
+              "level": "JLPT N1 常考文法",
+              "explanation": "文語否定助動詞，表示「不是 A 而是 B」（光合成ならぬ「電気合成」）。"
+            }
+          ]
+        }
+      },
+      "22:00": {
+        "time": "22:00",
+        "periodName": "夜間篇",
+        "icon": "🌙",
+        "themeSummary": "家庭睡前閱讀時光 ＆ 夏目漱石《草枕》談人際與心靈餘裕",
+        "dialogue": {
+          "scene": "家庭・睡前客廳放鬆時光",
+          "title": "放下手機的睡前閱讀習慣",
+          "tone": "家人之間溫和親近的睡前閒聊",
+          "charCount": "195 字",
+          "lines": [
+            {
+              "speaker": "健太",
+              "role": "弟弟",
+              "jp": "あれ、お<ruby>姉<rt>ねえ</rt></ruby>ちゃん、こんな<ruby>時<rt>じ</rt>間<rt>かん</rt></ruby>に<ruby>珍<rt>めずら</rt></ruby>しく<ruby>文<rt>ぶん</rt>庫<rt>こ</rt>本<rt>ぼん</rt></ruby>なんて<ruby>読<rt>よ</rt></ruby>んでるの？いつもならスマホを<ruby>見<rt>み</rt></ruby>てる<span class=\"exam-hl\" data-tip=\"【N3/N2常考文法】～なのに：明明……卻……（表意外或轉折）\">のに</span>。",
+              "plainJp": "あれ、お姉ちゃん、こんな時間に珍しく文庫本なんて読んでるの？いつもならスマホを見てるのに。",
+              "zh": "健太：咦，姊，這麼晚了妳居然難得在看文庫本小說？平常這個時間明明都在滑手機的說。"
+            },
+            {
+              "speaker": "由紀",
+              "role": "姊姊",
+              "jp": "<ruby>寝<rt>ね</rt></ruby>る<ruby>直<rt>ちょく</rt>前<rt>ぜん</rt></ruby>までSNS<span class=\"exam-hl\" data-tip=\"【N3常考文法】～ばかり：總是、光是在做……\">ばかり</span><ruby>見<rt>み</rt></ruby>てると、ブルーライトのせいか<span class=\"exam-hl\" data-tip=\"【N2常考慣用】頭が冴える（あたまがさえる）：頭腦變得清醒亢奮\"><ruby>頭<rt>あたま</rt></ruby>が<ruby>冴<rt>さ</rt></ruby>えちゃって</span>、なかなか<ruby>寝<rt>ね</rt>付<rt>つ</rt></ruby>けないんだよね。",
+              "plainJp": "寝る直前までSNSばかり見てると、ブルーライトのせいか頭が冴えちゃって、なかなか寝付けないんだよね。",
+              "zh": "由紀：因為要是到睡前一刻都一直在滑社群媒體，不知是不是藍光的關係，腦袋會變得太清醒，很難入睡嘛。"
+            },
+            {
+              "speaker": "健太",
+              "role": "弟弟",
+              "jp": "たしかに。<ruby>僕<rt>ぼく</rt></ruby>も<span class=\"exam-hl\" data-tip=\"【N2常考副詞】ついつい：不知不覺、忍不住就……\">ついつい</span><ruby>動<rt>どう</rt>画<rt>が</rt></ruby>を<ruby>見<rt>み</rt></ruby>すぎて、<ruby>翌<rt>よく</rt>朝<rt>あさ</rt></ruby><ruby>起<rt>お</rt></ruby>きるのがつらくなることがよくあるよ。",
+              "plainJp": "たしかに。僕もついつい動画を見すぎて、翌朝起きるのがつらくなることがよくあるよ。",
+              "zh": "健太：確實耶。我也常常不知不覺看太多影片，結果隔天早上爬起來超痛苦。"
+            },
+            {
+              "speaker": "由紀",
+              "role": "姊姊",
+              "jp": "でしょ？<ruby>紙<rt>かみ</rt></ruby>の<ruby>本<rt>ほん</rt></ruby>を<ruby>十<rt>じゅっ</rt>分<rt>ぷん</rt></ruby>ほど<ruby>読<rt>よ</rt></ruby>む<span class=\"exam-hl\" data-tip=\"【N2常考文法】～ようにしてから：自從開始養成……的習慣之後\">ようにしてから</span>、<ruby>気<rt>き</rt>持<rt>も</rt></ruby>ちが<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>いてぐっすり<ruby>眠<rt>ねむ</rt></ruby>れるようになったの。",
+              "plainJp": "でしょ？紙の本を十分ほど読むようにしてから、気持ちが落ち着いてぐっすり眠れるようになったの。",
+              "zh": "由紀：對吧？自從我養成睡前讀十分鐘紙本書的習慣後，心情會安定下來，變得能一覺好眠喔。"
+            },
+            {
+              "speaker": "健太",
+              "role": "弟弟",
+              "jp": "いい<ruby>習<rt>しゅう</rt>慣<rt>かん</rt></ruby>だね。<ruby>僕<rt>ぼく</rt></ruby>も<ruby>今<rt>こん</rt>夜<rt>や</rt></ruby>はスマホを<ruby>充<rt>じゅう</rt>電<rt>でん</rt>器<rt>き</rt></ruby>に<ruby>置<rt>お</rt></ruby>いて、もう<ruby>布<rt>ふ</rt>団<rt>とん</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ろうかな。",
+              "plainJp": "いい習慣だね。僕も今夜はスマホを充電器に置いて、もう布団に入ろうかな。",
+              "zh": "健太：真是好習慣耶。那我今晚也把手機放在充電器上，準備進被窩睡覺好了。"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "頭が冴える（あたまがさえる）",
+              "level": "JLPT N2 常考慣用",
+              "meaning": "頭腦變得清醒、精神亢奮睡不著"
+            },
+            {
+              "word": "寝付く（ねつく）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "入睡、睡著（なかなか寝付けない＝很難入睡）"
+            },
+            {
+              "word": "ついつい",
+              "level": "JLPT N2 常考副詞",
+              "meaning": "不知不覺地、忍不住就……（用於無意識重複習慣）"
+            },
+            {
+              "word": "ぐっすり",
+              "level": "JLPT N3 常考副詞",
+              "meaning": "熟睡地、香甜深沉地入睡"
+            }
+          ]
+        },
+        "article": {
+          "genre": "文學・隨筆賞析",
+          "jlpt": "JLPT N1~N2",
+          "title": "「とかくに人の世は住みにくい」——夏目漱石『草枕』にみる心の余白",
+          "charCount": "586 字",
+          "sourceTitle": "青空文庫：夏目漱石『草枕』",
+          "sourceUrl": "https://www.aozora.gr.jp/cards/000148/files/776_14941.html",
+          "paragraphs": [
+            "「<ruby>山<rt>やま</rt>路<rt>みち</rt></ruby>を<ruby>登<rt>のぼ</rt></ruby>りながら、こう<ruby>考<rt>かんが</rt></ruby>えた。<ruby>智<rt>ち</rt></ruby>に<ruby>働<rt>はたら</rt></ruby>けば<span class=\"exam-hl\" data-tip=\"【N2常考慣用】角が立つ（かどがたつ）：起稜角、傷和氣\"><ruby>角<rt>かど</rt></ruby>が<ruby>立<rt>た</rt></ruby>つ</span>。<ruby>情<rt>じょう</rt></ruby>に<ruby>棹<rt>さお</rt></ruby>させば<ruby>流<rt>なが</rt></ruby>される。<ruby>意<rt>い</rt>地<rt>じ</rt></ruby>を<ruby>通<rt>とお</rt></ruby>せば<span class=\"exam-hl\" data-tip=\"【N2常考形容動詞】窮屈（きゅうくつ）：拘束、局促、不自在\"><ruby>窮<rt>きゅう</rt>屈<rt>くつ</rt></ruby></span>だ。<span class=\"exam-hl\" data-tip=\"【N1常考副詞】とかく（に）：總之、世間往往容易……\">とかくに</span><ruby>人<rt>ひと</rt></ruby>の<ruby>世<rt>よ</rt></ruby>は<ruby>住<rt>す</rt></ruby>みにくい。」——<ruby>夏<rt>なつ</rt>目<rt>め</rt>漱<rt>そう</rt>石<rt>せき</rt></ruby>が<ruby>明<rt>めい</rt>治<rt>じ</rt>三<rt>さん</rt>十<rt>じゅう</rt>九<rt>く</rt>年<rt>ねん</rt></ruby>に<ruby>発<rt>はっ</rt>表<rt>ぴょう</rt></ruby>した<ruby>小<rt>しょう</rt>説<rt>せつ</rt></ruby>『<ruby>草<rt>くさ</rt>枕<rt>まくら</rt></ruby>』の<ruby>冒<rt>ぼう</rt>頭<rt>とう</rt></ruby>は、<ruby>百<rt>ひゃく</rt>年<rt>ねん</rt>以<rt>い</rt>上<rt>じょう</rt></ruby>を<ruby>経<rt>へ</rt></ruby>た<ruby>現<rt>げん</rt>代<rt>だい</rt></ruby>の<ruby>私<rt>わたし</rt></ruby>たちの<ruby>胸<rt>むね</rt></ruby>にも<ruby>深<rt>ふか</rt></ruby>く<ruby>響<rt>ひび</rt></ruby>く。",
+            "<ruby>理<rt>り</rt>屈<rt>くつ</rt></ruby>や<ruby>効<rt>こう</rt>率<rt>りつ</rt></ruby>ばかりを<ruby>優<rt>ゆう</rt>先<rt>せん</rt></ruby>すれば<ruby>周<rt>しゅう</rt>囲<rt>い</rt></ruby>との<ruby>摩<rt>ま</rt>擦<rt>さつ</rt></ruby>を<ruby>生<rt>う</rt></ruby>み、<ruby>他<rt>た</rt>者<rt>しゃ</rt></ruby>の<ruby>感<rt>かん</rt>情<rt>じょう</rt></ruby>に<span class=\"exam-hl\" data-tip=\"【N1常考單字】迎合（げいごう）：曲意逢迎、過度迎合他人\"><ruby>迎<rt>げい</rt>合<rt>ごう</rt></ruby></span>しすぎれば<ruby>自<rt>じ</rt>分<rt>ぶん</rt></ruby>を<ruby>見<rt>み</rt>失<rt>うしな</rt></ruby>い、<ruby>己<rt>おのれ</rt></ruby>の<ruby>主<rt>しゅ</rt>張<rt>ちょう</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考單字】貫く（つらぬく）：貫徹、堅持到底\"><ruby>貫<rt>つらぬ</rt></ruby>こう</span>とすれば<ruby>息<rt>いき</rt>苦<rt>ぐる</rt></ruby>しくなる。<ruby>作<rt>さく</rt>中<rt>ちゅう</rt></ruby>の<ruby>主<rt>しゅ</rt>人<rt>じん</rt>公<rt>こう</rt></ruby>である<ruby>画<rt>が</rt>工<rt>こう</rt></ruby>は、この<ruby>住<rt>す</rt></ruby>みにくさを<ruby>乗<rt>の</rt></ruby>り<ruby>越<rt>こ</rt></ruby>えるために、<ruby>世<rt>せ</rt>俗<rt>ぞく</rt></ruby>の<ruby>損<rt>そん</rt>得<rt>とく</rt></ruby>や<ruby>善<rt>ぜん</rt>悪<rt>あく</rt></ruby>から<ruby>一<rt>いっ</rt>歩<rt>ぽ</rt></ruby><span class=\"exam-hl\" data-tip=\"【N1常考單字】退く（しりぞく）：退後、退出、抽身\"><ruby>退<rt>しりぞ</rt></ruby>き</span>、<ruby>眼<rt>め</rt></ruby>の<ruby>前<rt>まえ</rt></ruby>の<ruby>景<rt>けい</rt>色<rt>しき</rt></ruby>や<ruby>人<rt>にん</rt>間<rt>げん</rt>模<rt>も</rt>様<rt>よう</rt></ruby>を一幅の<ruby>絵<rt>え</rt></ruby>のように<ruby>眺<rt>なが</rt></ruby>める「<ruby>非<rt>ひ</rt>人<rt>にん</rt>情<rt>じょう</rt></ruby>」の<ruby>旅<rt>たび</rt></ruby>へと<ruby>出<rt>で</rt></ruby>かけた。",
+            "ここでいう「<ruby>非<rt>ひ</rt>人<rt>にん</rt>情<rt>じょう</rt></ruby>」とは、<ruby>決<rt>けっ</rt></ruby>して<ruby>冷<rt>れい</rt>酷<rt>こく</rt></ruby>になることではなく、<ruby>執<rt>しゅう</rt>着<rt>ちゃく</rt></ruby>や<ruby>利<rt>り</rt>害<rt>がい</rt></ruby>から<ruby>心<rt>こころ</rt></ruby>を<ruby>解<rt>と</rt></ruby>き<ruby>放<rt>はな</rt></ruby>つ<ruby>美<rt>び</rt>的<rt>てき</rt></ruby>な<ruby>態<rt>たい</rt>度<rt>ど</rt></ruby>を<ruby>指<rt>さ</rt></ruby>している。SNSなどを通じて<ruby>他<rt>た</rt>人<rt>にん</rt></ruby>の<ruby>評<rt>ひょう</rt>価<rt>か</rt></ruby>や<ruby>情<rt>じょう</rt>報<rt>ほう</rt></ruby>が<ruby>絶<rt>た</rt></ruby>えず<span class=\"exam-hl\" data-tip=\"【N2常考單字】押し寄せる（おしよせる）：蜂擁而至、不斷湧來\"><ruby>押<rt>お</rt></ruby>し<ruby>寄<rt>よ</rt></ruby>せる</span><ruby>現<rt>げん</rt>代<rt>だい</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～からこそ：正因為……才更……\">だからこそ</span>、<ruby>時<rt>とき</rt></ruby>には<ruby>当<rt>とう</rt>事<rt>じ</rt>者<rt>しゃ</rt></ruby>としての<ruby>焦<rt>あせ</rt></ruby>りを<ruby>手<rt>て</rt>放<rt>ばな</rt></ruby>し、<ruby>静<rt>しず</rt></ruby>かに<ruby>物<rt>もの</rt>事<rt>ごと</rt></ruby>を<ruby>観<rt>かん</rt>察<rt>さつ</rt></ruby>する<ruby>心<rt>こころ</rt></ruby>の<ruby>余<rt>よ</rt>白<rt>はく</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考文法】～たいものだ：真希望能……啊（表深切期許）\"><ruby>持<rt>も</rt></ruby>ちたいものだ</span>。"
+          ],
+          "plainParagraphs": [
+            "「山路を登りながら、こう考えた。智に働けば角が立つ。情に棹させば流される。意地を通せば窮屈だ。とかくに人の世は住みにくい。」——夏目漱石が明治三十九年に発表した小説『草枕』の冒頭は、百年以上を経た現代の私たちの胸にも深く響く。",
+            "理屈や効率ばかりを優先すれば周囲との摩擦を生み、他者の感情に迎合しすぎれば自分を見失い、己の主張を貫こうとすれば息苦しくなる。作中の主人公である画工は、この住みにくさを乗り越えるために、世俗の損得や善悪から一歩退き、眼の前の景色や人間模様を一幅の絵のように眺める「非人情」の旅へと出かけた。",
+            "ここでいう「非人情」とは、決して冷酷になることではなく、執着や利害から心を解き放つ美的な態度を指している。SNSなどを通じて他人の評価や情報が絶えず押し寄せる現代だからこそ、時には当事者としての焦りを手放し、静かに物事を観察する心の余白を持ちたいものだ。"
+          ],
+          "plainJp": "「山路を登りながら、こう考えた。智に働けば角が立つ。情に棹させば流される。意地を通せば窮屈だ。とかくに人の世は住みにくい。」——夏目漱石が明治三十九年に発表した小説『草枕』の冒頭は、百年以上を経た現代の私たちの胸にも深く響く。理屈や効率ばかりを優先すれば周囲との摩擦を生み、他者の感情に迎合しすぎれば自分を見失い、己の主張を貫こうとすれば息苦しくなる。作中の主人公である画工は、この住みにくさを乗り越えるために、世俗の損得や善悪から一歩退き、眼の前の景色や人間模様を一幅の絵のように眺める「非人情」の旅へと出かけた。ここでいう「非人情」とは、決して冷酷になることではなく、執着や利害から心を解き放つ美的な態度を指している。SNSなどを通じて他人の評価や情報が絶えず押し寄せる現代だからこそ、時には当事者としての焦りを手放し、静かに物事を観察する心の余白を持ちたいものだ。",
+          "translation": [
+            "「沿著山路攀登時，我這麼想著：憑理智行事則易起稜角；順情感漂流則易隨波逐流；固執己見則又處處受限。總之，人世間實在不易安居。」——夏目漱石於明治 39 年（1906 年）發表的小說《草枕》開篇名句，在超過百年後的今天，依然深深觸動我們的心弦。",
+            "若只顧講求道理與效率，容易與周遭產生摩擦；過度迎合他人的情緒，又會迷失自我；而若想貫徹自己的主張，則不免感到窒息局促。書中的主角畫家為了跨越這份「不易安居」的苦悶，選擇從世俗的利害得失與是非善惡中退後一步，踏上一場將眼前風景與人生百態當作一幅畫來靜觀的「非人情」之旅。",
+            "此處所說的「非人情」，絕非變得冷酷無情，而是指將心靈從執著與利害關係中解放出來的美學態度。正因為身處透過社群媒體不斷湧入他人評價與資訊的現代，我們更需要在某些時刻放下身為當事人的焦慮，保有靜心觀察萬物的心靈留白。"
+          ],
+          "vocab": [
+            {
+              "word": "角が立つ（かどがたつ）",
+              "level": "JLPT N2 常考慣用",
+              "meaning": "起稜角、傷和氣、人際關係變得尖銳"
+            },
+            {
+              "word": "窮屈（きゅうくつ）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "拘束、局促、空間或心情不自在"
+            },
+            {
+              "word": "迎合（げいごう）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "迎合、曲意逢迎他人"
+            },
+            {
+              "word": "貫く（つらぬく）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "貫徹、堅持到底（主張を貫く）"
+            },
+            {
+              "word": "退く（しりぞく）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "退後、退出、從第一線抽身"
+            },
+            {
+              "word": "押し寄せる（おしよせる）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "蜂擁而至、浪潮或資訊不斷湧來"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "とかく～は…やすい / とかくに",
+              "level": "JLPT N1 常考文法",
+              "explanation": "副詞，表示「總之、世間往往動不動就容易……」，常用於評論人世常態。"
+            },
+            {
+              "pattern": "～からこそ",
+              "level": "JLPT N2 常考文法",
+              "explanation": "強調原因，「正因為……才更加……」（押し寄せる現代だからこそ）。"
+            },
+            {
+              "pattern": "～たいものだ",
+              "level": "JLPT N2 常考文法",
+              "explanation": "接於動詞ます形後，表達說話者深切的期許或願望，「真希望能……啊」。"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "date": "2026-11-07",
+    "dayLabel": "11月7日（週六）",
+    "badge": "昨日存檔",
+    "slots": {
+      "08:00": {
+        "time": "08:00",
+        "periodName": "晨間篇",
+        "icon": "🌅",
+        "themeSummary": "通勤電車延誤應變 ＆ 混合辦公（Hybrid Work）的深層課題",
+        "dialogue": {
+          "scene": "通勤・電車延誤與彈性應變",
+          "title": "改在車站共享空間連線開會",
+          "tone": "電話／語音訊息中簡潔得體的職場應對",
+          "charCount": "192 字",
+          "lines": [
+            {
+              "speaker": "高橋",
+              "role": "業務部員",
+              "jp": "<ruby>課<rt>か</rt>長<rt>ちょう</rt></ruby>、おはようございます。<ruby>今<rt>いま</rt></ruby>、<ruby>人<rt>じん</rt>身<rt>しん</rt>事<rt>じ</rt>故<rt>こ</rt></ruby>の<ruby>影<rt>えい</rt>響<rt>きょう</rt></ruby>で<ruby>電<rt>でん</rt>車<rt>しゃ</rt></ruby>が<ruby>途<rt>と</rt>中<rt>ちゅう</rt></ruby>の<ruby>駅<rt>えき</rt></ruby>で<ruby>止<rt>と</rt></ruby>まってしまいまして、<span class=\"exam-hl\" data-tip=\"【N1常考單字】見通し（みとおし）：展望、預計（復旧の見通しが立たない）\"><ruby>復<rt>ふっ</rt>旧<rt>きゅう</rt></ruby>の<ruby>見<rt>み</rt>通<rt>とお</rt></ruby>しが<ruby>立<rt>た</rt></ruby>っていない</span>ようです。",
+              "plainJp": "課長、おはようございます。今、人身事故の影響で電車が途中の駅で止まってしまいまして、復旧の見通しが立っていないようです。",
+              "zh": "高橋：課長早安。現在因為路線事故的影響，電車停在半路的車站，看起來還不確定什麼時候能恢復通車。"
+            },
+            {
+              "speaker": "中村",
+              "role": "部門課長",
+              "jp": "そうか、<ruby>大<rt>たい</rt>変<rt>へん</rt></ruby>だね。<ruby>九<rt>く</rt>時<rt>じ</rt></ruby>からの<ruby>定<rt>てい</rt>例<rt>れい</rt>会<rt>かい</rt>議<rt>ぎ</rt></ruby>はオンラインでも<ruby>参<rt>さん</rt>加<rt>か</rt></ruby>できるから、<span class=\"exam-hl\" data-tip=\"【N2常考文法】無理して～ない：不用勉強去做……\"><ruby>無<rt>む</rt>理<rt>り</rt></ruby>して</span><ruby>振<rt>ふ</rt></ruby>り<ruby>替<rt>か</rt></ruby>え<ruby>輸<rt>ゆ</rt>送<rt>そう</rt></ruby>に<ruby>並<rt>なら</rt></ruby>ばなくていいよ。",
+              "plainJp": "そうか、大変だね。九時からの定例会議はオンラインでも参加できるから、無理して振り替え輸送に並ばなくていいよ。",
+              "zh": "中村：這樣啊，辛苦了。九點的例行會議用線上參加也可以，你不用勉強去排隊搭接駁轉乘沒關係喔。"
+            },
+            {
+              "speaker": "高橋",
+              "role": "業務部員",
+              "jp": "ありがとうございます！<span class=\"exam-hl\" data-tip=\"【N2常考文法】幸い（さいわい）：幸好、所幸\">幸い</span>、<ruby>改<rt>かい</rt>札<rt>さつ</rt></ruby>を<ruby>出<rt>で</rt></ruby>たところにワークスペースがありますので、そこからパソコンで<ruby>接<rt>せつ</rt>続<rt>ぞく</rt></ruby>します。",
+              "plainJp": "ありがとうございます！幸い、改札を出たところにワークスペースがありますので、そこからパソコンで接続します。",
+              "zh": "高橋：非常感謝！幸好出剪票口的地方就有共享工作空間，我從那裡用筆電連線進去。"
+            },
+            {
+              "speaker": "中村",
+              "role": "部門課長",
+              "jp": "わかった。<ruby>午<rt>ご</rt>後<rt>ご</rt></ruby>の<ruby>客<rt>きゃく</rt>先<rt>さき</rt></ruby><ruby>訪<rt>ほう</rt>問<rt>もん</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～に間に合うように：為了趕上……\">に<ruby>間<rt>ま</rt></ruby>に<ruby>合<rt>あ</rt></ruby>うように</span>、<ruby>電<rt>でん</rt>車<rt>しゃ</rt></ruby>が<ruby>動<rt>うご</rt></ruby>き<ruby>出<rt>だ</rt></ruby>してからゆっくり<ruby>移<rt>い</rt>動<rt>どう</rt></ruby>してくれれば<ruby>大<rt>だい</rt>丈<rt>じょう</rt>夫<rt>ぶ</rt></ruby>だよ。",
+              "plainJp": "わかった。午後の客先訪問に間に合うように、電車が動き出してからゆっくり移動してくれれば大丈夫だよ。",
+              "zh": "中村：知道了。只要能趕上下午拜訪客戶的行程，等電車恢復行駛後你再慢慢移動過來就可以了。"
+            },
+            {
+              "speaker": "高橋",
+              "role": "業務部員",
+              "jp": "<span class=\"exam-hl\" data-tip=\"【N2/商務常考敬語】承知いたしました：我明白了（かしこまりました的同義鄭重表現）\"><ruby>承<rt>しょう</rt>知<rt>ち</rt></ruby>いたしました</span>。では、のちほどオンライン<ruby>会<rt>かい</rt>議<rt>ぎ</rt></ruby>でよろしくお<ruby>願<rt>ねが</rt></ruby>いいたします。",
+              "plainJp": "承知いたしました。では、のちほどオンライン会議でよろしくお願いいたします。",
+              "zh": "高橋：我明白了。那麼稍後在線上會議室再請您多多指教。"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "見通しが立つ（みとおしがたつ）",
+              "level": "JLPT N1 常考慣用",
+              "meaning": "看得見眉目、能預計未來的進展（常接否定：見通しが立たない）"
+            },
+            {
+              "word": "振り替え輸送（ふりかえゆそう）",
+              "level": "JLPT N2 生活常考",
+              "meaning": "（鐵路停駛時）改搭其他路線的替代運輸"
+            },
+            {
+              "word": "承知いたしました（しょうち）",
+              "level": "JLPT N2 常考敬語",
+              "meaning": "我明白了、遵命（謙讓語）"
+            },
+            {
+              "word": "のちほど（後程）",
+              "level": "JLPT N2 常考副詞",
+              "meaning": "稍後、過一會兒（商務常用詞）"
+            }
+          ]
+        },
+        "article": {
+          "genre": "深度社論・職場文化",
+          "jlpt": "JLPT N2",
+          "title": "出社か在宅かを超えて——「ハイブリッドワーク」が直面する真の課題",
+          "charCount": "592 字",
+          "sourceTitle": "三菱総合研究所：次世代の働き方「ハイブリッドワーク」の動向と今後",
+          "sourceUrl": "https://www.mri.co.jp/knowledge/column/20220314.html",
+          "secondarySourceTitle": "日本総研：テレワークを活かす人材戦略・時間管理の変革",
+          "secondarySourceUrl": "https://www.jri.co.jp/page.jsp?id=39481",
+          "paragraphs": [
+            "オフィスへの<ruby>出<rt>しゅっ</rt>社<rt>しゃ</rt></ruby>と<ruby>在<rt>ざい</rt>宅<rt>たく</rt>勤<rt>きん</rt>務<rt>む</rt></ruby>を<ruby>組<rt>く</rt></ruby>み<ruby>合<rt>あ</rt></ruby>わせる「ハイブリッドワーク」は、<ruby>多<rt>おお</rt></ruby>くの<ruby>日<rt>に</rt>本<rt>ほん</rt>企<rt>き</rt>業<rt>ぎょう</rt></ruby>において<ruby>新<rt>あたら</rt></ruby>しい<ruby>働<rt>はたら</rt></ruby>き<ruby>方<rt>かた</rt></ruby>の<ruby>標<rt>ひょう</rt>準<rt>じゅん</rt></ruby>として<span class=\"exam-hl\" data-tip=\"【N2常考文法】～つつある：正在逐漸……之中\"><ruby>定<rt>てい</rt>着<rt>ちゃく</rt></ruby>しつつある</span>。<ruby>通<rt>つう</rt>勤<rt>きん</rt></ruby>の<ruby>負<rt>ふ</rt>担<rt>たん</rt></ruby>を<ruby>軽<rt>けい</rt>減<rt>げん</rt></ruby>し、<ruby>個<rt>こ</rt>人<rt>じん</rt></ruby>が<ruby>業<rt>ぎょう</rt>務<rt>む</rt></ruby>に<ruby>集<rt>しゅう</rt>中<rt>ちゅう</rt></ruby>できる<ruby>時<rt>じ</rt>間<rt>かん</rt></ruby>を<ruby>確<rt>かく</rt>保<rt>ほ</rt></ruby>できるという<ruby>利<rt>り</rt>点<rt>てん</rt></ruby>がある<span class=\"exam-hl\" data-tip=\"【N2常考文法】～反面（はんめん）：一方面……但反過來說卻……\"><ruby>反<rt>はん</rt>面<rt>めん</rt></ruby></span>、<ruby>運<rt>うん</rt>用<rt>よう</rt></ruby>が<ruby>長<rt>ちょう</rt>期<rt>き</rt>化<rt>か</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～につれて：隨著……的變化，也跟著……\">するにつれて</span><ruby>新<rt>あら</rt></ruby>たな<ruby>課<rt>か</rt>題<rt>だい</rt></ruby>も<span class=\"exam-hl\" data-tip=\"【N1常考單字】浮き彫り（うきぼり）：浮現、凸顯出來\"><ruby>浮<rt>う</rt></ruby>き<ruby>彫<rt>ぼ</rt></ruby>り</span>になってきた。",
+            "その<ruby>一<rt>ひと</rt></ruby>つが、<span class=\"exam-hl\" data-tip=\"【N1常考單字】偶発的（ぐうはつてき）：偶發性的、不期而遇的\"><ruby>偶<rt>ぐう</rt>発<rt>はつ</rt>的<rt>てき</rt></ruby></span>な<ruby>対<rt>たい</rt>話<rt>わ</rt></ruby>の<ruby>減<rt>げん</rt>少<rt>しょう</rt></ruby>と<ruby>人<rt>じん</rt>事<rt>じ</rt>評<rt>ひょう</rt>価<rt>か</rt></ruby>の<ruby>難<rt>むずか</rt></ruby>しさだ。<ruby>同<rt>おな</rt></ruby>じ<ruby>空<rt>くう</rt>間<rt>かん</rt></ruby>にいれば<ruby>自<rt>し</rt>然<rt>ぜん</rt></ruby>と<ruby>交<rt>か</rt></ruby>わされていた<ruby>雑<rt>ざつ</rt>談<rt>だん</rt></ruby>やちょっとした<ruby>相<rt>そう</rt>談<rt>だん</rt></ruby>が<ruby>減<rt>へ</rt></ruby>り、<ruby>特<rt>とく</rt></ruby>に<ruby>経<rt>けい</rt>験<rt>けん</rt></ruby>の<ruby>浅<rt>あさ</rt></ruby>い<ruby>若<rt>わか</rt>手<rt>て</rt>社<rt>しゃ</rt>員<rt>いん</rt></ruby>が<ruby>孤<rt>こ</rt>立<rt>りつ</rt>感<rt>かん</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考單字】抱く（いだく）：懷抱（情感、疑問或危機感）\"><ruby>抱<rt>いだ</rt></ruby>きやすい</span>と<ruby>指<rt>し</rt>摘<rt>てき</rt></ruby>されている。また、<ruby>働<rt>はたら</rt></ruby>く<ruby>姿<rt>すがた</rt></ruby>が<ruby>直<rt>ちょく</rt>接<rt>せつ</rt></ruby><ruby>見<rt>み</rt></ruby>えないため、<ruby>成<rt>せい</rt>果<rt>か</rt></ruby>の<ruby>基<rt>き</rt>準<rt>じゅん</rt></ruby>があいまいなままでは、<ruby>不<rt>ふ</rt>公<rt>こう</rt>平<rt>へい</rt>感<rt>かん</rt></ruby>が<ruby>生<rt>しょう</rt></ruby>じかねない。",
+            "これからの<ruby>組<rt>そ</rt>織<rt>しき</rt></ruby>に<ruby>求<rt>もと</rt></ruby>められるのは、「<ruby>週<rt>しゅう</rt></ruby>に<ruby>何<rt>なん</rt>日<rt>にち</rt></ruby><ruby>出<rt>しゅっ</rt>社<rt>しゃ</rt></ruby>するか」という<ruby>形<rt>けい</rt>式<rt>しき</rt>的<rt>てき</rt></ruby>なルールづくりではない。<ruby>対<rt>たい</rt>面<rt>めん</rt></ruby><span class=\"exam-hl\" data-tip=\"【N1常考文法】～でこそ：正因為在……條件下才能……\">でこそ</span><ruby>生<rt>う</rt></ruby>まれるチームワークや<ruby>共<rt>きょう</rt>創<rt>そう</rt></ruby>の<ruby>場<rt>ば</rt></ruby>と、<ruby>場<rt>ば</rt>所<rt>しょ</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考慣用】～にとらわれない：不受……拘束、不拘泥於……\">にとらわれない</span><ruby>自<rt>じ</rt>律<rt>りつ</rt>的<rt>てき</rt></ruby>な<ruby>業<rt>ぎょう</rt>務<rt>む</rt></ruby>とを、<ruby>目<rt>もく</rt>的<rt>てき</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～に応じて（におうじて）：根據……、按照……而調整\">に<ruby>応<rt>おう</rt></ruby>じて</span><ruby>再<rt>さい</rt>設<rt>せっ</rt>計<rt>けい</rt></ruby>する<ruby>柔<rt>じゅう</rt>軟<rt>なん</rt></ruby>なマネジメントなのである。"
+          ],
+          "plainParagraphs": [
+            "オフィスへの出社と在宅勤務を組み合わせる「ハイブリッドワーク」は、多くの日本企業において新しい働き方の標準として定着しつつある。通勤の負担を軽減し、個人が業務に集中できる時間を確保できるという利点がある反面、運用が長期化するにつれて新たな課題も浮き彫りになってきた。",
+            "その一つが、偶発的な対話の減少と人事評価の難しさだ。同じ空間にいれば自然と交わされていた雑談やちょっとした相談が減り、特に経験の浅い若手社員が孤立感を抱きやすいと指摘されている。また、働く姿が直接見えないため、成果の基準があいまいなままでは、不公平感が生じかねない。",
+            "これからの組織に求められるのは、「週に何日出社するか」という形式的なルールづくりではない。対面でこそ生まれるチームワークや共創の場と、場所にとらわれない自律的な業務とを、目的に応じて再設計する柔軟なマネジメントなのである。"
+          ],
+          "plainJp": "オフィスへの出社と在宅勤務を組み合わせる「ハイブリッドワーク」は、多くの日本企業において新しい働き方の標準として定着しつつある。通勤の負担を軽減し、個人が業務に集中できる時間を確保できるという利点がある反面、運用が長期化するにつれて新たな課題も浮き彫りになってきた。その一つが、偶発的な対話の減少と人事評価の難しさだ。同じ空間にいれば自然と交わされていた雑談やちょっとした相談が減り、特に経験の浅い若手社員が孤立感を抱きやすいと指摘されている。また、働く姿が直接見えないため、成果の基準があいまいなままでは、不公平感が生じかねない。これからの組織に求められるのは、「週に何日出社するか」という形式的なルールづくりではない。対面でこそ生まれるチームワークや共創の場と、場所にとらわれない自律的な業務とを、目的に応じて再設計する柔軟なマネジメントなのである。",
+          "translation": [
+            "結合辦公室出勤與居家辦公的「混合辦公（Hybrid Work）」，正逐漸在許多日本企業中定型為新工作型態的標準。這種模式一方面具有減輕通勤負擔、確保個人專注時間的優點；但反過來說，隨著實施時間拉長，新的課題也逐漸浮上檯面。",
+            "其中之一便是偶發性對話的減少與人事績效評估的困難。過去身處同一個空間時自然交談的閒聊與隨口請益變少了，不少分析指出這特別容易讓資歷尚淺的年輕員工產生孤立感。此外，由於看不見實際工作時的模樣，若成果評估標準維持模糊不清，便很有可能衍生出不公平感。",
+            "未來的組織所需要的，並不是制定「每週規定進辦公室幾天」這類形式化的規則，而是根據工作目的，重新設計「唯有面對面才能激發的團隊合作與共創場合」以及「不受地點拘束的自主業務」之彈性管理思維。"
+          ],
+          "vocab": [
+            {
+              "word": "浮き彫り（うきぼり）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "浮現、凸顯出來（課題が浮き彫りになる）"
+            },
+            {
+              "word": "偶発的（ぐうはつてき）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "偶發性的、不期而遇的"
+            },
+            {
+              "word": "抱く（いだく）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "懷抱（感情、不安、疑問或理想）"
+            },
+            {
+              "word": "とらわれる",
+              "level": "JLPT N2 常考單字",
+              "meaning": "受拘泥於……、受限於……（場所にとらわれない）"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "～つつある",
+              "level": "JLPT N2 常考文法",
+              "explanation": "接於動詞ます形後，表示某種趨勢「正在逐漸……之中」（定着しつつある）。"
+            },
+            {
+              "pattern": "～反面（はんめん）",
+              "level": "JLPT N2 常考文法",
+              "explanation": "表示同一事物的正反兩面，「一方面有……優點，但反面也有……」。"
+            },
+            {
+              "pattern": "～かねない",
+              "level": "JLPT N2 常考文法",
+              "explanation": "接於動詞ます形後，表示負面擔憂，「很有可能會導致……」（不公平感が生じかねない）。"
+            },
+            {
+              "pattern": "～でこそ",
+              "level": "JLPT N1 常考文法",
+              "explanation": "強調唯有在該條件下才能產生後項價值，「正因為面對面才能……」（対面でこそ生まれる）。"
+            }
+          ]
+        }
+      },
+      "17:00": {
+        "time": "17:00",
+        "periodName": "午後篇",
+        "icon": "🌇",
+        "themeSummary": "SNS 攝影社團留言交流 ＆ 深度睡眠中的「腦脊髓液」洗滌機制",
+        "dialogue": {
+          "scene": "社群・SNS 攝影照片留言互動",
+          "title": "秋日黃昏銀杏大道的逆光拍攝",
+          "tone": "SNS 社群平台上友善熱絡的同好交流口吻",
+          "charCount": "194 字",
+          "lines": [
+            {
+              "speaker": "Haru (@haru_photo)",
+              "role": "攝影愛好者",
+              "jp": "<ruby>夕<rt>ゆう</rt>暮<rt>ぐ</rt></ruby>れのイチョウ<ruby>並<rt>なみ</rt>木<rt>き</rt></ruby>、<ruby>光<rt>ひかり</rt></ruby>の<ruby>透<rt>とう</rt>明<rt>めい</rt>感<rt>かん</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N2常考慣用】たまらない：令人愛不釋手、棒得不得了\">たまらない</span>ですね！<ruby>何<rt>なん</rt>時<rt>じ</rt></ruby>ごろ<ruby>撮<rt>と</rt></ruby>られたんですか？",
+              "plainJp": "夕暮れのイチョウ並木、光の透明感がたまらないですね！何時ごろ撮られたんですか？",
+              "zh": "Haru：黃昏的銀杏大道，光線的透明感真是美得讓人愛不釋手呢！請問您大概是幾點拍的呀？"
+            },
+            {
+              "speaker": "Aoi (@aoi_snap)",
+              "role": "貼文作者",
+              "jp": "コメントありがとうございます！<ruby>四<rt>よ</rt>時<rt>じ</rt>半<rt>はん</rt></ruby>すぎの、<ruby>日<rt>ひ</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N2常考文法】～かける：剛開始……、正要……的時候\"><ruby>傾<rt>かたむ</rt></ruby>きかけた</span>タイミングを<ruby>狙<rt>ねら</rt></ruby>って<ruby>撮<rt>さつ</rt>影<rt>えい</rt></ruby>しました。",
+              "plainJp": "コメントありがとうございます！四時半すぎの、日が傾きかけたタイミングを狙って撮影しました。",
+              "zh": "Aoi：謝謝您的留言！我是瞄準四點半過後、夕陽剛開始西斜的那個時間點拍的。"
+            },
+            {
+              "speaker": "Haru (@haru_photo)",
+              "role": "攝影愛好者",
+              "jp": "<ruby>平<rt>へい</rt>日<rt>じつ</rt></ruby>でも<ruby>結<rt>けっ</rt>構<rt>こう</rt></ruby><ruby>人<rt>ひと</rt>出<rt>で</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いイメージですが、<ruby>通<rt>とお</rt></ruby>り<ruby>がかり</ruby>の<ruby>人<rt>ひと</rt></ruby>が<ruby>写<rt>うつ</rt></ruby>り<ruby>込<rt>こ</rt></ruby>まないように<ruby>撮<rt>と</rt></ruby>るのは<ruby>難<rt>むずか</rt></ruby>しくなかったですか？",
+              "plainJp": "平日でも結構人出が多いイメージですが、通りがかりの人が写り込まないように撮るのは難しくなかったですか？",
+              "zh": "Haru：我印象中那裡連平日人潮都滿多的，要拍到沒有路人入鏡不會很難嗎？"
+            },
+            {
+              "speaker": "Aoi (@aoi_snap)",
+              "role": "貼文作者",
+              "jp": "少し<ruby>下<rt>した</rt></ruby>からのアングルで<ruby>見<rt>み</rt></ruby>上げるように<ruby>構<rt>かま</rt></ruby>えると、<ruby>人<rt>ひと</rt>混<rt>ご</rt></ruby>みを<span class=\"exam-hl\" data-tip=\"【N2常考文法】～ずに済む（ずにすむ）：不用……就解決了、免於……\"><ruby>気<rt>き</rt></ruby>にせずに<ruby>済<rt>す</rt></ruby>みます</span>よ！",
+              "plainJp": "少し下からのアングルで見上げるように構えると、人混みを気にせずに済みますよ！",
+              "zh": "Aoi：只要稍微從低角度往上仰拍構圖，就不用擔心人群入鏡的問題囉！"
+            },
+            {
+              "speaker": "Haru (@haru_photo)",
+              "role": "攝影愛好者",
+              "jp": "なるほど、<ruby>参<rt>さん</rt>考<rt>こう</rt></ruby>になります！<ruby>来<rt>らい</rt>週<rt>しゅう</rt></ruby>の<ruby>休<rt>やす</rt></ruby>みにカメラを<ruby>持<rt>も</rt></ruby>って<ruby>散<rt>さん</rt>歩<rt>ぽ</rt></ruby>しに<ruby>行<rt>い</rt></ruby>ってみます。",
+              "plainJp": "なるほど、参考になります！来週の休みにカメラを持って散歩しに行ってみます。",
+              "zh": "Haru：原來如此，太有參考價值了！下週放假我也帶相機去散步拍拍看。"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "たまらない",
+              "level": "JLPT N2 常考慣用",
+              "meaning": "令人愛不釋手、棒極了（或反義：受不了）"
+            },
+            {
+              "word": "～かける（傾きかける）",
+              "level": "JLPT N2 常考文法",
+              "meaning": "接動詞ます形，表動作「剛開始進行、做到一半」"
+            },
+            {
+              "word": "通りがかり（とおりがかり）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "路過、途經（通りがかりの人＝路人）"
+            },
+            {
+              "word": "～ずに済む（ずにすむ）",
+              "level": "JLPT N2 常考文法",
+              "meaning": "不用做某事就能解決、免於……"
+            }
+          ]
+        },
+        "article": {
+          "genre": "科學・腦神經研究",
+          "jlpt": "JLPT N1~N2",
+          "title": "深い眠りが脳を洗い流す——脳脊髄液のリズムと記憶の整理",
+          "charCount": "584 字",
+          "sourceTitle": "理化学研究所：深い睡眠中に頻繁に動く脳脊髄液ダイナミクスを解明",
+          "sourceUrl": "https://www.riken.jp/press/2025/20251010_2/index.html",
+          "secondarySourceTitle": "日本脳科学関連学会連合：睡眠に関する神経科学研究",
+          "secondarySourceUrl": "https://www.brainscience-union.jp/trivia/trivia3705",
+          "paragraphs": [
+            "<ruby>私<rt>わたし</rt></ruby>たちが<ruby>毎<rt>まい</rt>晩<rt>ばん</rt></ruby><ruby>繰<rt>く</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>す「<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>」は、<ruby>単<rt>たん</rt></ruby>に<ruby>身<rt>しん</rt>体<rt>たい</rt></ruby>の<ruby>疲<rt>つか</rt></ruby>れを<span class=\"exam-hl\" data-tip=\"【N2常考單字】癒やす（いやす）：療癒、消除疲勞或傷痛\"><ruby>癒<rt>い</rt></ruby>やす</span>だけの<ruby>受<rt>じゅ</rt>動<rt>どう</rt>的<rt>てき</rt></ruby>な<ruby>休<rt>きゅう</rt>息<rt>そく</rt></ruby>ではない。<ruby>理<rt>り</rt>化<rt>か</rt>学<rt>がく</rt>研<rt>けん</rt>究<rt>きゅう</rt>所<rt>しょ</rt></ruby>などの<ruby>研<rt>けん</rt>究<rt>きゅう</rt></ruby>チームによる<ruby>詳<rt>しょう</rt>細<rt>さい</rt></ruby>な<ruby>解<rt>かい</rt>析<rt>せき</rt></ruby>で、<ruby>深<rt>ふか</rt></ruby>いノンレム<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>の<span class=\"exam-hl\" data-tip=\"【N3/N2常考文法】～最中に（さいちゅうに）：正在……的正當中\"><ruby>最<rt>さい</rt>中<rt>ちゅう</rt></ruby>には</span>、<ruby>脳<rt>のう</rt></ruby>と<ruby>脊<rt>せき</rt>髄<rt>ずい</rt></ruby>の<ruby>周<rt>しゅう</rt>囲<rt>い</rt></ruby>を<ruby>満<rt>み</rt></ruby>たす「<ruby>脳<rt>のう</rt>脊<rt>せき</rt>髄<rt>ずい</rt>液<rt>えき</rt></ruby>」が<ruby>短<rt>みじか</rt></ruby>い<ruby>周<rt>しゅう</rt>期<rt>き</rt></ruby>で<ruby>頻<rt>ひん</rt>繁<rt>ぱん</rt></ruby>に<ruby>変<rt>へん</rt>動<rt>どう</rt></ruby>している<ruby>仕<rt>し</rt>組<rt>く</rt></ruby>みが<ruby>明<rt>あき</rt></ruby>らかになった。",
+            "<ruby>浅<rt>あさ</rt></ruby>い<ruby>眠<rt>ねむ</rt></ruby>りの<ruby>段<rt>だん</rt>階<rt>かい</rt></ruby>では、<ruby>脳<rt>のう</rt>脊<rt>せき</rt>髄<rt>ずい</rt>液<rt>えき</rt></ruby>の<ruby>動<rt>うご</rt></ruby>きが<span class=\"exam-hl\" data-tip=\"【N1常考單字】断続的（だんぞくてき）：斷斷續續的、間歇性的\"><ruby>断<rt>だん</rt>続<rt>ぞく</rt>的<rt>てき</rt></ruby></span>である<span class=\"exam-hl\" data-tip=\"【N2常考文法】～のに対し（て）：與前項……相對比，後項則是……\">のに<ruby>対<rt>たい</rt></ruby>し</span>、<ruby>深<rt>ふか</rt></ruby>い<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ると、<ruby>記<rt>き</rt>憶<rt>おく</rt></ruby>の<ruby>定<rt>てい</rt>着<rt>ちゃく</rt></ruby>や<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>の<ruby>質<rt>しつ</rt></ruby>に<ruby>密<rt>みっ</rt>接<rt>せつ</rt></ruby>に<ruby>関<rt>かか</rt></ruby>わる<ruby>脳<rt>のう</rt>波<rt>は</rt></ruby>と<ruby>同<rt>どう</rt>期<rt>き</rt></ruby>するように、リズミカルで<ruby>活<rt>かっ</rt>発<rt>ぱつ</rt></ruby>な<ruby>流<rt>なが</rt></ruby>れが<ruby>生<rt>しょう</rt></ruby>じる。この<ruby>循<rt>じゅん</rt>環<rt>かん</rt></ruby>が、<ruby>日<rt>にっ</rt>中<rt>ちゅう</rt></ruby>の<ruby>高<rt>こう</rt>度<rt>ど</rt></ruby>な<ruby>神<rt>しん</rt>経<rt>けい</rt>活<rt>かつ</rt>動<rt>どう</rt></ruby>によって<span class=\"exam-hl\" data-tip=\"【N2常考單字】蓄積（ちくせき）：累積、積蓄\"><ruby>蓄<rt>ちく</rt>積<rt>せき</rt></ruby></span>した<ruby>老<rt>ろう</rt>廃<rt>はい</rt>物<rt>ぶつ</rt></ruby>を<ruby>効<rt>こう</rt>率<rt>りつ</rt></ruby>よく<ruby>洗<rt>あら</rt></ruby>い<ruby>流<rt>なが</rt></ruby>し、<ruby>脳<rt>のう</rt></ruby>の<ruby>健<rt>けん</rt>康<rt>こう</rt></ruby>を<ruby>保<rt>たも</rt></ruby>つ<span class=\"exam-hl\" data-tip=\"【N2常考慣用】役割を果たす（やくわりをはたす）：發揮作用、扮演……角色\"><ruby>役<rt>やく</rt>割<rt>わり</rt></ruby>を<ruby>果<rt>は</rt></ruby>たして</span>いるとみられる。",
+            "<ruby>忙<rt>いそが</rt></ruby>しい<ruby>現<rt>げん</rt>代<rt>だい</rt>社<rt>しゃ</rt>会<rt>かい</rt></ruby>では、<ruby>仕事<rt>しごと</rt></ruby>や<ruby>娯<rt>ご</rt>楽<rt>らく</rt></ruby>のために<ruby>睡<rt>すい</rt>眠<rt>みん</rt>時<rt>じ</rt>間<rt>かん</rt></ruby>を<ruby>削<rt>けず</rt></ruby>りがちだが、<ruby>慢性<rt>まんせい</rt>的<rt>てき</rt></ruby>な<ruby>寝<rt>ね</rt>不<rt>ぶ</rt>足<rt>そく</rt></ruby>は<ruby>集<rt>しゅう</rt>中<rt>ちゅう</rt>力<rt>りょく</rt></ruby>の<ruby>低<rt>てい</rt>下<rt>か</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～のみならず：不僅僅……甚至還……\">のみならず</span>、<ruby>長<rt>ちょう</rt>期<rt>き</rt>的<rt>てき</rt></ruby>な<ruby>認知<rt>にんち</rt>機<rt>き</rt>能<rt>のう</rt></ruby>にも<ruby>悪<rt>あく</rt>影<rt>えい</rt>響<rt>きょう</rt></ruby>を<ruby>及<rt>およ</rt></ruby>ぼす。<ruby>深<rt>ふか</rt></ruby>い<ruby>眠<rt>ねむ</rt></ruby>りを<ruby>妨<rt>さまた</rt></ruby>げることは、<ruby>脳<rt>のう</rt></ruby>が<ruby>自<rt>みずか</rt></ruby>らをメンテナンスする<ruby>貴<rt>き</rt>重<rt>ちょう</rt></ruby>な<ruby>機<rt>き</rt>会<rt>かい</rt></ruby>を<ruby>奪<rt>うば</rt></ruby>うこと<span class=\"exam-hl\" data-tip=\"【N1常考文法】～にほかならない：無非就是……、無異於……\">にほかならない</span>。"
+          ],
+          "plainParagraphs": [
+            "私たちが毎晩繰り返す「睡眠」は、単に身体の疲れを癒やすだけの受動的な休息ではない。理化学研究所などの研究チームによる詳細な解析で、深いノンレム睡眠の最中には、脳と脊髄の周囲を満たす「脳脊髄液」が短い周期で頻繁に変動している仕組みが明らかになった。",
+            "浅い眠りの段階では、脳脊髄液の動きが断続的であるのに対し、深い睡眠に入ると、記憶の定着や睡眠の質に密接に関わる脳波と同期するように、リズミカルで活発な流れが生じる。この循環が、日中の高度な神経活動によって蓄積した老廃物を効率よく洗い流し、脳の健康を保つ役割を果たしているとみられる。",
+            "忙しい現代社会では、仕事や娯楽のために睡眠時間を削りがちだが、慢性的な寝不足は集中力の低下のみならず、長期的な認知機能にも悪影響を及ぼす。深い眠りを妨げることは、脳が自らをメンテナンスする貴重な機会を奪うことにほかならない。"
+          ],
+          "plainJp": "私たちが毎晩繰り返す「睡眠」は、単に身体の疲れを癒やすだけの受動的な休息ではない。理化学研究所などの研究チームによる詳細な解析で、深いノンレム睡眠の最中には、脳と脊髄の周囲を満たす「脳脊髄液」が短い周期で頻繁に変動している仕組みが明らかになった。浅い眠りの段階では、脳脊髄液の動きが断続的であるのに対し、深い睡眠に入ると、記憶の定着や睡眠の質に密接に関わる脳波と同期するように、リズミカルで活発な流れが生じる。この循環が、日中の高度な神経活動によって蓄積した老廃物を効率よく洗い流し、脳の健康を保つ役割を果たしているとみられる。忙しい現代社会では、仕事や娯楽のために睡眠時間を削りがちだが、慢性的な寝不足は集中力の低下のみならず、長期的な認知機能にも悪影響を及ぼす。深い眠りを妨げることは、脳が自らをメンテナンスする貴重な機会を奪うことにほかならない。",
+          "translation": [
+            "我們每晚重複進行的「睡眠」，並不單單只是消除身體疲勞的被動休息。根據日本理化學研究所等研究團隊的詳細解析，在深度非快速動眼（Non-REM）睡眠期間，充滿於大腦與脊髓周圍的「腦脊髓液」會以短週期頻繁地波動循環。",
+            "在淺眠階段，腦脊髄液的流動是斷斷續續的；相對地，一旦進入深度睡眠，便會產生與記憶定型及睡眠品質密切相關的腦波同步之規律活躍流動。這項循環被認為能高效率地沖洗掉白天高度神經活動所累積的代謝廢物，發揮維持大腦健康的作用。",
+            "在忙碌的現代社會中，人們動不動就為了工作或娛樂而犧牲睡眠時間，但長期睡眠不足不僅會導致專注力下降，還會對長期認知功能造成負面影響。妨礙深度睡眠，無異於剝奪了大腦自我保養修復的寶貴機會。"
+          ],
+          "vocab": [
+            {
+              "word": "癒やす（いやす）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "療癒、消除（疲勞或傷痛）"
+            },
+            {
+              "word": "断続的（だんぞくてき）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "斷斷續續的、間歇性的"
+            },
+            {
+              "word": "蓄積（ちくせき）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "累積、積蓄（知識、疲勞或廢物）"
+            },
+            {
+              "word": "妨げる（さまたげる）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "妨礙、阻撓（成長或睡眠）"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "～のに対し（て）",
+              "level": "JLPT N2 常考文法",
+              "explanation": "對比兩個事物的相反特徵，「相對於前項……，後項則是……」。"
+            },
+            {
+              "pattern": "～のみならず",
+              "level": "JLPT N2 常考文法",
+              "explanation": "書面語，表示「不僅僅……甚至連後項也……」（集中力の低下のみならず）。"
+            },
+            {
+              "pattern": "～にほかならない",
+              "level": "JLPT N1 常考文法",
+              "explanation": "強烈斷定句型，表示「無非就是……、無異於……」，常置於論説文句尾。"
+            }
+          ]
+        }
+      },
+      "22:00": {
+        "time": "22:00",
+        "periodName": "夜間篇",
+        "icon": "🌙",
+        "themeSummary": "室友深夜家事分擔 ＆ 為何搖晃讓人想睡？大腦前庭神經與睡眠",
+        "dialogue": {
+          "scene": "居家・室友間的宵夜與家事分擔",
+          "title": "順手洗好的碗盤與深夜布丁",
+          "tone": "同住室友／伴侶間自然體貼的生活口語",
+          "charCount": "190 字",
+          "lines": [
+            {
+              "speaker": "翔太",
+              "role": "室友",
+              "jp": "あれ、シンクにあったお<ruby>皿<rt>さら</rt></ruby>、もう<span class=\"exam-hl\" data-tip=\"【N3常考文法】～ておいてくれた：事先幫我做好了……\"><ruby>洗<rt>あら</rt></ruby>っておいてくれた</span>んだね。<ruby>今日<rt>きょう</rt></ruby>は<ruby>僕<rt>ぼく</rt></ruby>の<ruby>当<rt>とう</rt>番<rt>ばん</rt></ruby>だったのに、ありがとう！",
+              "plainJp": "あれ、シンクにあったお皿、もう洗っておいてくれたんだね。今日は僕の当番だったのに、ありがとう！",
+              "zh": "翔太：咦，流理台裡的盤子你已經先幫我洗好了呀。今天明明輪到我值日的說，謝謝你！"
+            },
+            {
+              "speaker": "大輝",
+              "role": "室友",
+              "jp": "<ruby>自<rt>じ</rt>分<rt>ぶん</rt></ruby>のマグカップを<ruby>洗<rt>あら</rt></ruby>う<span class=\"exam-hl\" data-tip=\"【N2常考文法】～ついでに：順便……\">ついでだったから</span>、<ruby>気<rt>き</rt></ruby>にしないで。<ruby>残<rt>ざん</rt>業<rt>ぎょう</rt></ruby>で<ruby>帰<rt>かえ</rt></ruby>りが<ruby>遅<rt>おそ</rt></ruby>くなると<ruby>聞<rt>き</rt></ruby>いてたしね。",
+              "plainJp": "自分のマグカップを洗うついでだったから、気にしないで。残業で帰りが遅くなると聞いてたしね。",
+              "zh": "大輝：只是我洗自己的馬克杯時順手洗的而已，別放在心上。而且我有聽說你今天加班會比較晚回來嘛。"
+            },
+            {
+              "speaker": "翔太",
+              "role": "室友",
+              "jp": "ほんとに<ruby>助<rt>たす</rt></ruby>かるよ。あ、<ruby>帰<rt>かえ</rt></ruby>り<ruby>道<rt>みち</rt></ruby>に<ruby>駅<rt>えき</rt>前<rt>まえ</rt></ruby>のケーキ<ruby>屋<rt>や</rt></ruby>さんでプリンを<ruby>買<rt>か</rt></ruby>ってきたんだけど、<ruby>一<rt>いっ</rt>緒<rt>しょ</rt></ruby>に<ruby>食<rt>た</rt></ruby>べない？",
+              "plainJp": "ほんとに助かるよ。あ、帰り道に駅前のケーキ屋さんでプリンを買ってきたんだけど、一緒に食べない？",
+              "zh": "翔太：真的幫大忙了。啊，我回來的路上在車站前的蛋糕店買了布丁，要不要一起吃？"
+            },
+            {
+              "speaker": "大輝",
+              "role": "室友",
+              "jp": "えっ、あそこの<ruby>限<rt>げん</rt>定<rt>てい</rt></ruby>プリン？<ruby>夜<rt>よ</rt>中<rt>なか</rt></ruby>の<ruby>甘<rt>あま</rt></ruby>いものは<ruby>太<rt>ふと</rt></ruby>る<span class=\"exam-hl\" data-tip=\"【N2常考文法】～と知りつつ（も）：明知道……卻還是……\">と<ruby>知<rt>し</rt></ruby>りつつ</span>、それだけは<ruby>断<rt>ことわ</rt></ruby>れないなあ！",
+              "plainJp": "えっ、あそこの限定プリン？夜中の甘いものは太ると知りつつ、それだけは断れないなあ！",
+              "zh": "大輝：咦，是那家店的限定布丁嗎？雖然明知道半夜吃甜食會胖，但只有那個我實在無法拒絕啊！"
+            },
+            {
+              "speaker": "翔太",
+              "role": "室友",
+              "jp": "はは、たまのご<ruby>褒<rt>ほう</rt>美<rt>び</rt></ruby>だからね。<ruby>今<rt>いま</rt></ruby>、ノンカフェインのお<ruby>茶<rt>ちゃ</rt></ruby>をいれるよ。",
+              "plainJp": "はは、たまのご褒美だからね。今、ノンカフェインのお茶をいれるよ。",
+              "zh": "翔太：哈哈，因為是偶爾的犒賞嘛。我現在就來泡無咖啡因的茶喔。"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "当番（とうばん）",
+              "level": "JLPT N3 常考單字",
+              "meaning": "輪值、值日生"
+            },
+            {
+              "word": "～ついでに",
+              "level": "JLPT N2 常考文法",
+              "meaning": "在做某事時「順便……」"
+            },
+            {
+              "word": "～と知りつつ（も）",
+              "level": "JLPT N2 常考文法",
+              "meaning": "明知道……卻還是忍不住……"
+            },
+            {
+              "word": "ご褒美（ごほうび）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "獎賞、犒賞自己的禮物"
+            }
+          ]
+        },
+        "article": {
+          "genre": "評論・科學與生活",
+          "jlpt": "JLPT N2",
+          "title": "電車に揺られると眠くなる理由——脳幹の回路と睡眠バランス",
+          "charCount": "576 字",
+          "sourceTitle": "つくばサイエンスニュース：睡眠制御する新神経細胞発見（筑波大学研究）",
+          "sourceUrl": "https://www.tsukuba-sci.com/?p=7595",
+          "paragraphs": [
+            "ガタンゴトンと<ruby>規<rt>き</rt>則<rt>そく</rt>的<rt>てき</rt></ruby>に<ruby>揺<rt>ゆ</rt></ruby>れる<ruby>電<rt>でん</rt>車<rt>しゃ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で、つい<span class=\"exam-hl\" data-tip=\"【N2常考擬態語】うとうと：迷迷糊糊打瞌睡的樣子\">うとうと</span>と<ruby>眠<rt>ねむ</rt>気<rt>け</rt></ruby>に<ruby>誘<rt>さそ</rt></ruby>われた<ruby>経<rt>けい</rt>験<rt>けん</rt></ruby>は<span class=\"exam-hl\" data-tip=\"【N1常考文法】誰しも（だれしも）：無論是誰都……、每個人都……\"><ruby>誰<rt>だれ</rt></ruby>しも</span>あるだろう。<ruby>赤<rt>あか</rt></ruby>ちゃんを<ruby>抱<rt>だ</rt></ruby>っこして<ruby>優<rt>やさ</rt></ruby>しく<ruby>揺<rt>ゆ</rt></ruby>らすと<ruby>眠<rt>ねむ</rt></ruby>りにつきやすいのも<ruby>同<rt>おな</rt></ruby>じ<ruby>現<rt>げん</rt>象<rt>しょう</rt></ruby>だが、この「<ruby>揺<rt>ゆ</rt></ruby>れ」と「<ruby>眠<rt>ねむ</rt></ruby>り」の<ruby>意<rt>い</rt>外<rt>がい</rt></ruby>な<ruby>接<rt>せっ</rt>点<rt>てん</rt></ruby>が、<ruby>筑<rt>つく</rt>波<rt>ば</rt>大<rt>だい</rt>学<rt>がく</rt></ruby>などの<ruby>研<rt>けん</rt>究<rt>きゅう</rt></ruby>によって<ruby>解<rt>と</rt></ruby>き<ruby>明<rt>あ</rt></ruby>かされつつある。",
+            "<ruby>研<rt>けん</rt>究<rt>きゅう</rt></ruby>グループは、<ruby>呼<rt>こ</rt>吸<rt>きゅう</rt></ruby>や<ruby>血<rt>けつ</rt>圧<rt>あつ</rt></ruby>など<ruby>生<rt>せい</rt>命<rt>めい</rt>維<rt>い</rt>持<rt>じ</rt></ruby>の<ruby>根<rt>こん</rt>幹<rt>かん</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考單字】担う（になう）：擔負、承擔（重要職責或功能）\"><ruby>担<rt>にな</rt></ruby>う</span><ruby>脳<rt>のう</rt>幹<rt>かん</rt></ruby>において、<ruby>深<rt>ふか</rt></ruby>いノンレム<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>を<ruby>誘<rt>ゆう</rt>導<rt>どう</rt></ruby>し、レム<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>とのバランスを<ruby>調<rt>ちょう</rt>整<rt>せい</rt></ruby>する<ruby>特<rt>とく</rt>定<rt>てい</rt></ruby>の<ruby>神<rt>しん</rt>経<rt>けい</rt>細<rt>さい</rt>胞<rt>ぼう</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考單字】突き止める（つきとめる）：查明、徹底找出（原因或真相）\"><ruby>突<rt>つ</rt></ruby>き<ruby>止<rt>と</rt></ruby>めた</span>。<ruby>興味<rt>きょうみ</rt>深<rt>ぶか</rt></ruby>いことに、これらの<ruby>細<rt>さい</rt>胞<rt>ぼう</rt></ruby>が<ruby>存<rt>そん</rt>在<rt>ざい</rt></ruby>する<ruby>四<rt>よん</rt></ruby>カ<ruby>所<rt>しょ</rt></ruby>のうち<ruby>一<rt>いっ</rt></ruby>カ<ruby>所<rt>しょ</rt></ruby>は、<ruby>平<rt>へい</rt>衡<rt>こう</rt>感<rt>かん</rt>覚<rt>かく</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N1常考單字】つかさどる（司る）：掌管、支配（生理機能或職責）\">つかさどり</span><ruby>身<rt>しん</rt>体<rt>たい</rt></ruby>の<ruby>揺<rt>ゆ</rt></ruby>れを<ruby>検<rt>けん</rt>知<rt>ち</rt></ruby>する「<ruby>前<rt>ぜん</rt>庭<rt>てい</rt>神<rt>しん</rt>経<rt>けい</rt>核<rt>かく</rt></ruby>」の<ruby>内<rt>うち</rt>側<rt>がわ</rt></ruby>に位置していた。",
+            "<ruby>現<rt>げん</rt>在<rt>ざい</rt></ruby><ruby>広<rt>ひろ</rt></ruby>く<ruby>使<rt>つか</rt></ruby>われている<ruby>睡<rt>すい</rt>眠<rt>みん</rt>薬<rt>やく</rt></ruby>では、<ruby>眠<rt>ねむ</rt></ruby>りの<ruby>量<rt>りょう</rt></ruby>を<ruby>増<rt>ふ</rt></ruby>やすことはできても、レム<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>とノンレム<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>の<ruby>本<rt>ほん</rt>来<rt>らい</rt></ruby>のバランスを<ruby>保<rt>たも</rt></ruby>つことは<ruby>難<rt>むずか</rt></ruby>しいとされる。<ruby>心<rt>ここ</rt>地<rt>ち</rt></ruby>よい<ruby>揺<rt>ゆ</rt></ruby>れが<ruby>脳<rt>のう</rt></ruby>の<ruby>回<rt>かい</rt>路<rt>ろ</rt></ruby><span class=\"exam-hl\" data-tip=\"【N1常考文法】～を介して（かいして）：透過……為媒介、經由……\">を<ruby>介<rt>かい</rt></ruby>して</span><ruby>自<rt>し</rt>然<rt>ぜん</rt></ruby>な<ruby>眠<rt>ねむ</rt></ruby>りを<span class=\"exam-hl\" data-tip=\"【N2常考單字】促す（うながす）：促進、催促\"><ruby>促<rt>うなが</rt></ruby>す</span>という<ruby>知<rt>ち</rt>見<rt>けん</rt></ruby>は、<ruby>睡<rt>すい</rt>眠<rt>みん</rt></ruby>の<ruby>質<rt>しつ</rt></ruby>に<ruby>悩<rt>なや</rt></ruby>む<ruby>現<rt>げん</rt>代<rt>だい</rt>人<rt>じん</rt></ruby>に<ruby>新<rt>あたら</rt></ruby>しい<ruby>処<rt>しょ</rt>方<rt>ほう</rt>箋<rt>せん</rt></ruby>をもたらすかもしれない。"
+          ],
+          "plainParagraphs": [
+            "ガタンゴトンと規則的に揺れる電車の中で、ついうとうとと眠気に誘われた経験は誰しもあるだろう。赤ちゃんを抱っこして優しく揺らすと眠りにつきやすいのも同じ現象だが、この「揺れ」と「眠り」の意外な接点が、筑波大学などの研究によって解き明かされつつある。",
+            "研究グループは、呼吸や血圧など生命維持の根幹を担う脳幹において、深いノンレム睡眠を誘導し、レム睡眠とのバランスを調整する特定の神経細胞を突き止めた。興味深いことに、これらの細胞が存在する四カ所のうち一カ所は、平衡感覚をつかさどり身体の揺れを検知する「前庭神経核」の内側に位置していた。",
+            "現在広く使われている睡眠薬では、眠りの量を増やすことはできても、レム睡眠とノンレム睡眠の本来のバランスを保つことは難しいとされる。心地よい揺れが脳の回路を介して自然な眠りを促すという知見は、睡眠の質に悩む現代人に新しい処方箋をもたらすかもしれない。"
+          ],
+          "plainJp": "ガタンゴトンと規則的に揺れる電車の中で、ついうとうとと眠気に誘われた経験は誰しもあるだろう。赤ちゃんを抱っこして優しく揺らすと眠りにつきやすいのも同じ現象だが、この「揺れ」と「眠り」の意外な接点が、筑波大学などの研究によって解き明かされつつある。研究グループは、呼吸や血圧など生命維持の根幹を担う脳幹において、深いノンレム睡眠を誘導し、レム睡眠とのバランスを調整する特定の神経細胞を突き止めた。興味深いことに、これらの細胞が存在する四カ所のうち一カ所は、平衡感覚をつかさどり身体の揺れを検知する「前庭神経核」の内側に位置していた。現在広く使われている睡眠薬では、眠りの量を増やすことはできても、レム睡眠とノンレム睡眠の本来のバランスを保つことは難しいとされる。心地よい揺れが脳の回路を介して自然な眠りを促すという知見は、睡眠の質に悩む現代人に新しい処方箋をもたらすかもしれない。",
+          "translation": [
+            "在喀噹喀噹規律搖晃的電車裡，不知不覺迷迷糊糊打起瞌睡的經驗，想必每個人都有過吧。把嬰兒抱在懷中輕輕搖晃就容易入睡也是相同的現象，而這份「搖晃」與「睡眠」之間的意外交集，正透過筑波大學等團隊的研究逐步揭曉。",
+            "研究團隊在負責維持呼吸、血壓等生命根幹的腦幹中，徹底找出了能誘導深度非快速動眼睡眠、並調節睡眠平衡的特定神經細胞。令人感興趣的是，這些細胞所在的四個區域中，有一處正好位於掌管平衡感與偵測身體搖晃的「前庭神經核」內側。",
+            "目前廣泛使用的安眠藥，雖然能增加睡眠時間，卻很難維持快速動眼與非快速動眼睡眠原本的自然平衡。舒適的搖晃感會透過大腦迴路促進自然睡眠的這項新發現，或許能為苦於睡眠品質的現代人帶來全新的處方與解方。"
+          ],
+          "vocab": [
+            {
+              "word": "うとうと",
+              "level": "JLPT N2 常考擬態語",
+              "meaning": "迷迷糊糊打瞌睡的樣子"
+            },
+            {
+              "word": "突き止める（つきとめる）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "查明、徹底找出（原因或真相）"
+            },
+            {
+              "word": "つかさどる（司る）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "掌管、支配（生理機能或職責）"
+            },
+            {
+              "word": "促す（うながす）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "促進、促使、催促"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "誰しも（だれしも）",
+              "level": "JLPT N1 常考文法",
+              "explanation": "表示「無論是誰都……、每個人都難免……」，常搭配推量形「～だろう」。"
+            },
+            {
+              "pattern": "～を介して（かいして）",
+              "level": "JLPT N1 常考文法",
+              "explanation": "表示「透過……作為媒介、經由……」（脳の回路を介して）。"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "date": "2026-11-06",
+    "dayLabel": "11月6日（週五）",
+    "badge": "前日存檔",
+    "slots": {
+      "08:00": {
+        "time": "08:00",
+        "periodName": "晨間篇",
+        "icon": "🌅",
+        "themeSummary": "客戶報價與交期協調 ＆ 國際能源價格波動與企業體質強化",
+        "dialogue": {
+          "scene": "職場・與客戶協調交貨期與報價",
+          "title": "提前一週交貨的庫存確認",
+          "tone": "對外部客戶標準得體的商務敬語（尊敬語・謙讓語）",
+          "charCount": "195 字",
+          "lines": [
+            {
+              "speaker": "鈴木",
+              "role": "負責業務",
+              "jp": "<ruby>先<rt>せん</rt>日<rt>じつ</rt></ruby>お<ruby>送<rt>おく</rt></ruby>りした<ruby>見<rt>み</rt>積<rt>つも</rt></ruby>り<ruby>書<rt>しょ</rt></ruby>の<ruby>件<rt>けん</rt></ruby>ですが、<span class=\"exam-hl\" data-tip=\"【N3/N2常考敬語】ご覧いただく（ごらんいただく）：請對方過目、看\"><ruby>ご<rt></rt>覧<rt>らん</rt></ruby>いただけました</span>でしょうか。",
+              "plainJp": "先日お送りした見積書の件ですが、ご覧いただけましたでしょうか。",
+              "zh": "鈴木：關於前陣子寄給您的報價單一事，不知您是否已經過目了呢？"
+            },
+            {
+              "speaker": "井上",
+              "role": "客戶採購",
+              "jp": "ええ、<span class=\"exam-hl\" data-tip=\"【N3/N2常考謙讓語】拝見する（はいけんする）：看、拜讀\">拝見しました</span>。<ruby>金<rt>きん</rt>額<rt>がく</rt></ruby>や<ruby>仕<rt>し</rt>様<rt>よう</rt></ruby>は<span class=\"exam-hl\" data-tip=\"【N1常考副詞】概ね（おおむね）：大致上、大體而言\"><ruby>概<rt>おおむ</rt></ruby>ね</span><ruby>問<rt>もん</rt>題<rt>だい</rt></ruby>ありませんが、<ruby>納<rt>のう</rt>期<rt>き</rt></ruby>だけ<ruby>一<rt>いっ</rt>週<rt>しゅう</rt>間<rt>かん</rt></ruby><ruby>早<rt>はや</rt></ruby>めていただくことは<ruby>可<rt>か</rt>能<rt>のう</rt></ruby>ですか。",
+              "plainJp": "ええ、拝見しました。金額や仕様は概ね問題ありませんが、納期だけ一週間早めていただくことは可能ですか。",
+              "zh": "井上：有的，我拜讀過了。金額與規格大致上沒有問題，但交貨期能否請貴公司提早一週呢？"
+            },
+            {
+              "speaker": "鈴木",
+              "role": "負責業務",
+              "jp": "<ruby>十<rt>じゅう</rt>一<rt>いち</rt>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>への<ruby>変<rt>へん</rt>更<rt>こう</rt></ruby>ですね。<ruby>初回<rt>しょかい</rt>分<rt>ぶん</rt></ruby>だけでも<ruby>先<rt>さき</rt></ruby>に<ruby>納<rt>のう</rt>品<rt>ひん</rt></ruby>できれば、そちらの<ruby>作<rt>さ</rt>業<rt>ぎょう</rt></ruby>に<ruby>支<rt>し</rt>障<rt>しょう</rt></ruby>はございませんか？",
+              "plainJp": "十一月末への変更ですね。初回分だけでも先に納品できれば、そちらの作業に支障はございませんか？",
+              "zh": "鈴木：是改到十一月底對吧。如果能先把第一批貨交過去，請問對貴公司的作業就不會造成妨礙嗎？"
+            },
+            {
+              "speaker": "井上",
+              "role": "客戶採購",
+              "jp": "はい、<ruby>半<rt>はん</rt>数<rt>すう</rt></ruby>でも<ruby>先<rt>さき</rt></ruby>に<ruby>届<rt>とど</rt></ruby>けてもらえれば<ruby>現<rt>げん</rt>場<rt>ば</rt></ruby>は<ruby>十分<rt>じゅうぶん</rt></ruby><ruby>助<rt>たす</rt></ruby>かります。",
+              "plainJp": "はい、半数でも先に届けてもらえれば現場は十分助かります。",
+              "zh": "井上：是的，只要能先送到一半的數量，現場就非常夠用了。"
+            },
+            {
+              "speaker": "鈴木",
+              "role": "負責業務",
+              "jp": "<ruby>承<rt>しょう</rt>知<rt>ち</rt></ruby>いたしました。<ruby>工<rt>こう</rt>場<rt>じょう</rt></ruby>の<ruby>在<rt>ざい</rt>庫<rt>こ</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考文法】～のうえ（で）：在確認／完成……之後\"><ruby>確<rt>かく</rt>認<rt>にん</rt></ruby>のうえ</span>、<ruby>本<rt>ほん</rt>日<rt>じつ</rt>中<rt>じゅう</rt></ruby>に<span class=\"exam-hl\" data-tip=\"【N2常考單字】折り返し（おりかえし）：隨即回電、回覆\"><ruby>折<rt>お</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>し</span>ご<ruby>連<rt>れん</rt>絡<rt>らく</rt></ruby>いたします。",
+              "plainJp": "承知いたしました。工場の在庫を確認のうえ、本日中に折り返しご連絡いたします。",
+              "zh": "鈴木：我明白了。向工廠確認庫存之後，會在今天之內回電向您報告。"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "概ね（おおむね）",
+              "level": "JLPT N1 常考副詞",
+              "meaning": "大致上、大體而言"
+            },
+            {
+              "word": "支障（ししょう）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "障礙、妨礙（作業に支障はない＝不影響作業）"
+            },
+            {
+              "word": "～のうえ（で）",
+              "level": "JLPT N2 常考文法",
+              "meaning": "名詞＋のうえで，表「在先進行……之後再……」"
+            },
+            {
+              "word": "折り返し（おりかえし）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "隨即回電、回覆"
+            }
+          ]
+        },
+        "article": {
+          "genre": "經濟・國際情勢",
+          "jlpt": "JLPT N1~N2",
+          "title": "資源価格の変動と日本経済——下振れリスクを見極める視点",
+          "charCount": "570 字",
+          "sourceTitle": "大和総研：日本経済見通し（原油価格と経済活動への影響）",
+          "sourceUrl": "https://www.dir.co.jp/report/research/economics/outlook/20260623_025859.html",
+          "paragraphs": [
+            "エネルギーや<ruby>鉱<rt>こう</rt>物<rt>ぶつ</rt></ruby>など<ruby>資<rt>し</rt>源<rt>げん</rt></ruby>の<ruby>大<rt>たい</rt>半<rt>はん</rt></ruby>を<ruby>輸<rt>ゆ</rt>入<rt>にゅう</rt></ruby>に<ruby>頼<rt>たよ</rt></ruby>る<ruby>日<rt>に</rt>本<rt>ほん</rt>経<rt>けい</rt>済<rt>ざい</rt></ruby><span class=\"exam-hl\" data-tip=\"【N3/N2常考文法】～にとって：對於……而言（表評價立場）\">にとって</span>、<ruby>中<rt>ちゅう</rt>東<rt>とう</rt></ruby><ruby>情<rt>じょう</rt>勢<rt>せい</rt></ruby>や<ruby>国<rt>こく</rt>際<rt>さい</rt></ruby><ruby>外<rt>がい</rt>交<rt>こう</rt></ruby>の<ruby>動<rt>どう</rt>向<rt>こう</rt></ruby>に伴う<ruby>原<rt>げん</rt>油<rt>ゆ</rt>価<rt>か</rt>格<rt>かく</rt></ruby>の<ruby>変<rt>へん</rt>動<rt>どう</rt></ruby>は、<ruby>常<rt>つね</rt></ruby>に<ruby>景<rt>けい</rt>気<rt>き</rt></ruby>の<span class=\"exam-hl\" data-tip=\"【N2常考單字】先行き（さきゆき）：前景、未來的走勢\"><ruby>先<rt>さき</rt>行<rt>ゆ</rt></ruby>き</span>を<ruby>左<rt>さ</rt>右<rt>ゆう</rt></ruby>する<ruby>要<rt>よう</rt>因<rt>いん</rt></ruby>となる。<ruby>外<rt>がい</rt>交<rt>こう</rt>交<rt>こう</rt>渉<rt>しょう</rt></ruby>の<ruby>進<rt>しん</rt>展<rt>てん</rt></ruby>によって<ruby>一<rt>いち</rt>時<rt>じ</rt>的<rt>てき</rt></ruby>に<ruby>緊<rt>きん</rt>張<rt>ちょう</rt></ruby>が<ruby>緩<rt>かん</rt>和<rt>わ</rt></ruby>し、<ruby>世<rt>せ</rt>界<rt>かい</rt>経<rt>けい</rt>済<rt>ざい</rt></ruby>の<ruby>急<rt>きゅう</rt>激<rt>げき</rt></ruby>な<span class=\"exam-hl\" data-tip=\"【N1常考單字】下振れ（したぶれ）：下行、表現低於預期\"><ruby>下<rt>した</rt>振<rt>ぶ</rt></ruby>れ</span>リスクが<ruby>後<rt>こう</rt>退<rt>たい</rt></ruby>する<ruby>局<rt>きょく</rt>面<rt>めん</rt></ruby><span class=\"exam-hl\" data-tip=\"【N2常考文法】～であっても：縱使是處於……情況下，也……\">であっても</span>、<ruby>最<rt>さい</rt>終<rt>しゅう</rt>的<rt>てき</rt></ruby>な<ruby>安<rt>あん</rt>定<rt>てい</rt></ruby>に<ruby>至<rt>いた</rt></ruby>るまでの<ruby>道<rt>みち</rt></ruby>のりは<ruby>決<rt>けっ</rt></ruby>して<ruby>平<rt>へい</rt>坦<rt>たん</rt></ruby>ではない。",
+            "エネルギー<ruby>価<rt>か</rt>格<rt>かく</rt></ruby>の<span class=\"exam-hl\" data-tip=\"【N1常考單字】高止まり（たかどまり）：價格維持在高點居高不下\"><ruby>高<rt>こう</rt>止<rt>ど</rt></ruby>まり</span>は、<ruby>物<rt>ぶつ</rt>流<rt>りゅう</rt>費<rt>ひ</rt></ruby>や<ruby>電<rt>でん</rt>力<rt>りょく</rt>料<rt>りょう</rt>金<rt>きん</rt></ruby>の上昇を通じて<ruby>企<rt>き</rt>業<rt>ぎょう</rt></ruby>の<ruby>収<rt>しゅう</rt>益<rt>えき</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考單字】圧迫（あっぱく）：壓迫、壓縮（獲利或空間）\"><ruby>圧<rt>あっ</rt>迫<rt>ぱく</rt></ruby></span>するだけでなく、<ruby>食<rt>しょく</rt>料<rt>りょう</rt>品<rt>ひん</rt></ruby>や<ruby>日<rt>にち</rt>用<rt>よう</rt>品<rt>ひん</rt></ruby>の<ruby>相<rt>あい</rt>次<rt>つ</rt></ruby>ぐ<ruby>値<rt>ね</rt>上<rt>あ</rt></ruby>がりとして<ruby>家<rt>か</rt>計<rt>けい</rt></ruby>の<ruby>消<rt>しょう</rt>費<rt>ひ</rt>意<rt>い</rt>欲<rt>よく</rt></ruby>にも<span class=\"exam-hl\" data-tip=\"【N2常考慣用】影を落とす（かげをおとす）：投下陰影、帶來負面影響\"><ruby>影<rt>かげ</rt></ruby>を<ruby>落<rt>お</rt></ruby>とす</span>。<ruby>特<rt>とく</rt></ruby>に<ruby>価<rt>か</rt>格<rt>かく</rt>転<rt>てん</rt>嫁<rt>か</rt></ruby>が<ruby>難<rt>むずか</rt></ruby>しい<ruby>中<rt>ちゅう</rt>小<rt>しょう</rt>企<rt>き</rt>業<rt>ぎょう</rt></ruby>では、コスト<ruby>増<rt>ぞう</rt></ruby>がそのまま<ruby>経<rt>けい</rt>営<rt>えい</rt></ruby>の<ruby>重<rt>おも</rt></ruby>しとなりやすい。",
+            "そのため、<ruby>企<rt>き</rt>業<rt>ぎょう</rt></ruby>には<ruby>短<rt>たん</rt>期<rt>き</rt>的<rt>てき</rt></ruby>な<ruby>相<rt>そう</rt>場<rt>ば</rt></ruby>の<ruby>上<rt>じょう</rt>下<rt>げ</rt></ruby>に<span class=\"exam-hl\" data-tip=\"【N1常考四字熟語】一喜一憂（いっきいちゆう）：一會兒高興、一會兒憂慮\"><ruby>一<rt>いち</rt>喜<rt>き</rt>一<rt>いち</rt>憂<rt>ゆう</rt></ruby></span><span class=\"exam-hl\" data-tip=\"【N2常考文法】～することなく：不……而直接……\">することなく</span>、<ruby>調<rt>ちょう</rt>達<rt>たつ</rt>先<rt>さき</rt></ruby>の<ruby>分<rt>ぶん</rt>散<rt>さん</rt></ruby>や<ruby>省<rt>しょう</rt></ruby>エネ<ruby>設<rt>せつ</rt>備<rt>び</rt></ruby>の<ruby>導<rt>どう</rt>入<rt>にゅう</rt></ruby>を<ruby>着<rt>ちゃく</rt>実<rt>じつ</rt></ruby>に<ruby>進<rt>すす</rt></ruby>める<ruby>体<rt>たい</rt>質<rt>しつ</rt>強<rt>きょう</rt>化<rt>か</rt></ruby>が<ruby>求<rt>もと</rt></ruby>められている。<ruby>不<rt>ふ</rt>確<rt>かく</rt>実<rt>じつ</rt></ruby>な<ruby>国<rt>こく</rt>際<rt>さい</rt>環<rt>かん</rt>境<rt>きょう</rt></ruby>を<ruby>生<rt>い</rt></ruby>き<ruby>抜<rt>ぬ</rt></ruby>くには、<ruby>危機<rt>きき</rt></ruby>を<ruby>契<rt>けい</rt>機<rt>き</rt></ruby>としてサプライチェーン<ruby>全<rt>ぜん</rt>体<rt>たい</rt></ruby>を<ruby>見<rt>み</rt>直<rt>なお</rt></ruby>す<ruby>長<rt>ちょう</rt>期<rt>き</rt>的<rt>てき</rt></ruby>な<ruby>視<rt>し</rt>座<rt>ざ</rt></ruby>が<ruby>不<rt>ふ</rt>可<rt>か</rt>欠<rt>けつ</rt></ruby>だ。"
+          ],
+          "plainParagraphs": [
+            "エネルギーや鉱物など資源の大半を輸入に頼る日本経済にとって、中東情勢や国際外交の動向に伴う原油価格の変動は、常に景気の先行きを左右する要因となる。外交交渉の進展によって一時的に緊張が緩和し、世界経済の急激な下振れリスクが後退する局面であっても、最終的な安定に至るまでの道のりは決して平坦ではない。",
+            "エネルギー価格の高止まりは、物流費や電力料金の上昇を通じて企業の収益を圧迫するだけでなく、食料品や日用品の相次ぐ値上がりとして家計の消費意欲にも影を落とす。特に価格転嫁が難しい中小企業では、コスト増がそのまま経営の重しとなりやすい。",
+            "そのため、企業には短期的な相場の上下に一喜一憂することなく、調達先の分散や省エネ設備の導入を着実に進める体質強化が求められている。不確実な国際環境を生き抜くには、危機を契機としてサプライチェーン全体を見直す長期的な視座が不可欠だ。"
+          ],
+          "plainJp": "エネルギーや鉱物など資源の大半を輸入に頼る日本経済にとって、中東情勢や国際外交の動向に伴う原油価格の変動は、常に景気の先行きを左右する要因となる。外交交渉の進展によって一時的に緊張が緩和し、世界経済の急激な下振れリスクが後退する局面であっても、最終的な安定に至るまでの道のりは決して平坦ではない。エネルギー価格の高止まりは、物流費や電力料金の上昇を通じて企業の収益を圧迫するだけでなく、食料品や日用品の相次ぐ値上がりとして家計の消費意欲にも影を落とす。特に価格転嫁が難しい中小企業では、コスト増がそのまま経営の重しとなりやすい。そのため、企業には短期的な相場の上下に一喜一憂することなく、調達先の分散や省エネ設備の導入を着実に進める体質強化が求められている。不確実な国際環境を生き抜くには、危機を契機としてサプライチェーン全体を見直す長期的な視座が不可欠だ。",
+          "translation": [
+            "對於能源與礦產等絕大多數資源仰賴進口的日本經濟而言，伴隨中東局勢或國際外交動向而來的原油價格波動，始終是左右景氣前景的關鍵因素。即使因為外交談判有所進展而使緊張局勢暫時緩和、全球經濟急遽下行的風險有所消退，通往最終穩定的道路也絕非平坦順遂。",
+            "能源價格居高不下，不僅會透過物流成本與電費上漲壓縮企業獲利，也會化為食品與日用品接連漲價，對家庭消費意願投下陰影。特別是在難以將成本轉嫁給售價的中小企業中，成本增加很容易直接成為經營上的沉重負擔。",
+            "因此，企業不能因短期行情的起伏而一喜一憂，必須確實推動採購來源分散化與引進節能設備，以強化經營體質。要在充滿不確定性的國際環境中生存下來，以危機為契機重新檢視整體供應鏈的長期視野是不可或缺的。"
+          ],
+          "vocab": [
+            {
+              "word": "先行き（さきゆき）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "前景、未來的走向（景気の先行き）"
+            },
+            {
+              "word": "下振れ（したぶれ）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "下行、表現低於預期基準"
+            },
+            {
+              "word": "高止まり（たかどまり）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "價格或數值維持在高點居高不下"
+            },
+            {
+              "word": "影を落とす（かげをおとす）",
+              "level": "JLPT N2 常考慣用",
+              "meaning": "投下陰影、帶來負面影響"
+            },
+            {
+              "word": "一喜一憂（いっきいちゆう）",
+              "level": "JLPT N1 常考四字熟語",
+              "meaning": "隨著情勢變化而一會兒高興、一會兒憂慮"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "～であっても",
+              "level": "JLPT N2 常考文法",
+              "explanation": "假定逆接，「縱使是處於……的局面下，也依然……」。"
+            },
+            {
+              "pattern": "～することなく",
+              "level": "JLPT N2 常考文法",
+              "explanation": "書面語否定連接，「不去做前項……而直接……」（一喜一憂することなく）。"
+            },
+            {
+              "pattern": "～を契機として（けいきとして）",
+              "level": "JLPT N1 常考文法",
+              "explanation": "表示「以……作為契機／轉機」（危機を契機として）。"
+            }
+          ]
+        }
+      },
+      "17:00": {
+        "time": "17:00",
+        "periodName": "午後篇",
+        "icon": "🌇",
+        "themeSummary": "商店街傍晚買菜對話 ＆ 預測海洋「植物性浮游生物」半年增減",
+        "dialogue": {
+          "scene": "購物・傍晚鮮魚店採買",
+          "title": "當季北海道秋刀魚與挑選秘訣",
+          "tone": "商店街店家與顧客間充滿人情味的自然對話",
+          "charCount": "196 字",
+          "lines": [
+            {
+              "speaker": "店主",
+              "role": "鮮魚店老闆",
+              "jp": "いらっしゃい！<ruby>今日<rt>きょう</rt></ruby>は<ruby>北<rt>ほっ</rt>海<rt>かい</rt>道<rt>どう</rt></ruby>から<span class=\"exam-hl\" data-tip=\"【N2常考慣用】脂がのる（あぶらがのる）：（當季魚類）油脂肥美\"><ruby>脂<rt>あぶら</rt></ruby>ののった</span>サンマが<ruby>入<rt>はい</rt></ruby>ってるよ。<ruby>今<rt>こん</rt>年<rt>とし</rt></ruby>の<ruby>中<rt>なか</rt></ruby>でもとびきりお<ruby>買<rt>か</rt></ruby>い<ruby>得<rt>どく</rt></ruby>だよ！",
+              "plainJp": "いらっしゃい！今日は北海道から脂ののったサンマが入ってるよ。今年の中でもとびきりお買い得だよ！",
+              "zh": "店主：歡迎光臨！今天有從北海道進貨、油脂很豐美的秋刀魚喔，是今年裡頭特別划算的一批！"
+            },
+            {
+              "speaker": "客",
+              "role": "常客",
+              "jp": "ほんとだ、<ruby>身<rt>み</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N2常考擬態語】ふっくら：飽滿圓潤、鬆軟厚實\">ふっくら</span>してて<ruby>美<rt>お</rt>味<rt>い</rt></ruby>しそう！新鮮なサンマを<ruby>選<rt>えら</rt></ruby>ぶときは、どこを<ruby>見<rt>み</rt></ruby>ればいいんですか？",
+              "plainJp": "ほんとだ、身がふっくらしてて美味しそう！新鮮なサンマを選ぶときは、どこを見ればいいんですか？",
+              "zh": "客人：真的耶，魚肉飽滿圓潤看起來好好吃！請問挑選新鮮秋刀魚的時候，要看哪個部位比較好呢？"
+            },
+            {
+              "speaker": "店主",
+              "role": "鮮魚店老闆",
+              "jp": "<ruby>口<rt>くち</rt>先<rt>さき</rt></ruby>がほんのり<ruby>黄<rt>き</rt>色<rt>いろ</rt></ruby>くて、<ruby>目<rt>め</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N2常考單字】澄む（すむ）：清澈透明\">澄んでいる</span>ものを選ぶといいよ。<ruby>塩<rt>しお</rt>焼<rt>や</rt></ruby>きにするなら<ruby>内<rt>ない</rt>臓<rt>ぞう</rt></ruby>もそのまま<ruby>焼<rt>や</rt></ruby>けるくらい<ruby>新<rt>しん</rt>鮮<rt>せん</rt></ruby>だよ。",
+              "plainJp": "口先がほんのり黄色くて、目が澄んでいるものを選ぶといいよ。塩焼きにするなら内臓もそのまま焼けるくらい新鮮だよ。",
+              "zh": "店主：挑嘴尖稍微帶點黃色、眼睛清澈透明的就對了。如果要做鹽烤的話，這批新鮮到連內臟都可以直接一起烤喔。"
+            },
+            {
+              "speaker": "客",
+              "role": "常客",
+              "jp": "いいことを<ruby>聞<rt>き</rt></ruby>きました！じゃあ、<ruby>今<rt>こん</rt>夜<rt>や</rt></ruby>は<ruby>家<rt>か</rt>族<rt>ぞく</rt></ruby>みんなで<ruby>食<rt>た</rt></ruby>べたいから、<ruby>四<rt>よん</rt>尾<rt>び</rt></ruby><ruby>包<rt>つつ</rt></ruby>んでください。",
+              "plainJp": "いいことを聞きました！じゃあ、今夜は家族みんなで食べたいから、四尾包んでください。",
+              "zh": "客人：學到好知識了！那今晚我想跟全家人一起吃，請幫我包四尾。"
+            },
+            {
+              "speaker": "店主",
+              "role": "鮮魚店老闆",
+              "jp": "まいどあり！<ruby>香<rt>かお</rt></ruby>りのいいスダチも<ruby>二<rt>ふた</rt></ruby>つ<span class=\"exam-hl\" data-tip=\"【N3口語常考】おまけしとく：「おまけしておく」縮約，表額外附贈\">おまけしとく</span>ね。<ruby>大<rt>だい</rt>根<rt>こん</rt></ruby>おろしをたっぷり<ruby>添<rt>そ</rt></ruby>えてどうぞ！",
+              "plainJp": "まいどあり！香りのいいスダチも二つおまけしとくね。大根おろしをたっぷり添えてどうぞ！",
+              "zh": "店主：多謝惠顧！再多送你兩顆香氣很棒的酢橘吧，搭配滿滿的白蘿蔔泥一起享用！"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "脂がのる（あぶらがのる）",
+              "level": "JLPT N2 常考慣用",
+              "meaning": "（當季魚類）油脂肥美豐潤"
+            },
+            {
+              "word": "ふっくら",
+              "level": "JLPT N2 常考擬態語",
+              "meaning": "飽滿鬆軟、圓潤厚實的樣子"
+            },
+            {
+              "word": "澄む（すむ）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "清澈、澄澈（目が澄んでいる）"
+            },
+            {
+              "word": "添える（そえる）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "附上、搭配（配菜或卡片）"
+            }
+          ]
+        },
+        "article": {
+          "genre": "生物・海洋環境",
+          "jlpt": "JLPT N2",
+          "title": "海の豊かさを先読みする——植物プランクトン増減の高精度予測",
+          "charCount": "572 字",
+          "sourceTitle": "Science Portal：海の食物連鎖を支える植物プランクトン、半年先の増減を高精度で予測",
+          "sourceUrl": "https://scienceportal.jst.go.jp/newsflash/20260929_n01/",
+          "paragraphs": [
+            "<ruby>私<rt>わたし</rt></ruby>たちの<ruby>食<rt>しょく</rt>卓<rt>たく</rt></ruby>に<ruby>並<rt>なら</rt></ruby>ぶサンマやマグロといった<ruby>魚<rt>ぎょ</rt>介<rt>かい</rt>類<rt>るい</rt></ruby>の<ruby>豊<rt>ゆた</rt></ruby>かさは、<ruby>目<rt>め</rt></ruby>に<ruby>見<rt>み</rt></ruby>えないほど<ruby>小<rt>ちい</rt></ruby>さな「<ruby>植<rt>しょく</rt>物<rt>ぶつ</rt></ruby>プランクトン」によって<ruby>支<rt>ささ</rt></ruby>えられている。<ruby>海<rt>うみ</rt></ruby>の<ruby>食<rt>しょく</rt>物<rt>もつ</rt>連<rt>れん</rt>鎖<rt>さ</rt></ruby>の<ruby>土<rt>ど</rt>台<rt>だい</rt></ruby>を<ruby>担<rt>にな</rt></ruby>う<span class=\"exam-hl\" data-tip=\"【N3/N2常考文法】～だけでなく…も：不僅……而且也……\">だけでなく</span>、<ruby>大<rt>たい</rt>気<rt>き</rt>中<rt>ちゅう</rt></ruby>の<ruby>二<rt>に</rt>酸<rt>さん</rt>化<rt>か</rt>炭<rt>たん</rt>素<rt>そ</rt></ruby>を<ruby>吸<rt>きゅう</rt>収<rt>しゅう</rt></ruby>して<ruby>地<rt>ち</rt>球<rt>きゅう</rt></ruby>の<ruby>気<rt>き</rt>候<rt>こう</rt></ruby>を<ruby>調<rt>ちょう</rt>整<rt>せい</rt></ruby>するうえでも<span class=\"exam-hl\" data-tip=\"【N2常考單字】欠かせない（かかせない）：不可或缺的\">欠かせない</span><ruby>存<rt>そん</rt>在<rt>ざい</rt></ruby>だ。",
+            "<ruby>近<rt>きん</rt>年<rt>ねん</rt></ruby>、<ruby>人<rt>じん</rt>工<rt>こう</rt>衛<rt>えい</rt>星<rt>せい</rt></ruby>による<ruby>海<rt>かい</rt>面<rt>めん</rt></ruby>の<ruby>観<rt>かん</rt>測<rt>そく</rt></ruby>データと<ruby>海<rt>かい</rt>洋<rt>よう</rt></ruby>シミュレーションを<span class=\"exam-hl\" data-tip=\"【N1常考單字】融合（ゆうごう）：融合、結合為一體\"><ruby>融<rt>ゆう</rt>合<rt>ごう</rt></ruby></span>させることで、この<ruby>植<rt>しょく</rt>物<rt>ぶつ</rt></ruby>プランクトンが<ruby>半<rt>はん</rt>年<rt>とし</rt>先<rt>さき</rt></ruby>にどの<ruby>海<rt>かい</rt>域<rt>いき</rt></ruby>で<ruby>増<rt>ぞう</rt>減<rt>げん</rt></ruby>するかを<ruby>高<rt>こう</rt>精<rt>せい</rt>度<rt>ど</rt></ruby>で<ruby>予<rt>よ</rt>測<rt>そく</rt></ruby>する<ruby>技<rt>ぎ</rt>術<rt>じゅつ</rt></ruby>が<ruby>開<rt>かい</rt>発<rt>はつ</rt></ruby>された。<ruby>海<rt>かい</rt>水<rt>すい</rt>温<rt>おん</rt></ruby>の<ruby>変<rt>へん</rt>化<rt>か</rt></ruby>や<ruby>海<rt>かい</rt>流<rt>りゅう</rt></ruby>のうねりが、<ruby>海<rt>かい</rt>底<rt>てい</rt></ruby>からの<ruby>栄<rt>えい</rt>養<rt>よう</rt>塩<rt>えん</rt></ruby>の<ruby>供<rt>きょう</rt>給<rt>きゅう</rt></ruby>にどう<ruby>影<rt>えい</rt>響<rt>きょう</rt></ruby>するかをスーパーコンピューターで<ruby>精<rt>せい</rt>密<rt>みつ</rt></ruby>に<ruby>計<rt>けい</rt>算<rt>さん</rt></ruby>する<ruby>仕<rt>し</rt>組<rt>く</rt></ruby>みである。",
+            "<ruby>従<rt>じゅう</rt>来<rt>らい</rt></ruby>は<ruby>数<rt>すう</rt>週<rt>しゅう</rt>間<rt>かん</rt></ruby><ruby>先<rt>さき</rt></ruby>までの<ruby>見<rt>み</rt>通<rt>とお</rt></ruby>しが<ruby>限<rt>げん</rt>界<rt>かい</rt></ruby>とされていたが、<ruby>半<rt>はん</rt>年<rt>とし</rt></ruby>という<ruby>長<rt>ちょう</rt>期<rt>き</rt></ruby>の<ruby>予<rt>よ</rt>測<rt>そく</rt></ruby>が<ruby>可<rt>か</rt>能<rt>のう</rt></ruby>になった<ruby>意<rt>い</rt>義<rt>ぎ</rt></ruby>は<ruby>大<rt>おお</rt></ruby>きい。<ruby>好<rt>こう</rt>漁<rt>ぎょ</rt>場<rt>じょう</rt></ruby>の<ruby>変<rt>へん</rt>動<rt>どう</rt></ruby>を<ruby>事<rt>じ</rt>前<rt>ぜん</rt></ruby>に<span class=\"exam-hl\" data-tip=\"【N2常考單字】把握（はあく）：掌握、透徹了解\"><ruby>把<rt>は</rt>握<rt>あく</rt></ruby></span>できれば、<ruby>漁<rt>ぎょ</rt>船<rt>せん</rt></ruby>の<ruby>燃<rt>ねん</rt>料<rt>りょう</rt></ruby>を<ruby>節<rt>せつ</rt>約<rt>やく</rt></ruby>できる<span class=\"exam-hl\" data-tip=\"【N2常考文法】～ばかりでなく：不僅……而且還……\">ばかりでなく</span>、<ruby>乱<rt>らん</rt>獲<rt>かく</rt></ruby>を<ruby>防<rt>ふせ</rt></ruby>ぎながら<ruby>持<rt>じ</rt>続<rt>ぞく</rt>可<rt>か</rt>能<rt>のう</rt></ruby>な<ruby>水<rt>すい</rt>産<rt>さん</rt>資<rt>し</rt>源<rt>げん</rt></ruby>の<ruby>管<rt>かん</rt>理<rt>り</rt></ruby>にも<ruby>大<rt>おお</rt></ruby>きく<span class=\"exam-hl\" data-tip=\"【N2常考單字】貢献（こうけん）：貢獻\"><ruby>貢<rt>こう</rt>献<rt>けん</rt></ruby></span>すると<ruby>期<rt>き</rt>待<rt>たい</rt></ruby>されている。"
+          ],
+          "plainParagraphs": [
+            "私たちの食卓に並ぶサンマやマグロといった魚介類の豊かさは、目に見えないほど小さな「植物プランクトン」によって支えられている。海の食物連鎖の土台を担うだけでなく、大気中の二酸化炭素を吸収して地球の気候を調整するうえでも欠かせない存在だ。",
+            "近年、人工衛星による海面の観測データと海洋シミュレーションを融合させることで、この植物プランクトンが半年先にどの海域で増減するかを高精度で予測する技術が開発された。海水温の変化や海流のうねりが、海底からの栄養塩の供給にどう影響するかをスーパーコンピューターで精密に計算する仕組みである。",
+            "従来は数週間先までの見通しが限界とされていたが、半年という長期の予測が可能になった意義は大きい。好漁場の変動を事前に把握できれば、漁船の燃料を節約できるばかりでなく、乱獲を防ぎながら持続可能な水産資源の管理にも大きく貢献すると期待されている。"
+          ],
+          "plainJp": "私たちの食卓に並ぶサンマやマグロといった魚介類の豊かさは、目に見えないほど小さな「植物プランクトン」によって支えられている。海の食物連鎖の土台を担うだけでなく、大気中の二酸化炭素を吸収して地球の気候を調整するうえでも欠かせない存在だ。近年、人工衛星による海面の観測データと海洋シミュレーションを融合させることで、この植物プランクトンが半年先にどの海域で増減するかを高精度で予測する技術が開発された。海水温の変化や海流のうねりが、海底からの栄養塩の供給にどう影響するかをスーパーコンピューターで精密に計算する仕組みである。従来は数週間先までの見通しが限界とされていたが、半年という長期の予測が可能になった意義は大きい。好漁場の変動を事前に把握できれば、漁船の燃料を節約できるばかりでなく、乱獲を防ぎながら持続可能な水産資源の管理にも大きく貢献すると期待されている。",
+          "translation": [
+            "我們餐桌上排列的秋刀魚、鮪魚等豐富海鮮漁獲，其實是由肉眼看不見的微小「植物性浮游生物」所支撐的。牠們不僅擔綱海洋食物鏈的基石，在吸收大氣中的二氧化碳、調節地球氣候方面，也是不可或缺的存在。",
+            "近年來，透過結合人造衛星的海面觀測數據與海洋模擬模型，科學家成功開發出能高精準度預測半年後各海域植物性浮游生物增減的技術。這套機制是利用超級電腦，精密計算海水溫度變化與洋流起伏如何影響海底營養鹽的供給。",
+            "過去最多只能預測到幾週後的變化，如今能做到長達半年的預測，具有重大意義。若能事先掌握優良漁場的變動趨勢，不僅能節省漁船燃料，更可望在防止過度捕撈的同時，對永續水產資源的管理做出重大貢獻。"
+          ],
+          "vocab": [
+            {
+              "word": "欠かせない（かかせない）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "不可或缺的、少不了的"
+            },
+            {
+              "word": "融合（ゆうごう）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "融合、將不同事物結合為一"
+            },
+            {
+              "word": "把握（はあく）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "掌握、透徹了解（情勢或數據）"
+            },
+            {
+              "word": "貢献（こうけん）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "貢獻、有助於……"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "～といった",
+              "level": "JLPT N3/N2 常考文法",
+              "explanation": "列舉代表性事物，「諸如……之類的」（サンマやマグロといった魚介類）。"
+            },
+            {
+              "pattern": "～ばかりでなく",
+              "level": "JLPT N2 常考文法",
+              "explanation": "表示「不僅僅……而且還……」，常搭配後句的「も」。"
+            }
+          ]
+        }
+      },
+      "22:00": {
+        "time": "22:00",
+        "periodName": "夜間篇",
+        "icon": "🌙",
+        "themeSummary": "家庭週末溫泉旅行規劃 ＆ 夏目漱石《硝子戸の中》日常隨筆",
+        "dialogue": {
+          "scene": "家庭・規劃秋末溫泉小旅行",
+          "title": "避開塞車人潮的早班特急列車",
+          "tone": "家庭成員間商量出遊細節的自然口語",
+          "charCount": "195 字",
+          "lines": [
+            {
+              "speaker": "母",
+              "role": "母親",
+              "jp": "<ruby>来<rt>らい</rt>週末<rt>しゅうまつ</rt></ruby>の<ruby>温<rt>おん</rt>泉<rt>せん</rt>旅<rt>りょ</rt>行<rt>こう</rt></ruby>だけど、<ruby>紅<rt>こう</rt>葉<rt>よう</rt></ruby>が見頃を迎えているから、<ruby>高<rt>こう</rt>速<rt>そく</rt>道<rt>どう</rt>路<rt>ろ</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N3常考單字】渋滞（じゅうたい）：塞車、交通堵塞\"><ruby>渋<rt>じゅう</rt>滞<rt>たい</rt></ruby></span>するかもしれないわね。",
+              "plainJp": "来週末の温泉旅行だけど、紅葉が見頃を迎えているから、高速道路が渋滞するかもしれないわね。",
+              "zh": "母親：下週末的溫泉旅行呀，因為楓葉正好進入最佳觀賞期，高速公路可能會塞車呢。"
+            },
+            {
+              "speaker": "父",
+              "role": "父親",
+              "jp": "そうだな。<span class=\"exam-hl\" data-tip=\"【N2常考副詞】せっかく：好不容易、難得……\">せっかく</span>の<ruby>休<rt>きゅう</rt>日<rt>じつ</rt></ruby>に<ruby>運<rt>うん</rt>転<rt>てん</rt></ruby>ばかりで<ruby>疲<rt>つか</rt></ruby>れるのもなんだし、<ruby>今<rt>こん</rt>回<rt>かい</rt></ruby>は<ruby>特<rt>とっ</rt>急<rt>きゅう</rt>電<rt>でん</rt>車<rt>しゃ</rt></ruby>でのんびり<ruby>向<rt>む</rt></ruby>かうのはどうだい？",
+              "plainJp": "そうだな。せっかくの休日に運転ばかりで疲れるのもなんだし、今回は特急電車でのんびり向かうのはどうだい？",
+              "zh": "父親：說得也是。難得的假日要是光開車就累壞了也不好，這次我們改搭特急列車悠閒過去怎麼樣？"
+            },
+            {
+              "speaker": "母",
+              "role": "母親",
+              "jp": "それがいいわね！でも、<ruby>指<rt>し</rt>定<rt>てい</rt>席<rt>せき</rt></ruby>が<span class=\"exam-hl\" data-tip=\"【N2常考文法】～ないうちに：趁還沒……之前\">埋まらないうちに</span>、<ruby>今<rt>こん</rt>夜<rt>や</rt></ruby>のうちにネットで<ruby>予<rt>よ</rt>約<rt>やく</rt></ruby>しておいたほうがよさそうよ。",
+              "plainJp": "それがいいわね！でも、指定席が埋まらないうちに、今夜のうちにネットで予約しておいたほうがよさそうよ。",
+              "zh": "母親：這樣好耶！不過趁對號座還沒被訂滿之前，我們今晚先在網路上訂好票比較保險喔。"
+            },
+            {
+              "speaker": "父",
+              "role": "父親",
+              "jp": "よし、<ruby>今<rt>いま</rt></ruby>から<ruby>空<rt>くう</rt>席<rt>せき</rt></ruby>を<ruby>調<rt>しら</rt></ruby>べてみるよ。<ruby>九<rt>く</rt>時<rt>じ</rt>発<rt>はつ</rt></ruby>の<ruby>便<rt>びん</rt></ruby>なら、<ruby>昼<rt>ひる</rt></ruby>すぎには<ruby>温<rt>おん</rt>泉<rt>せん</rt>街<rt>がい</rt></ruby>に<ruby>着<rt>つ</rt></ruby>けるはずだ。",
+              "plainJp": "よし、今から空席を調べてみるよ。九時発の便なら、昼すぎには温泉街に着けるはずだ。",
+              "zh": "父親：好，我現在就來查查空位。如果是九點出發的班次，過中午應該就能抵達溫泉街了。"
+            },
+            {
+              "speaker": "母",
+              "role": "母親",
+              "jp": "楽しみだわ。<ruby>当<rt>とう</rt>日<rt>じつ</rt></ruby>は<ruby>少し早<rt>すこしはや</rt></ruby>めに<ruby>駅<rt>えき</rt></ruby>へ<ruby>行<rt>い</rt></ruby>って、<ruby>季<rt>き</rt>節<rt>せつ</rt>限<rt>げん</rt>定<rt>てい</rt></ruby>の<ruby>駅<rt>えき</rt>弁<rt>べん</rt></ruby>を<ruby>買<rt>か</rt></ruby>って<ruby>乗<rt>の</rt></ruby>り<ruby>込<rt>こ</rt></ruby>みましょう！",
+              "plainJp": "楽しみだわ。当日は少し早めに駅へ行って、季節限定の駅弁を買って乗り込みましょう！",
+              "zh": "母親：真令人期待。當天我們稍微提早一點去車站，買季節限定的鐵路便當上車吧！"
+            }
+          ],
+          "vocab": [
+            {
+              "word": "見頃（みごろ）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "（花卉、楓葉等）最佳觀賞期"
+            },
+            {
+              "word": "渋滞（じゅうたい）",
+              "level": "JLPT N3 常考單字",
+              "meaning": "塞車、交通擁堵"
+            },
+            {
+              "word": "せっかく",
+              "level": "JLPT N2 常考副詞",
+              "meaning": "好不容易、難得（せっかくの休日）"
+            },
+            {
+              "word": "～ないうちに",
+              "level": "JLPT N2 常考文法",
+              "meaning": "趁著還沒發生……之前趕快……"
+            }
+          ]
+        },
+        "article": {
+          "genre": "隨筆・文學與日常",
+          "jlpt": "JLPT N1~N2",
+          "title": "小さな書斎から世界を見つめる——漱石『硝子戸の中』の静かな眼差し",
+          "charCount": "579 字",
+          "sourceTitle": "青空文庫：夏目漱石『硝子戸の中』",
+          "sourceUrl": "https://www.aozora.gr.jp/cards/000148/files/760_14940.html",
+          "paragraphs": [
+            "<ruby>大<rt>たい</rt>正<rt>しょう</rt>四<rt>よ</rt>年<rt>ねん</rt></ruby>の<ruby>冬<rt>ふゆ</rt></ruby>、<ruby>体<rt>たい</rt>調<rt>ちょう</rt></ruby>を<ruby>崩<rt>くず</rt></ruby>して<ruby>自<rt>じ</rt>宅<rt>たく</rt></ruby>に<span class=\"exam-hl\" data-tip=\"【N2常考文法】～がち：動不動就容易……（多用於負面傾向）\">こもりがち</span>だった<ruby>夏<rt>なつ</rt>目<rt>め</rt>漱<rt>そう</rt>石<rt>せき</rt></ruby>は、<ruby>明<rt>あか</rt></ruby>るい<ruby>硝<rt>がら</rt>子<rt>す</rt>戸<rt>ど</rt></ruby>の<ruby>内<rt>うち</rt>側<rt>がわ</rt></ruby>から<ruby>日<rt>ひ</rt>々<rt>び</rt></ruby>の<ruby>出<rt>で</rt>来<rt>き</rt>事<rt>ごと</rt></ruby>や<ruby>昔<rt>むかし</rt></ruby>の<ruby>記<rt>き</rt>憶<rt>おく</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N1常考單字】綴る（つづる）：撰寫、以文字記錄抒發\"><ruby>綴<rt>つづ</rt></ruby>った</span><ruby>随<rt>ずい</rt>筆<rt>ひつ</rt></ruby>『<ruby>硝<rt>がら</rt>子<rt>す</rt>戸<rt>ど</rt></ruby>の<ruby>中<rt>なか</rt></ruby>』を<ruby>新<rt>しん</rt>聞<rt>ぶん</rt></ruby>に<ruby>連<rt>れん</rt>載<rt>さい</rt></ruby>した。<ruby>社<rt>しゃ</rt>会<rt>かい</rt></ruby>を<ruby>揺<rt>ゆ</rt></ruby>るがす<ruby>大<rt>だい</rt>事<rt>じ</rt>件<rt>けん</rt></ruby>ではなく、<ruby>飼<rt>か</rt></ruby>い<ruby>猫<rt>ねこ</rt></ruby>の<ruby>仕<rt>し</rt>草<rt>ぐさ</rt></ruby>や<ruby>訪<rt>おとず</rt></ruby>れる<ruby>客<rt>きゃく</rt></ruby>との<ruby>対<rt>たい</rt>話<rt>わ</rt></ruby>、<ruby>幼<rt>おさな</rt></ruby>い<ruby>頃<rt>ころ</rt></ruby>の<ruby>街<rt>まち</rt>並<rt>な</rt></ruby>みといった<ruby>身<rt>み</rt>近<rt>ぢか</rt></ruby>な<ruby>題<rt>だい</rt>材<rt>ざい</rt></ruby>が、<span class=\"exam-hl\" data-tip=\"【N1常考形容動詞】淡々（たんたん）：平淡從容、不誇張的樣子\"><ruby>淡<rt>たん</rt>々<rt>たん</rt></ruby>とした</span><ruby>筆<rt>ひっ</rt>致<rt>ち</rt></ruby>で<ruby>描<rt>えが</rt></ruby>かれている。",
+            "<ruby>硝<rt>がら</rt>子<rt>す</rt>戸<rt>ど</rt></ruby>という<ruby>一<rt>いち</rt>枚<rt>まい</rt></ruby>の<ruby>透<rt>とう</rt>明<rt>めい</rt></ruby>な<ruby>境<rt>きょう</rt>界<rt>かい</rt></ruby>を<span class=\"exam-hl\" data-tip=\"【N2常考單字】隔てる（へだてる）：隔開、阻隔\"><ruby>隔<rt>へだ</rt></ruby>てる</span>ことで、<ruby>外<rt>そと</rt></ruby>の<ruby>世<rt>せ</rt>間<rt>けん</rt></ruby>の<ruby>騒<rt>さわ</rt></ruby>がしさは<ruby>和<rt>やわ</rt></ruby>らぎ、<ruby>逆<rt>ぎゃく</rt></ruby>に<ruby>人<rt>ひと</rt></ruby>の<ruby>心<rt>こころ</rt></ruby>の<span class=\"exam-hl\" data-tip=\"【N1常考單字】機微（きび）：細膩微妙的心思變化\"><ruby>機<rt>き</rt>微<rt>び</rt></ruby></span>や<ruby>暮<rt>く</rt></ruby>らしの<ruby>愛<rt>いと</rt></ruby>おしさが<ruby>鮮<rt>あざ</rt></ruby>やかに<ruby>浮<rt>う</rt></ruby>かび<ruby>上<rt>あ</rt></ruby>がる。ある<ruby>日<rt>ひ</rt></ruby>、<ruby>深<rt>ふか</rt></ruby>い<ruby>悩<rt>なや</rt></ruby>みを<ruby>抱<rt>かか</rt></ruby>えた<ruby>女<rt>じょ</rt>性<rt>せい</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>にじっと<ruby>耳<rt>みみ</rt></ruby>を<ruby>傾<rt>かたむ</rt></ruby>けた<ruby>漱<rt>そう</rt>石<rt>せき</rt></ruby>は、<ruby>他<rt>た</rt>人<rt>にん</rt></ruby>の<ruby>痛<rt>いた</rt></ruby>みに<ruby>寄<rt>よ</rt></ruby>り<ruby>添<rt>そ</rt></ruby>いながらも、<ruby>人<rt>にん</rt>間<rt>げん</rt></ruby>という<ruby>存<rt>そん</rt>在<rt>ざい</rt></ruby>の<ruby>奥<rt>おく</rt>深<rt>ぶか</rt></ruby>さを<ruby>静<rt>しず</rt></ruby>かに<ruby>見<rt>み</rt></ruby>つめている。",
+            "<ruby>遠<rt>とお</rt></ruby>くへ<ruby>出<rt>で</rt></ruby>かけ<span class=\"exam-hl\" data-tip=\"【N1常考文法】～ずとも：即使不……也……（文語假定）\">ずとも</span>、<ruby>自<rt>じ</rt>分<rt>ぶん</rt></ruby>の<ruby>足<rt>あし</rt>元<rt>もと</rt></ruby>にある<span class=\"exam-hl\" data-tip=\"【N2常考連體詞】何気ない（なにげない）：不經意的、看似尋常的\"><ruby>何<rt>なに</rt>気<rt>げ</rt></ruby>ない</span><ruby>風<rt>ふう</rt>景<rt>けい</rt></ruby>に<ruby>丁<rt>てい</rt>寧<rt>ねい</rt></ruby>に<ruby>目<rt>め</rt></ruby>を<ruby>向<rt>む</rt></ruby>ければ、<ruby>思<rt>し</rt>考<rt>こう</rt></ruby>はいくらでも<span class=\"exam-hl\" data-tip=\"【N2常考文法】～得る（うる／える）：能夠……、有可能……\"><ruby>深<rt>ふか</rt></ruby>まり<ruby>得<rt>う</rt></ruby>る</span>。<ruby>春<rt>はる</rt></ruby>の<ruby>日<rt>ひ</rt>差<rt>ざ</rt></ruby>しが<ruby>差<rt>さ</rt></ruby>し<ruby>込<rt>こ</rt></ruby>む<ruby>小<rt>ちい</rt></ruby>さな<ruby>書<rt>しょ</rt>斎<rt>さい</rt></ruby>から<ruby>生<rt>う</rt></ruby>まれたこの<ruby>小<rt>しょう</rt>品<rt>ひん</rt></ruby>は、<ruby>慌<rt>あわ</rt></ruby>ただしく<ruby>過<rt>す</rt></ruby>ぎる<ruby>日<rt>にち</rt>常<rt>じょう</rt></ruby>を<ruby>味<rt>あじ</rt></ruby>わい<ruby>直<rt>なお</rt></ruby>すヒントを<ruby>私<rt>わたし</rt></ruby>たちに<ruby>教<rt>おし</rt></ruby>えてくれる。"
+          ],
+          "plainParagraphs": [
+            "大正四年の冬、体調を崩して自宅にこもりがちだった夏目漱石は、明るい硝子戸の内側から日々の出来事や昔の記憶を綴った随筆『硝子戸の中』を新聞に連載した。社会を揺るがす大事件ではなく、飼い猫の仕草や訪れる客との対話、幼い頃の街並みといった身近な題材が、淡々とした筆致で描かれている。",
+            "硝子戸という一枚の透明な境界を隔てることで、外の世間の騒がしさは和らぎ、逆に人の心の機微や暮らしの愛おしさが鮮やかに浮かび上がる。ある日、深い悩みを抱えた女性の話にじっと耳を傾けた漱石は、他人の痛みに寄り添いながらも、人間という存在の奥深さを静かに見つめている。",
+            "遠くへ出かけずとも、自分の足元にある何気ない風景に丁寧に目を向ければ、思考はいくらでも深まり得る。春の日差しが差し込む小さな書斎から生まれたこの小品は、慌ただしく過ぎる日常を味わい直すヒントを私たちに教えてくれる。"
+          ],
+          "plainJp": "大正四年の冬、体調を崩して自宅にこもりがちだった夏目漱石は、明るい硝子戸の内側から日々の出来事や昔の記憶を綴った随筆『硝子戸の中』を新聞に連載した。社会を揺るがす大事件ではなく、飼い猫の仕草や訪れる客との対話、幼い頃の街並みといった身近な題材が、淡々とした筆致で描かれている。硝子戸という一枚の透明な境界を隔てることで、外の世間の騒がしさは和らぎ、逆に人の心の機微や暮らしの愛おしさが鮮やかに浮かび上がる。ある日、深い悩みを抱えた女性の話にじっと耳を傾けた漱石は、他人の痛みに寄り添いながらも、人間という存在の奥深さを静かに見つめている。遠くへ出かけずとも、自分の足元にある何気ない風景に丁寧に目を向ければ、思考はいくらでも深まり得る。春の日差しが差し込む小さな書斎から生まれたこの小品は、慌ただしく過ぎる日常を味わい直すヒントを私たちに教えてくれる。",
+          "translation": [
+            "大正四年（1915 年）冬天，因身體微恙而時常留在家中的夏目漱石，在報紙上連載了從明亮玻璃門內側記錄日常點滴與往昔記憶的隨筆集《硝子戸の中（玻璃門內）》。書中描寫的並非撼動社會的重大事件，而是家貓的舉止、與來訪客人的對話、童年街景等貼近生活的題材，筆觸平淡從容。",
+            "隔著玻璃門這一道透明的界線，外在世間的喧囂得以緩和，反而讓細膩的人心微妙變化與生活的可貴之處鮮明地浮現出來。某天，靜靜傾聽一位懷抱深沉煩惱的女性訴說的漱石，在體貼他人痛楚的同時，也靜靜凝視著「人」這種存在的深邃。",
+            "即便不出遠門，只要細心凝視自己腳邊看似不經意的日常風景，思考依然能夠無限深化。這部誕生於春光灑落的幽靜書房中的精巧隨筆，為我們提供了重新細細品味匆忙日常的啟發。"
+          ],
+          "vocab": [
+            {
+              "word": "綴る（つづる）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "撰寫、以文字記錄抒發"
+            },
+            {
+              "word": "淡々（たんたん）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "平淡從容、不帶誇飾（淡々とした筆致）"
+            },
+            {
+              "word": "隔てる（へだてる）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "隔開、阻隔（空間或時間）"
+            },
+            {
+              "word": "機微（きび）",
+              "level": "JLPT N1 常考單字",
+              "meaning": "微妙之處、細膩的心思變化（人の心の機微）"
+            },
+            {
+              "word": "何気ない（なにげない）",
+              "level": "JLPT N2 常考單字",
+              "meaning": "不經意的、看似平淡尋常的"
+            }
+          ],
+          "grammar": [
+            {
+              "pattern": "～がち",
+              "level": "JLPT N2 常考文法",
+              "explanation": "接於動詞ます形或名詞後，表示「動不動就容易……」（自宅にこもりがち）。"
+            },
+            {
+              "pattern": "～ずとも",
+              "level": "JLPT N1 常考文法",
+              "explanation": "文語否定假定，「即使不……也……」（遠くへ出かけずとも）。"
+            },
+            {
+              "pattern": "～得る（うる／える）",
+              "level": "JLPT N2 常考文法",
+              "explanation": "接於動詞ます形後，表示「有可能……、能夠……」（深まり得る）。"
+            }
+          ]
+        }
+      }
+    }
+  }
+];
+
+    // =========================================================================
+    // Application State (Defaults strictly match user requirements #1, #4, #5, #7)
+    // =========================================================================
+    const state = {
+      activeDayIndex: 0,
+      activeSlotKey: "08:00",
+      showFurigana: false,          // (1) Default: NO furigana
+      showExamHighlight: true,      // (5) Default: SHOW light-red high-frequency exam highlights
+      expandAllTranslations: false, // (4) Default: HIDE all Chinese translations
+      dialogueTransOpen: false,     // (4) Default: HIDE dialogue Chinese translation
+      articleTransOpen: false,      // (4) Default: HIDE article Chinese translation
+      zone1Open: false,             // (7) Default: Zone 1 (Top) COLLAPSED
+      zone2Open: false,             // (7) Default: Zone 2 (Bottom) COLLAPSED
+      largeFont: false,
+      speechRate: 0.95,
+      selectedVoiceURI: "auto",
+      openaiKey: "",
+      completedSlots: {},
+      savedVocab: []
+    };
+
+    function loadSavedState() {
+      try {
+        const comp = localStorage.getItem("yomuhi_completed_slots");
+        if (comp) state.completedSlots = JSON.parse(comp);
+        const voc = localStorage.getItem("yomuhi_saved_vocab");
+        if (voc) state.savedVocab = JSON.parse(voc);
+        const okey = localStorage.getItem("yomuhi_openai_key");
+        if (okey) state.openaiKey = okey;
+      } catch (e) {}
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("yomuhi_completed_slots", JSON.stringify(state.completedSlots));
+        localStorage.setItem("yomuhi_saved_vocab", JSON.stringify(state.savedVocab));
+        localStorage.setItem("yomuhi_openai_key", state.openaiKey || "");
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast-msg");
+      toast.textContent = msg;
+      toast.classList.remove("hidden");
+      if (window._toastTimer) clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 2600);
+    }
+
+    function getSlotId(dayDate, slotKey) {
+      return `${dayDate}_${slotKey}`;
+    }
+
+    // =========================================================================
+    // Natural Voice Selection & Multi-Speaker Web Speech / AI TTS
+    // =========================================================================
+    let availableJpVoices = [];
+    let currentAudioObj = null;
+
+    function scoreJapaneseVoice(v) {
+      const name = (v.name || "").toLowerCase();
+      let score = 0;
+      if (name.includes("natural") || name.includes("online")) score += 50;
+      if (name.includes("nanami") || name.includes("keita")) score += 40;
+      if (name.includes("google") && name.includes("日本語")) score += 35;
+      if (name.includes("kyoko") || name.includes("otoya") || name.includes("siri")) score += 30;
+      if (name.includes("enhanced") || name.includes("premium")) score += 20;
+      if (!v.localService) score += 10;
+      return score;
+    }
+
+    let isPopulatingVoices = false; // 防止 populateVoices ↔ getPreferredVoice 無限遞迴（裝置沒有日文語音時）
+
+    function populateVoices() {
+      if (!("speechSynthesis" in window) || isPopulatingVoices) return;
+      isPopulatingVoices = true;
+      try {
+        const allVoices = window.speechSynthesis.getVoices() || [];
+        availableJpVoices = allVoices
+          .filter(v => v.lang && (v.lang.toLowerCase().startsWith("ja") || v.name.includes("日本語") || v.name.includes("Japanese")))
+          .sort((a, b) => scoreJapaneseVoice(b) - scoreJapaneseVoice(a));
+
+        const sel = document.getElementById("select-jp-voice");
+        if (sel) {
+          const currentVal = sel.value || state.selectedVoiceURI;
+          sel.innerHTML = `<option value="auto">✨ 自動優選最自然日文語音（推薦）</option>`;
+          availableJpVoices.forEach(v => {
+            const isNatural = scoreJapaneseVoice(v) >= 30;
+            const opt = document.createElement("option");
+            opt.value = v.voiceURI;
+            opt.textContent = `${isNatural ? '🌟 ' : ''}${v.name} (${v.lang})`;
+            sel.appendChild(opt);
+          });
+          if ([...sel.options].some(o => o.value === currentVal)) {
+            sel.value = currentVal;
+          }
+        }
+        updateVoiceTagLabels();
+      } catch (e) {
+        // 某些環境（iframe、受限瀏覽器）存取 speechSynthesis 會出錯，忽略即可
+      } finally {
+        isPopulatingVoices = false;
+      }
+    }
+
+    function getPreferredVoice(speakerIndex = 0) {
+      if (availableJpVoices.length === 0 && "speechSynthesis" in window) {
+        populateVoices();
+      }
+      const isAlt = speakerIndex % 2 === 1;
+      if (state.selectedVoiceURI !== "auto") {
+        const found = availableJpVoices.find(v => v.voiceURI === state.selectedVoiceURI);
+        if (found) {
+          if (!isAlt) return found;
+          // 第二位說話者：挑另一個日文聲線，沒有就沿用同一個
+          return availableJpVoices.find(v => v.voiceURI !== found.voiceURI) || found;
+        }
+      }
+      if (availableJpVoices.length > 1 && isAlt) {
+        return availableJpVoices[1];
+      }
+      return availableJpVoices[0] || null;
+    }
+
+    function updateVoiceTagLabels() {
+      const t1 = document.getElementById("current-voice-tag-1");
+      const t2 = document.getElementById("current-voice-tag-2");
+      let label = "系統自然日文語音";
+      if (state.openaiKey && state.openaiKey.startsWith("sk-")) {
+        label = "✨ OpenAI 真人級 AI 語音";
+      } else {
+        const v = getPreferredVoice(0);
+        if (v) label = `聲線：${v.name.replace(/Microsoft |Online \(Natural\) - Japanese \(Japan\)/g, '').trim()}`;
+      }
+      if (t1) t1.textContent = `${label} (${state.speechRate}x)`;
+      if (t2) t2.textContent = `${label} (${state.speechRate}x)`;
+    }
+
+    function stopSpeech() {
+      window._speechCancelled = true;
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (currentAudioObj) {
+        currentAudioObj.pause();
+        releaseAudio();
+      }
+      document.querySelectorAll(".speaking-active").forEach(el => el.classList.remove("speaking-active"));
+      const btnDlg = document.getElementById("btn-speak-dialogue");
+      const btnArt = document.getElementById("btn-speak-article");
+      if (btnDlg) btnDlg.innerHTML = "<span>🔊 朗讀對話</span>";
+      if (btnArt) btnArt.innerHTML = "<span>🔊 朗讀專欄</span>";
+    }
+
+    // 釋放 OpenAI 音訊佔用的 blob 網址，避免記憶體洩漏
+    function releaseAudio() {
+      if (currentAudioObj && currentAudioObj._blobUrl) {
+        URL.revokeObjectURL(currentAudioObj._blobUrl);
+      }
+      currentAudioObj = null;
+    }
+
+    let ttsLoading = false; // OpenAI 語音生成中，避免重複點擊造成同時播放
+
+    async function speakWithOpenAI(text, sentences, domElements, btnElement, defaultLabel, alternatePitch) {
+      ttsLoading = true;
+      try {
+        btnElement.innerHTML = "<span>⏳ 生成 AI 自然語音中...</span>";
+        const resp = await fetch("https://api.openai.com/v1/audio/speech", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${state.openaiKey.trim()}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini-tts",
+            voice: "nova",
+            input: text,
+            speed: state.speechRate
+          })
+        });
+        if (!resp.ok) throw new Error("API request failed");
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio._blobUrl = url;
+        currentAudioObj = audio;
+        btnElement.innerHTML = "<span>⏹ 停止朗讀</span>";
+        audio.onended = () => {
+          btnElement.innerHTML = `<span>${defaultLabel}</span>`;
+          if (currentAudioObj === audio) releaseAudio();
+        };
+        ttsLoading = false;
+        await audio.play();
+      } catch (e) {
+        ttsLoading = false;
+        if (currentAudioObj) releaseAudio();
+        showToast("OpenAI 語音呼叫失敗，已自動切換為瀏覽器內建自然語音");
+        btnElement.innerHTML = `<span>${defaultLabel}</span>`;
+        // skipOpenAI = true：直接改用瀏覽器語音，不再重打 OpenAI（避免無限重試）
+        speakSentencesSequentially(sentences, domElements, btnElement, defaultLabel, alternatePitch, true);
+      }
+    }
+
+    function speakSentencesSequentially(sentences, domElements, btnElement, defaultLabel, alternatePitch = false, skipOpenAI = false) {
+      if (ttsLoading) return;
+      if (("speechSynthesis" in window && window.speechSynthesis.speaking) || currentAudioObj) {
+        stopSpeech();
+        return;
+      }
+      if (!skipOpenAI && state.openaiKey && state.openaiKey.trim().startsWith("sk-")) {
+        speakWithOpenAI(sentences.join("。\n"), sentences, domElements, btnElement, defaultLabel, alternatePitch);
+        return;
+      }
+      if (!("speechSynthesis" in window)) {
+        showToast("您的瀏覽器不支援語音合成功能");
+        btnElement.innerHTML = `<span>${defaultLabel}</span>`;
+        return;
+      }
+
+      window._speechCancelled = false;
+      btnElement.innerHTML = "<span>⏹ 停止朗讀</span>";
+      let idx = 0;
+
+      function nextLine() {
+        if (window._speechCancelled || idx >= sentences.length) {
+          document.querySelectorAll(".speaking-active").forEach(el => el.classList.remove("speaking-active"));
+          btnElement.innerHTML = `<span>${defaultLabel}</span>`;
+          return;
+        }
+        document.querySelectorAll(".speaking-active").forEach(el => el.classList.remove("speaking-active"));
+        if (domElements[idx]) {
+          domElements[idx].classList.add("speaking-active");
+        }
+
+        const utter = new SpeechSynthesisUtterance(sentences[idx]);
+        utter.lang = "ja-JP";
+        const voice = getPreferredVoice(alternatePitch ? idx : 0);
+        if (voice) utter.voice = voice;
+        utter.rate = state.speechRate;
+        if (alternatePitch) {
+          // Subtle natural pitch alternation between speaker A and speaker B
+          utter.pitch = (idx % 2 === 0) ? 1.03 : 0.94;
+        }
+
+        utter.onend = () => {
+          idx++;
+          if (!window._speechCancelled) {
+            setTimeout(nextLine, 320); // Natural breathing pause between lines
+          }
+        };
+        utter.onerror = () => {
+          document.querySelectorAll(".speaking-active").forEach(el => el.classList.remove("speaking-active"));
+          btnElement.innerHTML = `<span>${defaultLabel}</span>`;
+        };
+        window.speechSynthesis.speak(utter);
+      }
+
+      nextLine();
+    }
+
+    // =========================================================================
+    // Rendering Functions
+    // =========================================================================
+    function renderDayTabs() {
+      const container = document.getElementById("day-tabs-container");
+      container.innerHTML = "";
+
+      READING_DAYS.forEach((dayObj, idx) => {
+        const isActive = idx === state.activeDayIndex;
+        const slotKeys = ["08:00", "17:00", "22:00"];
+        const doneCount = slotKeys.filter(k => state.completedSlots[getSlotId(dayObj.date, k)]).length;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("role", "tab");
+        btn.setAttribute("aria-selected", isActive ? "true" : "false");
+        btn.className = isActive
+          ? "p-2.5 sm:p-3 rounded-xl bg-emerald-900 text-white shadow-xs border border-emerald-950 flex flex-col items-center sm:items-start justify-between cursor-pointer transition"
+          : "p-2.5 sm:p-3 rounded-xl bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200 flex flex-col items-center sm:items-start justify-between cursor-pointer transition";
+
+        btn.innerHTML = `
+          <div class="flex items-center justify-between w-full gap-1">
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${isActive ? 'bg-amber-400 text-stone-950' : 'bg-stone-200 text-stone-700'}">${dayObj.badge}</span>
+            <span class="text-[10px] font-semibold ${isActive ? 'text-emerald-200' : 'text-stone-500'}">${doneCount}/3</span>
+          </div>
+          <div class="text-xs sm:text-sm font-bold mt-1.5 truncate">${dayObj.dayLabel}</div>
+        `;
+
+        btn.addEventListener("click", () => {
+          stopSpeech();
+          state.activeDayIndex = idx;
+          // Reset per-slot collapse & translation states per requirements #4 & #7
+          if (!state.expandAllTranslations) {
+            state.dialogueTransOpen = false;
+            state.articleTransOpen = false;
+          }
+          state.zone1Open = false;
+          state.zone2Open = false;
+          renderAll();
+        });
+
+        container.appendChild(btn);
+      });
+
+      const totalDone = Object.keys(state.completedSlots).filter(k => state.completedSlots[k]).length;
+      document.getElementById("progress-counter").textContent = `已完成 ${totalDone} / 9 則`;
+    }
+
+    function renderSlotTabs() {
+      const container = document.getElementById("slot-tabs-container");
+      container.innerHTML = "";
+      const activeDay = READING_DAYS[state.activeDayIndex];
+      const slotOrder = ["08:00", "17:00", "22:00"];
+
+      slotOrder.forEach(slotKey => {
+        const slotData = activeDay.slots[slotKey];
+        const isActive = slotKey === state.activeSlotKey;
+        const isDone = !!state.completedSlots[getSlotId(activeDay.date, slotKey)];
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("role", "tab");
+        btn.setAttribute("aria-selected", isActive ? "true" : "false");
+        btn.className = isActive
+          ? "py-2 px-2 rounded-lg bg-white text-stone-900 shadow-xs border border-stone-200/90 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer transition"
+          : "py-2 px-2 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-white/50 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer transition";
+
+        btn.innerHTML = `
+          <span class="text-sm leading-none">${slotData.icon}</span>
+          <span class="text-xs sm:text-sm font-bold">${slotData.time} ${slotData.periodName}${isDone ? ' ✓' : ''}</span>
+        `;
+
+        btn.addEventListener("click", () => {
+          stopSpeech();
+          state.activeSlotKey = slotKey;
+          if (!state.expandAllTranslations) {
+            state.dialogueTransOpen = false;
+            state.articleTransOpen = false;
+          }
+          state.zone1Open = false;
+          state.zone2Open = false;
+          renderAll();
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    function renderActiveSlotHeader() {
+      const activeDay = READING_DAYS[state.activeDayIndex];
+      const slotData = activeDay.slots[state.activeSlotKey];
+      const slotId = getSlotId(activeDay.date, state.activeSlotKey);
+      const isDone = !!state.completedSlots[slotId];
+
+      const header = document.getElementById("active-slot-header");
+      header.innerHTML = `
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5 text-[11px] text-emerald-200">
+            <span class="font-mono">${activeDay.date}</span>
+            <span>•</span>
+            <span class="font-semibold text-amber-300">${slotData.icon} ${slotData.time} ${slotData.periodName}</span>
+          </div>
+          <p class="text-xs sm:text-sm font-bold text-white truncate mt-0.5">${slotData.themeSummary}</p>
+        </div>
+        <button id="btn-mark-complete" type="button"
+          class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            isDone
+              ? 'bg-emerald-700 text-amber-200 border border-emerald-500'
+              : 'bg-amber-400 text-stone-950 hover:bg-amber-300'
+          }">
+          ${isDone ? '✓ 已完成' : '○ 打卡完成'}
+        </button>
+      `;
+
+      document.getElementById("btn-mark-complete").addEventListener("click", () => {
+        state.completedSlots[slotId] = !state.completedSlots[slotId];
+        saveState();
+        renderDayTabs();
+        renderSlotTabs();
+        renderActiveSlotHeader();
+        showToast(state.completedSlots[slotId] ? "已標記本時段為完成閱讀！" : "已取消完成標記");
+      });
+    }
+
+    function updateAccordionUI() {
+      const z1Body = document.getElementById("zone1-body");
+      const z1Pill = document.getElementById("zone1-status-pill");
+      const z1Btn = document.getElementById("btn-accordion-zone1");
+      z1Body.classList.toggle("hidden", !state.zone1Open);
+      z1Btn.setAttribute("aria-expanded", state.zone1Open ? "true" : "false");
+      z1Pill.textContent = state.zone1Open ? "收合第一區 ▲" : "點擊展開 ▼";
+      z1Pill.className = state.zone1Open
+        ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-200 text-stone-800"
+        : "px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-900 text-white shadow-2xs";
+
+      const z2Body = document.getElementById("zone2-body");
+      const z2Pill = document.getElementById("zone2-status-pill");
+      const z2Btn = document.getElementById("btn-accordion-zone2");
+      z2Body.classList.toggle("hidden", !state.zone2Open);
+      z2Btn.setAttribute("aria-expanded", state.zone2Open ? "true" : "false");
+      z2Pill.textContent = state.zone2Open ? "收合第二區 ▲" : "點擊展開 ▼";
+      z2Pill.className = state.zone2Open
+        ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-200 text-stone-800"
+        : "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-900 text-white shadow-2xs";
+
+      const bothOpen = state.zone1Open && state.zone2Open;
+      const btnBoth = document.getElementById("btn-expand-collapse-both");
+      if (btnBoth) {
+        btnBoth.textContent = bothOpen ? "收合兩大區塊 ▲" : "展開兩大區塊 ▼";
+      }
+    }
+
+    function bindExamHighlightClicks(container) {
+      container.querySelectorAll(".exam-hl").forEach(el => {
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const tip = el.getAttribute("data-tip") || el.textContent;
+          const bannerText = document.getElementById("exam-tip-text");
+          if (bannerText) {
+            bannerText.textContent = tip;
+          }
+          showToast(`🖍️ 常考考點：${tip}`);
+        });
+      });
+    }
+
+    function isVocabSaved(word) {
+      return state.savedVocab.some(item => item.word === word);
+    }
+
+    function toggleSaveVocab(vocabItem, sourceLabel) {
+      const idx = state.savedVocab.findIndex(item => item.word === vocabItem.word);
+      if (idx >= 0) {
+        state.savedVocab.splice(idx, 1);
+        showToast(`已從單字本移除：${vocabItem.word}`);
+      } else {
+        state.savedVocab.push({
+          word: vocabItem.word,
+          level: vocabItem.level,
+          meaning: vocabItem.meaning,
+          source: sourceLabel
+        });
+        showToast(`★ 已加入單字本：${vocabItem.word}`);
+      }
+      saveState();
+      updateVocabBadge();
+      renderContentZones();
+      renderVocabModalList();
+    }
+
+    function updateVocabBadge() {
+      document.getElementById("badge-vocab-count").textContent = String(state.savedVocab.length);
+    }
+
+    function renderContentZones() {
+      const activeDay = READING_DAYS[state.activeDayIndex];
+      const slotData = activeDay.slots[state.activeSlotKey];
+      const dlg = slotData.dialogue;
+      const art = slotData.article;
+      const sourceTag = `${activeDay.date} ${slotData.time}`;
+
+      updateAccordionUI();
+      updateVoiceTagLabels();
+
+      // --- ZONE 1: Extended Dialogue ---
+      document.getElementById("dialogue-scene-badge").textContent = dlg.scene;
+      document.getElementById("dialogue-title").textContent = dlg.title;
+      document.getElementById("dialogue-char-count").textContent = `原文 ${dlg.charCount}`;
+      document.getElementById("dialogue-tone-note").textContent = `💡 ${dlg.tone}`;
+
+      const linesContainer = document.getElementById("dialogue-lines-container");
+      linesContainer.innerHTML = "";
+      dlg.lines.forEach((line, i) => {
+        const isFirstSpeaker = i % 2 === 0;
+        const row = document.createElement("div");
+        row.className = `dialogue-line-item p-3.5 rounded-xl border transition ${
+          isFirstSpeaker
+            ? "bg-stone-50/90 border-stone-200/90 mr-1 sm:mr-4"
+            : "bg-amber-50/35 border-amber-200/70 ml-1 sm:ml-4"
+        }`;
+        row.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold ${isFirstSpeaker ? 'text-emerald-900' : 'text-amber-900'}">${line.speaker} <span class="font-normal text-stone-500">（${line.role}）</span></span>
+            <span class="text-[10px] text-stone-400 font-mono">#${i + 1}</span>
+          </div>
+          <p class="dialogue-bubble text-stone-900 ${state.largeFont ? 'text-lg' : 'text-[15px] sm:text-base'}">${line.jp}</p>
+        `;
+        linesContainer.appendChild(row);
+      });
+      bindExamHighlightClicks(linesContainer);
+
+      // Dialogue Translation
+      const dlgTransBox = document.getElementById("dialogue-trans-box");
+      const btnDlgTrans = document.getElementById("btn-toggle-dialogue-trans");
+      dlgTransBox.innerHTML = dlg.lines.map(l => `<p>${l.zh}</p>`).join("");
+      const showDlgTrans = state.expandAllTranslations || state.dialogueTransOpen;
+      dlgTransBox.classList.toggle("hidden", !showDlgTrans);
+      btnDlgTrans.textContent = showDlgTrans ? "隱藏中文翻譯" : "展開中文翻譯";
+
+      // Dialogue Exam Vocab
+      const dlgVocabList = document.getElementById("dialogue-vocab-list");
+      dlgVocabList.innerHTML = "";
+      dlg.vocab.forEach(v => {
+        const saved = isVocabSaved(v.word);
+        const item = document.createElement("div");
+        item.className = "flex items-start justify-between gap-2 p-2.5 rounded-xl bg-white border border-rose-200/80 text-xs";
+        item.innerHTML = `
+          <div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="font-bold text-rose-950 bg-rose-100 px-1.5 py-0.5 rounded jp-sans">${v.word}</span>
+              <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-800 border border-rose-200 text-[10px] font-bold">${v.level}</span>
+            </div>
+            <p class="text-stone-600 mt-1 leading-relaxed">${v.meaning}</p>
+          </div>
+          <button type="button" class="shrink-0 px-2 py-1 rounded text-xs font-bold cursor-pointer ${
+            saved ? 'bg-amber-100 text-amber-800' : 'text-stone-400 hover:text-amber-600'
+          }" title="加入或移除單字本">
+            ${saved ? '★' : '☆'}
+          </button>
+        `;
+        item.querySelector("button").addEventListener("click", () => toggleSaveVocab(v, sourceTag));
+        dlgVocabList.appendChild(item);
+      });
+
+      // --- ZONE 2: Expanded JLPT N3~N1 Article ---
+      document.getElementById("article-genre-badge").textContent = art.genre;
+      document.getElementById("article-jlpt-badge").textContent = art.jlpt;
+      document.getElementById("article-title").textContent = art.title;
+      document.getElementById("article-char-count").textContent = `原文 ${art.charCount}`;
+
+      const sourceBar = document.getElementById("article-source-bar");
+      let sourceHtml = `
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span class="font-semibold text-stone-500">📎 出處：</span>
+          <a href="${art.sourceUrl}" target="_blank" rel="noopener noreferrer" class="text-emerald-800 hover:underline font-medium">
+            ${art.sourceTitle} ↗
+          </a>
+      `;
+      if (art.secondarySourceUrl) {
+        sourceHtml += `
+          <span class="text-stone-300">|</span>
+          <a href="${art.secondarySourceUrl}" target="_blank" rel="noopener noreferrer" class="text-emerald-800 hover:underline font-medium">
+            ${art.secondarySourceTitle} ↗
+          </a>
+        `;
+      }
+      sourceHtml += `</div>`;
+      sourceBar.innerHTML = sourceHtml;
+
+      const artParaContainer = document.getElementById("article-paragraphs-container");
+      artParaContainer.className = `p-4 sm:p-6 space-y-5 jp-serif reading-text text-stone-900 ${
+        state.largeFont ? "text-lg sm:text-xl" : "text-base sm:text-[17px]"
+      }`;
+      artParaContainer.innerHTML = art.paragraphs.map(p => `<p class="article-para-item indent-4 p-1 rounded-lg transition">${p}</p>`).join("");
+      bindExamHighlightClicks(artParaContainer);
+
+      // Article Translation
+      const artTransBox = document.getElementById("article-trans-box");
+      const btnArtTrans = document.getElementById("btn-toggle-article-trans");
+      artTransBox.innerHTML = art.translation.map(t => `<p class="indent-4">${t}</p>`).join("");
+      const showArtTrans = state.expandAllTranslations || state.articleTransOpen;
+      artTransBox.classList.toggle("hidden", !showArtTrans);
+      btnArtTrans.textContent = showArtTrans ? "隱藏中文翻譯" : "展開中文翻譯";
+
+      // Article Exam Vocab
+      const artVocabGrid = document.getElementById("article-vocab-grid");
+      artVocabGrid.innerHTML = "";
+      art.vocab.forEach(v => {
+        const saved = isVocabSaved(v.word);
+        const card = document.createElement("div");
+        card.className = "flex items-start justify-between gap-2 p-3 rounded-xl bg-white border border-rose-200/90 text-xs shadow-2xs";
+        card.innerHTML = `
+          <div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="font-bold text-rose-950 text-sm bg-rose-100 px-1.5 py-0.5 rounded jp-sans">${v.word}</span>
+              <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-800 border border-rose-200 text-[10px] font-bold">${v.level}</span>
+            </div>
+            <p class="text-stone-600 mt-1.5 leading-relaxed">${v.meaning}</p>
+          </div>
+          <button type="button" class="shrink-0 px-2 py-1 rounded text-xs font-bold cursor-pointer ${
+            saved ? 'bg-amber-100 text-amber-800' : 'text-stone-400 hover:text-amber-600'
+          }" title="加入或移除單字本">
+            ${saved ? '★' : '☆'}
+          </button>
+        `;
+        card.querySelector("button").addEventListener("click", () => toggleSaveVocab(v, sourceTag));
+        artVocabGrid.appendChild(card);
+      });
+
+      // Article Exam Grammar
+      const artGrammarList = document.getElementById("article-grammar-list");
+      artGrammarList.innerHTML = "";
+      art.grammar.forEach(g => {
+        const row = document.createElement("div");
+        row.className = "p-3 rounded-xl bg-white border border-rose-200/90 text-xs sm:text-sm";
+        row.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-bold text-rose-950 bg-rose-100 px-2 py-0.5 rounded jp-sans">${g.pattern}</span>
+            <span class="px-1.5 py-0.5 rounded bg-rose-700 text-white text-[10px] font-bold">${g.level}</span>
+          </div>
+          <p class="text-stone-600 mt-1.5 text-xs leading-relaxed">${g.explanation}</p>
+        `;
+        artGrammarList.appendChild(row);
+      });
+    }
+
+    function renderVocabModalList() {
+      const container = document.getElementById("saved-vocab-container");
+      if (state.savedVocab.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-stone-400 text-xs space-y-1">
+            <p class="text-base">尚未收藏任何常考單字</p>
+            <p>在閱讀時點擊單字卡片右側的「☆」即可將常考單字加入此處複習！</p>
+          </div>
+        `;
+        return;
+      }
+      container.innerHTML = "";
+      state.savedVocab.forEach((v, idx) => {
+        const item = document.createElement("div");
+        item.className = "p-3 rounded-xl bg-stone-50 border border-stone-200 flex items-start justify-between gap-2 text-xs";
+        item.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm text-rose-950 bg-rose-100 px-1.5 py-0.5 rounded jp-sans">${v.word}</span>
+              <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-800 border border-rose-200 text-[10px] font-bold">${v.level}</span>
+              <span class="text-[10px] text-stone-400 font-mono">${v.source || ''}</span>
+            </div>
+            <p class="text-stone-600 mt-1">${v.meaning}</p>
+          </div>
+          <button type="button" class="text-stone-400 hover:text-rose-600 px-2 py-1 cursor-pointer" title="移除">✕</button>
+        `;
+        item.querySelector("button").addEventListener("click", () => {
+          state.savedVocab.splice(idx, 1);
+          saveState();
+          updateVocabBadge();
+          renderVocabModalList();
+          renderContentZones();
+        });
+        container.appendChild(item);
+      });
+    }
+
+    function syncToolbarButtons() {
+      // Furigana UI
+      document.body.classList.toggle("hide-furigana", !state.showFurigana);
+      const btnFurigana = document.getElementById("btn-toggle-furigana");
+      document.getElementById("label-furigana").textContent = state.showFurigana ? "平假名：開啟" : "平假名：關閉";
+      btnFurigana.className = state.showFurigana
+        ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-900 text-white shadow-2xs transition cursor-pointer"
+        : "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer";
+
+      const mobFuri = document.getElementById("mob-btn-furigana");
+      const mobLblFuri = document.getElementById("mob-label-furigana");
+      if (mobFuri && mobLblFuri) {
+        mobLblFuri.textContent = state.showFurigana ? "開啟" : "關閉";
+        mobFuri.className = state.showFurigana
+          ? "flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-emerald-900 text-white flex flex-col items-center gap-0.5 cursor-pointer"
+          : "flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer";
+      }
+
+      // Exam Highlight UI
+      document.body.classList.toggle("hide-exam-hl", !state.showExamHighlight);
+      const btnExam = document.getElementById("btn-toggle-exam-hl");
+      document.getElementById("label-exam-hl").textContent = state.showExamHighlight ? "常考紅底：開啟" : "常考紅底：關閉";
+      btnExam.className = state.showExamHighlight
+        ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-900 border border-rose-300 hover:bg-rose-200/70 transition cursor-pointer"
+        : "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer";
+
+      const mobExam = document.getElementById("mob-btn-exam");
+      const mobLblExam = document.getElementById("mob-label-exam");
+      if (mobExam && mobLblExam) {
+        mobLblExam.textContent = state.showExamHighlight ? "開啟" : "關閉";
+        mobExam.className = state.showExamHighlight
+          ? "flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-rose-100 text-rose-900 flex flex-col items-center gap-0.5 cursor-pointer"
+          : "flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer";
+      }
+
+      // Translation UI
+      const btnAllTrans = document.getElementById("btn-toggle-all-trans");
+      document.getElementById("label-all-trans").textContent = state.expandAllTranslations ? "譯文：全部展開" : "譯文：預設隱藏";
+      btnAllTrans.className = state.expandAllTranslations
+        ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-900 text-white shadow-2xs transition cursor-pointer"
+        : "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white text-stone-700 border border-stone-300 hover:bg-stone-100 transition cursor-pointer";
+
+      const mobTrans = document.getElementById("mob-btn-trans");
+      const mobLblTrans = document.getElementById("mob-label-trans");
+      if (mobTrans && mobLblTrans) {
+        mobLblTrans.textContent = state.expandAllTranslations ? "展開" : "隱藏";
+        mobTrans.className = state.expandAllTranslations
+          ? "flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-emerald-900 text-white flex flex-col items-center gap-0.5 cursor-pointer"
+          : "flex-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-stone-100 text-stone-700 flex flex-col items-center gap-0.5 cursor-pointer";
+      }
+    }
+
+    function renderAll() {
+      syncToolbarButtons();
+      renderDayTabs();
+      renderSlotTabs();
+      renderActiveSlotHeader();
+      renderContentZones();
+      updateVocabBadge();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      try {
+        if ("speechSynthesis" in window) {
+          populateVoices();
+          window.speechSynthesis.onvoiceschanged = populateVoices;
+        }
+      } catch (e) {}
+      renderAll();
+
+      // Accordion toggles for Zone 1 (Top) and Zone 2 (Bottom)
+      document.getElementById("btn-accordion-zone1").addEventListener("click", () => {
+        state.zone1Open = !state.zone1Open;
+        updateAccordionUI();
+      });
+      document.getElementById("btn-accordion-zone2").addEventListener("click", () => {
+        state.zone2Open = !state.zone2Open;
+        updateAccordionUI();
+      });
+      document.getElementById("btn-expand-collapse-both").addEventListener("click", () => {
+        const target = !(state.zone1Open && state.zone2Open);
+        state.zone1Open = target;
+        state.zone2Open = target;
+        updateAccordionUI();
+      });
+
+      // Toggle Furigana (Desktop + Mobile)
+      function handleToggleFurigana() {
+        state.showFurigana = !state.showFurigana;
+        syncToolbarButtons();
+      }
+      document.getElementById("btn-toggle-furigana").addEventListener("click", handleToggleFurigana);
+      document.getElementById("mob-btn-furigana").addEventListener("click", handleToggleFurigana);
+
+      // Toggle Exam Highlight (Desktop + Mobile)
+      function handleToggleExam() {
+        state.showExamHighlight = !state.showExamHighlight;
+        syncToolbarButtons();
+      }
+      document.getElementById("btn-toggle-exam-hl").addEventListener("click", handleToggleExam);
+      document.getElementById("mob-btn-exam").addEventListener("click", handleToggleExam);
+
+      // Toggle All Translations (Desktop + Mobile)
+      function handleToggleAllTrans() {
+        state.expandAllTranslations = !state.expandAllTranslations;
+        state.dialogueTransOpen = state.expandAllTranslations;
+        state.articleTransOpen = state.expandAllTranslations;
+        syncToolbarButtons();
+        renderContentZones();
+      }
+      document.getElementById("btn-toggle-all-trans").addEventListener("click", handleToggleAllTrans);
+      document.getElementById("mob-btn-trans").addEventListener("click", handleToggleAllTrans);
+
+      // Individual Translation Buttons
+      document.getElementById("btn-toggle-dialogue-trans").addEventListener("click", () => {
+        state.dialogueTransOpen = !state.dialogueTransOpen;
+        if (!state.dialogueTransOpen) state.expandAllTranslations = false;
+        syncToolbarButtons();
+        renderContentZones();
+      });
+      document.getElementById("btn-toggle-article-trans").addEventListener("click", () => {
+        state.articleTransOpen = !state.articleTransOpen;
+        if (!state.articleTransOpen) state.expandAllTranslations = false;
+        syncToolbarButtons();
+        renderContentZones();
+      });
+
+      // Font Size
+      const btnFontNormal = document.getElementById("btn-font-normal");
+      const btnFontLarge = document.getElementById("btn-font-large");
+      btnFontNormal.addEventListener("click", () => {
+        state.largeFont = false;
+        btnFontNormal.className = "px-2 py-0.5 rounded-md font-medium bg-stone-200 text-stone-900 transition cursor-pointer";
+        btnFontLarge.className = "px-2 py-0.5 rounded-md font-medium text-stone-600 hover:text-stone-900 transition cursor-pointer";
+        renderContentZones();
+      });
+      btnFontLarge.addEventListener("click", () => {
+        state.largeFont = true;
+        btnFontLarge.className = "px-2 py-0.5 rounded-md font-medium bg-stone-200 text-stone-900 transition cursor-pointer";
+        btnFontNormal.className = "px-2 py-0.5 rounded-md font-medium text-stone-600 hover:text-stone-900 transition cursor-pointer";
+        renderContentZones();
+      });
+
+      // Speak Dialogue (Line-by-Line with natural pause & alternating speaker pitch)
+      document.getElementById("btn-speak-dialogue").addEventListener("click", function() {
+        const activeDay = READING_DAYS[state.activeDayIndex];
+        const dlg = activeDay.slots[state.activeSlotKey].dialogue;
+        const sentences = dlg.lines.map(l => l.plainJp);
+        const domEls = Array.from(document.querySelectorAll(".dialogue-line-item"));
+        speakSentencesSequentially(sentences, domEls, this, "🔊 朗讀對話", true);
+      });
+
+      // Speak Article (Paragraph-by-Paragraph with natural pause)
+      document.getElementById("btn-speak-article").addEventListener("click", function() {
+        const activeDay = READING_DAYS[state.activeDayIndex];
+        const art = activeDay.slots[state.activeSlotKey].article;
+        const sentences = art.plainParagraphs || [art.plainJp];
+        const domEls = Array.from(document.querySelectorAll(".article-para-item"));
+        speakSentencesSequentially(sentences, domEls, this, "🔊 朗讀專欄", false);
+      });
+
+      // Voice Settings Modal
+      const voiceModal = document.getElementById("voice-modal");
+      function openVoiceModal() {
+        populateVoices();
+        document.getElementById("input-openai-key").value = state.openaiKey || "";
+        voiceModal.classList.remove("hidden");
+      }
+      document.getElementById("btn-open-voice-modal").addEventListener("click", openVoiceModal);
+      document.getElementById("mob-btn-voice").addEventListener("click", openVoiceModal);
+      document.getElementById("btn-close-voice-modal").addEventListener("click", () => voiceModal.classList.add("hidden"));
+
+      document.getElementById("select-jp-voice").addEventListener("change", (e) => {
+        state.selectedVoiceURI = e.target.value;
+        updateVoiceTagLabels();
+      });
+
+      document.querySelectorAll(".rate-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.speechRate = parseFloat(btn.getAttribute("data-rate"));
+          document.querySelectorAll(".rate-btn").forEach(b => {
+            b.className = "rate-btn py-2 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 cursor-pointer";
+          });
+          btn.className = "rate-btn py-2 rounded-xl border border-emerald-800 bg-emerald-900 text-white text-xs font-semibold cursor-pointer";
+          updateVoiceTagLabels();
+        });
+      });
+
+      document.getElementById("btn-test-voice").addEventListener("click", function() {
+        state.openaiKey = document.getElementById("input-openai-key").value.trim();
+        speakSentencesSequentially(
+          ["こんにちは。毎日の日本語読解へようこそ。自然な音声で読み上げます。"],
+          [],
+          this,
+          "🔊 試聽目前語音",
+          false
+        );
+      });
+
+      document.getElementById("btn-save-voice-modal").addEventListener("click", () => {
+        state.openaiKey = document.getElementById("input-openai-key").value.trim();
+        saveState();
+        updateVoiceTagLabels();
+        voiceModal.classList.add("hidden");
+        showToast("已儲存語音與朗讀設定！");
+      });
+
+      // Vocab Modal
+      const vocabModal = document.getElementById("vocab-modal");
+      document.getElementById("btn-open-vocab-modal").addEventListener("click", () => {
+        renderVocabModalList();
+        vocabModal.classList.remove("hidden");
+      });
+      document.getElementById("btn-close-vocab-modal").addEventListener("click", () => vocabModal.classList.add("hidden"));
+      document.getElementById("btn-close-vocab-footer").addEventListener("click", () => vocabModal.classList.add("hidden"));
+      document.getElementById("btn-clear-vocab").addEventListener("click", () => {
+        state.savedVocab = [];
+        saveState();
+        updateVocabBadge();
+        renderVocabModalList();
+        renderContentZones();
+        showToast("已清空單字收藏本");
+      });
+
+      // Export JSON
+      document.getElementById("btn-export-json").addEventListener("click", () => {
+        const jsonStr = JSON.stringify(READING_DAYS, null, 2);
+        const ta = document.createElement("textarea");
+        ta.value = jsonStr;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showToast("已將最新 3 日完整 JSON 資料複製到剪貼簿！");
+        } catch (err) {
+          showToast("複製失敗");
+        }
+        document.body.removeChild(ta);
+      });
+    });
+  </script>
+</body>
+</html>
