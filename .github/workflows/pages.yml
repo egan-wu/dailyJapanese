@@ -1,0 +1,60 @@
+# 部署到 GitHub Pages。
+# 部署時會重新產生 manifest，所以不管是 Actions、Gemini Spark 還是你手動新增 data/slots/*.json，
+# 只要 push 到 main 就會上線；格式錯誤的檔案會被略過，不會讓網站壞掉。
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # 檢查所有文章；有錯誤時這個 job 會失敗，GitHub 會寄信通知你（但網站照常部署）
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/validate.mjs
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main   # 被 generate.yml 呼叫時，確保拿到剛 commit 的新文章
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build site
+        run: |
+          mkdir -p _site/data
+          cp index.html _site/
+          cp -r assets _site/
+          cp -r data/slots _site/data/
+          if [ -d data/audio ]; then cp -r data/audio _site/data/; fi
+          node scripts/build-manifest.mjs --out _site/data/manifest.json
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

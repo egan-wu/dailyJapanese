@@ -1,0 +1,94 @@
+# 每天三次呼叫 Gemini API 產生文章、Cloud TTS 產生朗讀音檔，通過檢查後 commit 並部署。
+# Secrets：GEMINI_API_KEY（必填）、GOOGLE_TTS_API_KEY（選填，沒設定就不產生音檔）
+# Variables（選填）：GEMINI_MODEL、TARGET_LEVEL、TTS_VOICE_NARRATOR、TTS_VOICE_A、TTS_VOICE_B、
+#                    TTS_USE_FURIGANA、AUDIO_KEEP_DAYS（說明見 README）
+name: Generate daily reading
+
+on:
+  schedule:
+    # GitHub 排程用 UTC；台灣時間 = UTC+8。提早 20 分鐘跑，排程常會延遲。
+    - cron: "40 23 * * *"   # 台灣 07:40 → 08:00 時段
+    - cron: "40 8 * * *"    # 台灣 16:40 → 17:00 時段
+    - cron: "40 13 * * *"   # 台灣 21:40 → 22:00 時段
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "時段"
+        type: choice
+        options: [auto, "08:00", "17:00", "22:00"]
+        default: auto
+      date:
+        description: "日期 YYYY-MM-DD（留空＝台灣今天）"
+        required: false
+      force:
+        description: "已存在也重新產生"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: generate
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          TARGET_LEVEL: ${{ vars.TARGET_LEVEL }}
+          INPUT_SLOT: ${{ inputs.slot || 'auto' }}
+          INPUT_DATE: ${{ inputs.date }}
+          INPUT_FORCE: ${{ inputs.force }}
+        run: |
+          ARGS=(--slot "$INPUT_SLOT")
+          if [ -n "$INPUT_DATE" ]; then ARGS+=(--date "$INPUT_DATE"); fi
+          if [ "$INPUT_FORCE" = "true" ]; then ARGS+=(--force); fi
+          node scripts/generate.mjs "${ARGS[@]}"
+
+      # 產生朗讀音檔並刪除超過保留天數的舊音檔；失敗不影響文章上線（網頁會改用瀏覽器語音）
+      - name: Generate audio with Cloud TTS
+        continue-on-error: true
+        env:
+          GOOGLE_TTS_API_KEY: ${{ secrets.GOOGLE_TTS_API_KEY }}
+          TTS_VOICE_NARRATOR: ${{ vars.TTS_VOICE_NARRATOR }}
+          TTS_VOICE_A: ${{ vars.TTS_VOICE_A }}
+          TTS_VOICE_B: ${{ vars.TTS_VOICE_B }}
+          TTS_USE_FURIGANA: ${{ vars.TTS_USE_FURIGANA }}
+          AUDIO_KEEP_DAYS: ${{ vars.AUDIO_KEEP_DAYS }}
+        run: node scripts/tts.mjs
+
+      - name: Commit
+        id: commit
+        run: |
+          git add data
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "沒有新內容"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "📖 新增每日閱讀 $(TZ=Asia/Taipei date +'%Y-%m-%d %H:%M')"
+          git pull --rebase
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+  # 用 GITHUB_TOKEN 推送的 commit 不會觸發其他 workflow，所以在這裡直接部署
+  deploy:
+    needs: generate
+    if: needs.generate.outputs.changed == 'true'
+    uses: ./.github/workflows/pages.yml
