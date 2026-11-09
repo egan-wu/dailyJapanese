@@ -32,6 +32,9 @@
       <span class="nav-date" id="nav-date"></span>
       <span class="nav-title">日日讀日文</span>
       <div class="nav-actions">
+        <button id="btn-open-archive" class="icon-btn" type="button" aria-label="過去的文章" hidden>
+          <svg class="icon"><use href="#i-calendar"/></svg>
+        </button>
         <button id="btn-open-vocab" class="icon-btn" type="button" aria-label="單字本">
           <svg class="icon"><use href="#i-book"/></svg>
           <span id="badge-vocab-count" class="badge" hidden>0</span>
@@ -205,7 +208,7 @@
   <!-- 歷史存檔 -->
   <div class="sheet" id="sheet-archive" role="dialog" aria-label="更早的文章" aria-modal="true">
     <div class="grabber"></div>
-    <div class="sheet-head"><span></span><h2>更早的文章</h2><button class="done" type="button" data-close>完成</button></div>
+    <div class="sheet-head"><span></span><h2>過去的文章</h2><button class="done" type="button" data-close>完成</button></div>
     <div class="sheet-body"><div class="group" id="archive-list"></div></div>
   </div>
 

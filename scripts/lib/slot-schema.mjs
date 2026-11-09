@@ -5,12 +5,12 @@ import { parseMarkup, listHighlights, charCount, LEVELS } from "../../assets/mar
 export const SLOTS = ["08:00", "17:00", "22:00"];
 
 export const LIMITS = {
-  dialogueLines: [4, 10],
-  articleParagraphs: [3, 6],
-  articleChars: { hardMin: 350, hardMax: 1100, softMin: 450, softMax: 850 },
-  dialogueChars: { softMin: 120, softMax: 420 },
+  dialogueLines: [3, 10],
+  articleParagraphs: [2, 6],
+  articleChars: { hardMin: 250, hardMax: 1100, softMin: 300, softMax: 550 },
+  dialogueChars: { softMin: 60, softMax: 140 },
   highlightsPerBlock: 2,   // 每句對話／每段文章最多幾個紅底
-  highlightsTotal: 10,     // 每個時段最多幾個紅底
+  highlightsTotal: 8,      // 每個時段最多幾個紅底
   questions: [2, 4]
 };
 

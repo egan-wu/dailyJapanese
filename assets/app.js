@@ -5,7 +5,6 @@
 import { toHtml, toPlain, charCount, escapeHtml as esc } from "./markup.js";
 
 const SLOT_ORDER = ["08:00", "17:00", "22:00"];
-const RECENT_DAYS = 3;
 // 計時參考：每分鐘閱讀字數（粗估），另外每題加 1 分鐘
 const READING_SPEED = { N1: 250, N2: 200, N3: 150, N4: 120, N5: 100 };
 // 單字複習間隔（天），依熟練度 box 0～6
@@ -136,14 +135,39 @@ async function fetchJSON(url) {
 }
 
 async function loadManifest() {
-  state.manifest = await fetchJSON("data/manifest.json");
-  if (!Array.isArray(state.manifest.days)) throw new Error("manifest.json 格式錯誤");
+  const m = await fetchJSON("data/manifest.json");
+  if (!Array.isArray(m.days)) throw new Error("manifest.json 格式錯誤");
+  state.manifest = m;
+  computeReleasedDays();
 }
 
-function findDay(date) { return state.manifest.days.find(d => d.date === date) || null; }
+// 文章可以一次放一整週，依台灣時間到了才「上架」：08:00、17:00、22:00 各自解鎖
+const TZ = "Asia/Taipei";
+function taipeiNow() {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+  }).formatToParts(new Date()).map(x => [x.type, x.value]));
+  return { date: `${p.year}-${p.month}-${p.day}`, hm: `${p.hour}:${p.minute}` };
+}
+function isReleased(date, slot, now = taipeiNow()) {
+  return date < now.date || (date === now.date && slot <= now.hm);
+}
+function computeReleasedDays() {
+  const now = taipeiNow();
+  state.days = state.manifest.days
+    .map(d => ({ ...d, slots: Object.fromEntries(Object.entries(d.slots).filter(([k]) => isReleased(d.date, k, now))) }))
+    .filter(d => Object.keys(d.slots).length > 0);
+  // 下一個要上架的時段（顯示在還沒解鎖的分段按鈕上）
+  state.upcoming = state.manifest.days.flatMap(d => Object.keys(d.slots).map(k => ({ date: d.date, slot: k })))
+    .filter(x => !isReleased(x.date, x.slot, now));
+}
+function releasedCount() { return state.days.reduce((n, d) => n + Object.keys(d.slots).length, 0); }
 
+function findDay(date) { return state.days.find(d => d.date === date) || null; }
+
+// 日期列：最新上架的那一天；從歷史存檔選了別天時，多顯示那一天
 function visibleDays() {
-  const days = state.manifest.days.slice(0, RECENT_DAYS);
+  const days = state.days.slice(0, 1);
   if (state.archiveDate && !days.some(d => d.date === state.archiveDate)) {
     const extra = findDay(state.archiveDate);
     if (extra) days.push(extra);
@@ -420,7 +444,9 @@ function renderStats() {
 function renderDayTabs() {
   const container = $("day-tabs-container");
   const days = visibleDays();
-  const hasOlder = state.manifest.days.length > RECENT_DAYS;
+  $("btn-open-archive").hidden = state.days.length <= 1;
+  // 只有一天時不需要日期列，日期顯示在下方卡片上
+  container.hidden = days.length <= 1;
   container.innerHTML = days.map(day => {
     const keys = SLOT_ORDER.filter(k => day.slots[k]);
     const p = parts(day.date);
@@ -431,13 +457,13 @@ function renderDayTabs() {
       <div class="dc-day">${p.d}</div>
       <div class="dc-dots">${dots}</div>
     </button>`;
-  }).join("") + (hasOlder ? `<button type="button" class="date-chip more" id="btn-open-archive" aria-label="更早的文章"><svg class="icon"><use href="#i-calendar"/></svg></button>` : "");
+  }).join("");
 
   container.querySelectorAll("[data-date]").forEach(b => b.addEventListener("click", () => {
     const day = findDay(b.dataset.date);
+    if (day.date === state.days[0].date) state.archiveDate = null;
     selectSlot(day.date, state.activeDate === day.date ? state.activeSlotKey : latestSlotKey(day));
   }));
-  $("btn-open-archive")?.addEventListener("click", () => { renderArchive(); openSheet("sheet-archive"); });
 }
 
 function renderSlotTabs() {
@@ -446,14 +472,15 @@ function renderSlotTabs() {
   c.innerHTML = SLOT_ORDER.map(k => {
     const ok = !!day?.slots?.[k];
     const done = !!state.completedSlots[getSlotId(state.activeDate, k)];
-    return `<button type="button" role="tab" data-slot="${k}" class="${k === state.activeSlotKey ? "active" : ""}" ${ok ? "" : "disabled"} aria-selected="${k === state.activeSlotKey}">
-      ${k}${done ? '<span class="seg-check">✓</span>' : ""}</button>`;
+    const pending = !ok && state.upcoming.some(x => x.date === state.activeDate && x.slot === k);
+    return `<button type="button" role="tab" data-slot="${k}" class="${k === state.activeSlotKey ? "active" : ""}" ${ok ? "" : "disabled"} aria-selected="${k === state.activeSlotKey}"${pending ? ` aria-label="${k} 尚未上架"` : ""}>
+      ${pending ? "🔒 " : ""}${k}${done ? '<span class="seg-check">✓</span>' : ""}</button>`;
   }).join("");
   c.querySelectorAll("button:not([disabled])").forEach(b => b.addEventListener("click", () => selectSlot(state.activeDate, b.dataset.slot)));
 }
 
 function renderArchive() {
-  const older = state.manifest.days.slice(RECENT_DAYS);
+  const older = state.days.slice(1);
   $("archive-list").innerHTML = older.length ? older.map(d => {
     const n = Object.keys(d.slots).length;
     const done = Object.keys(d.slots).filter(k => state.completedSlots[getSlotId(d.date, k)]).length;
@@ -975,6 +1002,8 @@ function bindEvents() {
     renderStats();
   });
 
+  $("btn-open-archive").addEventListener("click", () => { renderArchive(); openSheet("sheet-archive"); });
+
   // Settings button
   $("btn-open-settings").addEventListener("click", () => { populateVoices(); $("input-openai-key").value = state.openaiKey || ""; openSheet("sheet-settings"); });
 
@@ -1019,13 +1048,31 @@ async function initApp() {
     $("content-root").hidden = true;
     return;
   }
-  if (!state.manifest.days.length) {
+  if (!state.days.length) {
     showLoadError("目前還沒有文章");
     $("content-root").hidden = true;
     return;
   }
-  const latest = state.manifest.days[0];
-  await selectSlot(latest.date, latestSlotKey(latest));
+  await selectSlot(state.days[0].date, latestSlotKey(state.days[0]));
+
+  // 頁面開著時，時間到了自動上架新時段；切回頁面時重新抓清單（可能已推送新一週的文章）
+  setInterval(refreshReleases, 60 * 1000);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") loadManifest().then(() => refreshReleases(true)).catch(() => {});
+  });
+}
+
+function refreshReleases(force = false) {
+  const before = releasedCount();
+  const wasOnLatest = !state.archiveDate && state.activeDate === state.days[0]?.date &&
+    state.activeSlotKey === latestSlotKey(state.days[0]);
+  computeReleasedDays();
+  if (!force && releasedCount() === before) return;
+  if (releasedCount() > before) showToast("新文章已上架");
+  // 正在看最新一篇時，自動切到剛上架的那篇；否則只更新日期與時段按鈕
+  if (wasOnLatest && state.days.length) selectSlot(state.days[0].date, latestSlotKey(state.days[0]));
+  else { renderDayTabs(); renderSlotTabs(); }
+  renderNav();
 }
 
 initApp();

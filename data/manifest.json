@@ -1,6 +1,209 @@
 {
-  "generatedAt": "2026-11-08T06:06:35.862Z",
+  "generatedAt": "2026-11-09T12:28:29.537Z",
   "days": [
+    {
+      "date": "2026-11-15",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-15_0800.json",
+          "theme": "請同事幫忙看資料 ＆ 科學：諾貝爾化學獎與「左右手」分子",
+          "level": "N1",
+          "title": "生命はなぜ「片方の手」を選んだのか",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-15_1700.json",
+          "theme": "睡前聊年終獎金 ＆ 經濟：獎金增加了，該怎麼用？",
+          "level": "N3",
+          "title": "ボーナスが増えたら、どう使う？",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-15_2200.json",
+          "theme": "在飯店櫃台辦理入住 ＆ 文學：松尾芭蕉《奧之細道》",
+          "level": "N2",
+          "title": "旅に生きた俳人・芭蕉",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-14",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-14_0800.json",
+          "theme": "車站電車誤點 ＆ 隨筆：電車停下來的那個早上",
+          "level": "N3",
+          "title": "電車が止まった朝",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-14_1700.json",
+          "theme": "咖啡店點餐 ＆ 社論：看不見的兒童貧困",
+          "level": "N2",
+          "title": "見えにくい「子どもの貧困」",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-14_2200.json",
+          "theme": "在健身房認識新朋友 ＆ 生物：舊坑道裡發現的新種跳蟲",
+          "level": "N3",
+          "title": "古い坑道で見つかった小さな新種",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-13",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-13_0800.json",
+          "theme": "下班前約同事吃飯 ＆ 經濟：無現金支付改變了什麼",
+          "level": "N2",
+          "title": "キャッシュレス決済が変える暮らし",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-13_1700.json",
+          "theme": "朋友傳訊息分享照片 ＆ 文學：《枕草子》的「春はあけぼの」",
+          "level": "N1",
+          "title": "「春はあけぼの」に学ぶ、季節を味わう目",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-13_2200.json",
+          "theme": "姊弟一起整理房間 ＆ 評論：東西少一點，生活會更好嗎",
+          "level": "N2",
+          "title": "物を減らせば、暮らしは豊かになるのか",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-12",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-12_0800.json",
+          "theme": "家人討論晚餐吃什麼 ＆ 報導：從「手前取り」看減少食物浪費",
+          "level": "N3",
+          "title": "「てまえどり」で食べ物のむだを減らす",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-12_1700.json",
+          "theme": "診所掛號 ＆ 生物：海洋普查與一千種未知生物",
+          "level": "N1",
+          "title": "海の「未知」を数える",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-12_2200.json",
+          "theme": "打電話預約餐廳 ＆ 科學：早晨的陽光與生理時鐘",
+          "level": "N3",
+          "title": "朝の光と体内時計",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-11",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-11_0800.json",
+          "theme": "在電梯遇到鄰居 ＆ 文學：宮澤賢治〈不輸給雨〉",
+          "level": "N2",
+          "title": "「雨ニモマケズ」が教えてくれること",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-11_1700.json",
+          "theme": "會議前的準備 ＆ 評論：會議為什麼總是開很久",
+          "level": "N3",
+          "title": "会議はなぜ長くなるのか",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-11_2200.json",
+          "theme": "和朋友聊最近追的劇 ＆ 隨筆：深夜聽廣播",
+          "level": "N2",
+          "title": "夜のラジオ",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-10",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-10_0800.json",
+          "theme": "社群上的深海生物照片 ＆ 生物：大眼睛的新種端足類",
+          "level": "N3",
+          "title": "大きな白い目を持つ新種のヨコエビ",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-10_1700.json",
+          "theme": "便利商店結帳 ＆ 科學：為什麼夕陽是紅色的",
+          "level": "N2",
+          "title": "夕焼けはなぜ赤いのか",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-10_2200.json",
+          "theme": "下課後聊打工時薪 ＆ 經濟：實質薪資轉正，但還不能放心",
+          "level": "N1",
+          "title": "実質賃金はプラスに　それでも残る不安",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-09",
+      "slots": {
+        "08:00": {
+          "file": "data/slots/2026-11-09_0800.json",
+          "theme": "早上交接客戶的回覆 ＆ 評論：訊息一定要馬上回嗎",
+          "level": "N2",
+          "title": "すぐに返事をしなければならないのか",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "17:00": {
+          "file": "data/slots/2026-11-09_1700.json",
+          "theme": "和朋友約週末去爬山 ＆ 隨筆：在車站買花的習慣",
+          "level": "N3",
+          "title": "駅の花屋さん",
+          "hasQuiz": true,
+          "hasAudio": false
+        },
+        "22:00": {
+          "file": "data/slots/2026-11-09_2200.json",
+          "theme": "早餐桌上聊新聞 ＆ 社論：年輕人眼中的國家課題",
+          "level": "N1",
+          "title": "若者が見つめる「この国の課題」",
+          "hasQuiz": true,
+          "hasAudio": false
+        }
+      }
+    },
     {
       "date": "2026-11-08",
       "slots": {

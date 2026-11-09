@@ -1,10 +1,23 @@
 # 日日讀日文 YomuHi
 
-每天 08:00、17:00、22:00 自動更新的 JLPT 日文閱讀練習網站，架在 GitHub Pages，文章由 Gemini 產生。
+每天 08:00、17:00、22:00 上架新文章的 JLPT 日文閱讀練習網站，架在 GitHub Pages。**一週更新一次就好**：一次放入 7 天共 21 篇，網頁依台灣時間自動上架。
+
+## 內容規格
+
+- 每個時段：一則約 100 字的日常生活短對話＋一篇 300～500 字的讀解文章，都附繁體中文翻譯
+- 文章 7 種類別輪流，每週各 3 篇：評論、隨筆、深度社論・報導、生物、科學、經濟、文學
+- 難度在 JLPT N3～N1 之間輪替；報導、經濟、科學、生物類先上網取材再改寫，並附參考來源
+- 每週的文法和單字盡量不重複
+
+## 顯示規則
+
+- 首頁只顯示「今天已到時間」的時段：08:00、17:00、22:00 各自解鎖，還沒到的顯示 🔒
+- 頁面開著時，時間一到會自動上架並切到新文章
+- 過去的日期收在右上角的 📅
 
 ## 功能
 
-- 每個時段一段生活對話＋一篇讀解文章，可切換振假名、中文翻譯、字體大小
+- 可切換振假名、中文翻譯、字體大小，支援深色模式
 - **常考紅底**：可依 N1／N2／N3 個別開關，點擊看考點解析
 - **讀解題**：JLPT 題型（內容理解、主張理解…），作答後顯示解析，並自動打卡
 - **計時閱讀**：依級數與字數給參考時間，超時會變紅
@@ -46,13 +59,17 @@ scripts/build-manifest.mjs 產生文章清單
 2. **Settings → Pages → Build and deployment → Source** 選 **GitHub Actions**。
 3. 到 [Google AI Studio](https://aistudio.google.com/apikey) 申請 Gemini API Key，然後在
    **Settings → Secrets and variables → Actions → Secrets** 新增 `GEMINI_API_KEY`。
-4. （選填）在同一頁的 **Variables** 新增：
-   - `TARGET_LEVEL`：你的目標級數，例如 `N2`、`N1`（預設 `N2`）
-   - `GEMINI_MODEL`：要用的模型（預設 `gemini-2.5-flash`；Google 下架舊模型時改這裡）
+4. （選填）在同一頁的 **Variables** 新增 `GEMINI_MODEL`：要用的模型（預設 `gemini-2.5-flash`；Google 下架舊模型時改這裡）。
 5. （選填，建議）設定 Google Cloud TTS 朗讀音檔，步驟見下一節。
-6. 到 **Actions → Generate daily reading → Run workflow** 手動跑一次，確認能產生文章並部署成功。
+6. 到 **Actions → Generate weekly reading → Run workflow** 手動跑一次，確認能產生文章並部署成功。
 
-之後每天台灣時間 07:40、16:40、21:40 會自動產生下一個時段的文章。GitHub 的排程偶爾會延遲幾十分鐘。
+之後**每週日台灣時間 12:00** 會自動產生下週一～日的 21 篇，約需 10～20 分鐘。要指定從哪一天開始，手動執行時填入 `week` 日期即可。
+
+本機也可以手動產生：
+
+```bash
+GEMINI_API_KEY=你的金鑰 node scripts/generate.mjs --week 2026-11-16
+```
 
 ## 朗讀音檔（Google Cloud TTS）
 
@@ -80,9 +97,15 @@ scripts/build-manifest.mjs 產生文章清單
 ## 自動化流程
 
 ```
-排程觸發 → generate.mjs 呼叫 Gemini → 檢查格式（不合格會把錯誤回傳給 AI 修正，最多 3 次）
-        → 寫入 data/slots/ → tts.mjs 產生朗讀音檔、刪除過期音檔 → commit → 部署到 GitHub Pages
+每週日排程 → generate.mjs 逐篇產生下週 21 篇
+             （報導、經濟、科學、生物類先用 Gemini 的 Google 搜尋取材）
+           → 檢查格式（不合格會把錯誤回傳給 AI 修正，最多 3 次）
+           → 寫入 data/slots/ → tts.mjs 產生朗讀音檔、刪除過期音檔 → commit → 部署
+網頁       → 依台灣時間，08:00／17:00／22:00 到了才顯示
 ```
+
+- 部分文章失敗時，成功的照樣上架；失敗的時段可以再手動執行一次補上（已存在的會略過）。
+- 注意：未來的文章雖然在網頁上看不到，但放在公開 repo 裡，知道路徑的人還是讀得到。
 
 - 音檔產生失敗不會影響文章上線，網頁會改用瀏覽器語音，下次執行時會再補。
 
@@ -93,7 +116,8 @@ scripts/build-manifest.mjs 產生文章清單
 
 只要讓它把一個時段的 JSON commit 到 `data/slots/YYYY-MM-DD_HHMM.json`（例如 `2026-11-09_0800.json`）並 push 到 `main`，部署時就會自動加入清單。
 
-- 指令內容直接用 [prompts/generate-slot.md](prompts/generate-slot.md)，把 `{{...}}` 換成實際的值。
+- 指令內容直接用 [prompts/generate-slot.md](prompts/generate-slot.md)，把 `{{...}}` 換成實際的值；每個時段的類別和難度可用 `node scripts/generate.mjs --slot 08:00 --date 2026-11-16 --print-prompt --no-research` 印出來。
+- 一週一次產生 21 個檔案即可，不用每天執行。
 - JSON 還要加上這三個欄位：`"schemaVersion": 2`、`"date": "2026-11-09"`、`"slot": "08:00"`。
 - 如果 Spark 沒辦法 push 到 GitHub，就用上面的 GitHub Actions 方案，不需要 Spark。
 - 兩種方式同時用的話，同一個時段已經有檔案時，Actions 會略過不重複產生。
