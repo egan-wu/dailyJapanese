@@ -7,7 +7,7 @@ export const SLOTS = ["08:00", "12:00", "18:00"];
 export const LIMITS = {
   dialogueLines: [3, 10],
   articleParagraphs: [2, 6],
-  articleChars: { hardMin: 250, hardMax: 1100, softMin: 300, softMax: 550 },
+  articleChars: { hardMin: 250, hardMax: 1100, softMin: 450, softMax: 750 },
   dialogueChars: { softMin: 60, softMax: 140 },
   highlightsPerBlock: 2,   // 每句對話／每段文章最多幾個紅底
   highlightsTotal: 8,      // 每個時段最多幾個紅底
