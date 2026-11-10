@@ -26,7 +26,7 @@ const MAX_ATTEMPTS = 3;
 const MODEL = () => process.env.GEMINI_MODEL || "gemini-2.5-flash";
 const DELAY = Number(process.env.GEN_DELAY_MS || 6000);
 
-const PERIOD = { "08:00": "晨間篇", "17:00": "午後篇", "22:00": "夜間篇" };
+const PERIOD = { "08:00": "早上", "12:00": "中午", "18:00": "傍晚" };
 
 // 一週 21 個時段依序輪流 7 種類別，每種剛好 3 次
 export const GENRES = ["評論", "隨筆", "深度社論・報導", "生物", "科學", "經濟", "文學"];

@@ -1,5 +1,5 @@
 # 每週日一次：呼叫 Gemini 產生下週一～日共 21 篇（報導、經濟、科學、生物類先用 Google 搜尋取材），
-# 用 Cloud TTS 產生朗讀音檔，通過檢查後 commit 並部署。網頁會依台灣時間在 08:00／17:00／22:00 自動上架。
+# 用 Cloud TTS 產生朗讀音檔，通過檢查後 commit 並部署。網頁會依台灣時間在 08:00／12:00／18:00 自動上架。
 # Secrets：GEMINI_API_KEY（必填）、GOOGLE_TTS_API_KEY（選填，沒設定就不產生音檔）
 # Variables（選填）：GEMINI_MODEL、TTS_VOICE_NARRATOR、TTS_VOICE_A、TTS_VOICE_B、TTS_USE_FURIGANA、AUDIO_KEEP_DAYS
 name: Generate weekly reading

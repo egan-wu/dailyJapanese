@@ -2,7 +2,7 @@
 // legacy: true 的舊資料只對「讀解題、紅底數量」給警告，新資料一律視為錯誤。
 import { parseMarkup, listHighlights, charCount, LEVELS } from "../../assets/markup.js";
 
-export const SLOTS = ["08:00", "17:00", "22:00"];
+export const SLOTS = ["08:00", "12:00", "18:00"];
 
 export const LIMITS = {
   dialogueLines: [3, 10],

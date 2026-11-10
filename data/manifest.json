@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T12:28:29.537Z",
+  "generatedAt": "2026-11-10T14:38:10.549Z",
   "days": [
     {
       "date": "2026-11-15",
@@ -12,16 +12,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-15_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-15_1200.json",
           "theme": "睡前聊年終獎金 ＆ 經濟：獎金增加了，該怎麼用？",
           "level": "N3",
           "title": "ボーナスが増えたら、どう使う？",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-15_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-15_1800.json",
           "theme": "在飯店櫃台辦理入住 ＆ 文學：松尾芭蕉《奧之細道》",
           "level": "N2",
           "title": "旅に生きた俳人・芭蕉",
@@ -41,16 +41,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-14_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-14_1200.json",
           "theme": "咖啡店點餐 ＆ 社論：看不見的兒童貧困",
           "level": "N2",
           "title": "見えにくい「子どもの貧困」",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-14_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-14_1800.json",
           "theme": "在健身房認識新朋友 ＆ 生物：舊坑道裡發現的新種跳蟲",
           "level": "N3",
           "title": "古い坑道で見つかった小さな新種",
@@ -70,16 +70,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-13_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-13_1200.json",
           "theme": "朋友傳訊息分享照片 ＆ 文學：《枕草子》的「春はあけぼの」",
           "level": "N1",
           "title": "「春はあけぼの」に学ぶ、季節を味わう目",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-13_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-13_1800.json",
           "theme": "姊弟一起整理房間 ＆ 評論：東西少一點，生活會更好嗎",
           "level": "N2",
           "title": "物を減らせば、暮らしは豊かになるのか",
@@ -99,16 +99,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-12_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-12_1200.json",
           "theme": "診所掛號 ＆ 生物：海洋普查與一千種未知生物",
           "level": "N1",
           "title": "海の「未知」を数える",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-12_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-12_1800.json",
           "theme": "打電話預約餐廳 ＆ 科學：早晨的陽光與生理時鐘",
           "level": "N3",
           "title": "朝の光と体内時計",
@@ -128,16 +128,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-11_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-11_1200.json",
           "theme": "會議前的準備 ＆ 評論：會議為什麼總是開很久",
           "level": "N3",
           "title": "会議はなぜ長くなるのか",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-11_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-11_1800.json",
           "theme": "和朋友聊最近追的劇 ＆ 隨筆：深夜聽廣播",
           "level": "N2",
           "title": "夜のラジオ",
@@ -157,16 +157,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-10_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-10_1200.json",
           "theme": "便利商店結帳 ＆ 科學：為什麼夕陽是紅色的",
           "level": "N2",
           "title": "夕焼けはなぜ赤いのか",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-10_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-10_1800.json",
           "theme": "下課後聊打工時薪 ＆ 經濟：實質薪資轉正，但還不能放心",
           "level": "N1",
           "title": "実質賃金はプラスに　それでも残る不安",
@@ -186,16 +186,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-09_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-09_1200.json",
           "theme": "和朋友約週末去爬山 ＆ 隨筆：在車站買花的習慣",
           "level": "N3",
           "title": "駅の花屋さん",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-09_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-09_1800.json",
           "theme": "早餐桌上聊新聞 ＆ 社論：年輕人眼中的國家課題",
           "level": "N1",
           "title": "若者が見つめる「この国の課題」",
@@ -215,16 +215,16 @@
           "hasQuiz": true,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-08_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-08_1200.json",
           "theme": "朋友深海展話題閒聊 ＆ 深海熱水噴出孔的「電氣合成」微生物",
           "level": "N2",
           "title": "太陽光の代わりに「電気」で生きる——深海微生物の電気合成",
           "hasQuiz": true,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-08_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-08_1800.json",
           "theme": "家庭睡前閱讀時光 ＆ 夏目漱石《草枕》談人際與心靈餘裕",
           "level": "N1~N2",
           "title": "「とかくに人の世は住みにくい」——夏目漱石『草枕』にみる心の余白",
@@ -244,16 +244,16 @@
           "hasQuiz": false,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-07_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-07_1200.json",
           "theme": "SNS 攝影社團留言交流 ＆ 深度睡眠中的「腦脊髓液」洗滌機制",
           "level": "N1~N2",
           "title": "深い眠りが脳を洗い流す——脳脊髄液のリズムと記憶の整理",
           "hasQuiz": false,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-07_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-07_1800.json",
           "theme": "室友深夜家事分擔 ＆ 為何搖晃讓人想睡？大腦前庭神經與睡眠",
           "level": "N2",
           "title": "電車に揺られると眠くなる理由——脳幹の回路と睡眠バランス",
@@ -273,16 +273,16 @@
           "hasQuiz": false,
           "hasAudio": false
         },
-        "17:00": {
-          "file": "data/slots/2026-11-06_1700.json",
+        "12:00": {
+          "file": "data/slots/2026-11-06_1200.json",
           "theme": "商店街傍晚買菜對話 ＆ 預測海洋「植物性浮游生物」半年增減",
           "level": "N2",
           "title": "海の豊かさを先読みする——植物プランクトン増減の高精度予測",
           "hasQuiz": false,
           "hasAudio": false
         },
-        "22:00": {
-          "file": "data/slots/2026-11-06_2200.json",
+        "18:00": {
+          "file": "data/slots/2026-11-06_1800.json",
           "theme": "家庭週末溫泉旅行規劃 ＆ 夏目漱石《硝子戸の中》日常隨筆",
           "level": "N1~N2",
           "title": "小さな書斎から世界を見つめる——漱石『硝子戸の中』の静かな眼差し",

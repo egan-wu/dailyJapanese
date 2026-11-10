@@ -4,7 +4,9 @@
 // =============================================================================
 import { toHtml, toPlain, charCount, escapeHtml as esc } from "./markup.js";
 
-const SLOT_ORDER = ["08:00", "17:00", "22:00"];
+const SLOT_ORDER = ["08:00", "12:00", "18:00"];
+// 舊版時段（17:00／22:00）改成 12:00／18:00，讀取舊的學習紀錄時自動換算
+const OLD_SLOT_MAP = { "17:00": "12:00", "22:00": "18:00" };
 // 計時參考：每分鐘閱讀字數（粗估），另外每題加 1 分鐘
 const READING_SPEED = { N1: 250, N2: 200, N3: 150, N4: 120, N5: 100 };
 // 單字複習間隔（天），依熟練度 box 0～6
@@ -53,10 +55,19 @@ function writeJSON(key, value) {
   try { localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value)); } catch (e) {}
 }
 
+function migrateSlotKeys(obj) {
+  const out = {};
+  for (const [k, v] of Object.entries(obj || {})) {
+    const m = k.match(/^(.*)_(\d\d:\d\d)$/);
+    out[m && OLD_SLOT_MAP[m[2]] ? `${m[1]}_${OLD_SLOT_MAP[m[2]]}` : k] = v;
+  }
+  return out;
+}
+
 function loadSavedState() {
-  state.completedSlots = readJSON("yomuhi_completed_slots", {});
+  state.completedSlots = migrateSlotKeys(readJSON("yomuhi_completed_slots", {}));
   state.savedVocab = readJSON("yomuhi_saved_vocab", []).map(normalizeSavedVocab);
-  state.quizResults = readJSON("yomuhi_quiz", {});
+  state.quizResults = migrateSlotKeys(readJSON("yomuhi_quiz", {}));
   state.activity = readJSON("yomuhi_activity", {});
   try { state.openaiKey = localStorage.getItem("yomuhi_openai_key") || ""; } catch (e) {}
   const p = readJSON("yomuhi_prefs", {});
@@ -141,7 +152,7 @@ async function loadManifest() {
   computeReleasedDays();
 }
 
-// 文章可以一次放一整週，依台灣時間到了才「上架」：08:00、17:00、22:00 各自解鎖
+// 文章可以一次放一整週，依台灣時間到了才「上架」：08:00、12:00、18:00 各自解鎖
 const TZ = "Asia/Taipei";
 function taipeiNow() {
   const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", {

@@ -1,21 +1,53 @@
 {
   "schemaVersion": 2,
   "date": "2026-11-12",
-  "slot": "17:00",
+  "slot": "12:00",
   "theme": "診所掛號 ＆ 生物：海洋普查與一千種未知生物",
   "dialogue": {
     "scene": "診所・掛號櫃台",
     "title": "第一次來看診",
     "tone": "櫃台人員的敬語，病患的丁寧語",
     "lines": [
-      { "speaker": "受付", "role": "診所櫃台", "jp": "こんにちは。こちらは{初|はじ}めてですか。", "zh": "您好。請問是第一次來嗎？" },
-      { "speaker": "患者", "role": "病患", "jp": "はい。{三日|みっか}ほど{前|まえ}から{喉|のど}が{痛|いた}くて……。", "zh": "是的。大概從三天前開始喉嚨就很痛……" },
-      { "speaker": "受付", "role": "診所櫃台", "jp": "では、{保険証|ほけんしょう}をお{預|あず}かりします。こちらの{問診票|もんしんひょう}に[[ご{記入|きにゅう}ください|N2|敬語|ご記入ください：請填寫（尊敬語的請求）]]。", "zh": "那麼，健保卡先交給我保管。請填寫這張問診單。" },
-      { "speaker": "患者", "role": "病患", "jp": "わかりました。", "zh": "好的。" }
+      {
+        "speaker": "受付",
+        "role": "診所櫃台",
+        "jp": "こんにちは。こちらは{初|はじ}めてですか。",
+        "zh": "您好。請問是第一次來嗎？"
+      },
+      {
+        "speaker": "患者",
+        "role": "病患",
+        "jp": "はい。{三日|みっか}ほど{前|まえ}から{喉|のど}が{痛|いた}くて……。",
+        "zh": "是的。大概從三天前開始喉嚨就很痛……"
+      },
+      {
+        "speaker": "受付",
+        "role": "診所櫃台",
+        "jp": "では、{保険証|ほけんしょう}をお{預|あず}かりします。こちらの{問診票|もんしんひょう}に[[ご{記入|きにゅう}ください|N2|敬語|ご記入ください：請填寫（尊敬語的請求）]]。",
+        "zh": "那麼，健保卡先交給我保管。請填寫這張問診單。"
+      },
+      {
+        "speaker": "患者",
+        "role": "病患",
+        "jp": "わかりました。",
+        "zh": "好的。"
+      }
     ],
     "vocab": [
-      { "word": "保険証", "reading": "ほけんしょう", "level": "N2", "type": "單字", "meaning": "健康保險證（相當於健保卡）" },
-      { "word": "問診票", "reading": "もんしんひょう", "level": "N1", "type": "單字", "meaning": "問診單（看診前填寫症狀的表格）" }
+      {
+        "word": "保険証",
+        "reading": "ほけんしょう",
+        "level": "N2",
+        "type": "單字",
+        "meaning": "健康保險證（相當於健保卡）"
+      },
+      {
+        "word": "問診票",
+        "reading": "もんしんひょう",
+        "level": "N1",
+        "type": "單字",
+        "meaning": "問診單（看診前填寫症狀的表格）"
+      }
     ]
   },
   "article": {
@@ -33,14 +65,48 @@
       "話雖如此，即使用上最新的技術，深海的大部分至今仍是人類目光所不及的世界。也許有些物種連名字都還沒被取，就已經消失了。了解，正是保護的第一步。"
     ],
     "vocab": [
-      { "word": "覆う", "reading": "おおう", "level": "N1", "type": "單字", "meaning": "覆蓋、遮蓋" },
-      { "word": "未知", "reading": "みち", "level": "N1", "type": "單字", "meaning": "未知" },
-      { "word": "標本", "reading": "ひょうほん", "level": "N1", "type": "單字", "meaning": "標本" },
-      { "word": "絞り込む", "reading": "しぼりこむ", "level": "N1", "type": "單字", "meaning": "篩選、縮小範圍" }
+      {
+        "word": "覆う",
+        "reading": "おおう",
+        "level": "N1",
+        "type": "單字",
+        "meaning": "覆蓋、遮蓋"
+      },
+      {
+        "word": "未知",
+        "reading": "みち",
+        "level": "N1",
+        "type": "單字",
+        "meaning": "未知"
+      },
+      {
+        "word": "標本",
+        "reading": "ひょうほん",
+        "level": "N1",
+        "type": "單字",
+        "meaning": "標本"
+      },
+      {
+        "word": "絞り込む",
+        "reading": "しぼりこむ",
+        "level": "N1",
+        "type": "單字",
+        "meaning": "篩選、縮小範圍"
+      }
     ],
     "grammar": [
-      { "pattern": "～に至る", "reading": "にいたる", "level": "N1", "explanation": "名詞・動詞辭書形＋に至る，表示經過一段過程「最終到達某個結果或地步」。本文：新種として正式に認められるに至るまでには。" },
-      { "pattern": "～をもってしても", "reading": "", "level": "N1", "explanation": "名詞＋をもってしても，表示「即使用了（強大的手段）也……」，後面接否定或困難的結果。本文：最新の技術をもってしても、深海の大部分は今なお人の目が届かない。" }
+      {
+        "pattern": "～に至る",
+        "reading": "にいたる",
+        "level": "N1",
+        "explanation": "名詞・動詞辭書形＋に至る，表示經過一段過程「最終到達某個結果或地步」。本文：新種として正式に認められるに至るまでには。"
+      },
+      {
+        "pattern": "～をもってしても",
+        "reading": "",
+        "level": "N1",
+        "explanation": "名詞＋をもってしても，表示「即使用了（強大的手段）也……」，後面接否定或困難的結果。本文：最新の技術をもってしても、深海の大部分は今なお人の目が届かない。"
+      }
     ],
     "questions": [
       {
@@ -69,8 +135,14 @@
       }
     ],
     "sources": [
-      { "title": "Washington Times：Ocean Census scientists uncover 1,100 unknown marine species", "url": "https://m.washingtontimes.com/news/2026/may/19/ocean-census-scientists-uncover-1100-unknown-marine-species-record/" },
-      { "title": "ナゾロジー：深海の新種候補を数日で確認", "url": "https://nazology.kusuguru.co.jp/archives/196357" }
+      {
+        "title": "Washington Times：Ocean Census scientists uncover 1,100 unknown marine species",
+        "url": "https://m.washingtontimes.com/news/2026/may/19/ocean-census-scientists-uncover-1100-unknown-marine-species-record/"
+      },
+      {
+        "title": "ナゾロジー：深海の新種候補を数日で確認",
+        "url": "https://nazology.kusuguru.co.jp/archives/196357"
+      }
     ]
   }
 }
